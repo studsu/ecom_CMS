@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:800px;margin:2rem auto;">
+  <h2>My Profile</h2>
+  
+  {% if messages %}
+    {% for message in messages %}
+      <div style="background:{% if message.tags == 'success' %}#d4edda;color:#155724{% else %}#f8d7da;color:#721c24{% endif %};padding:1rem;border-radius:4px;margin-bottom:1rem;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- User Info Section -->
+  <div style="background:#f8f9fa;padding:2rem;border-radius:8px;margin-bottom:2rem;">
+    <h3>Account Information</h3>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    <p><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+  </div>
+
+  <!-- Profile Form -->
+  <div style="background:#fff;border:1px solid #dee2e6;padding:2rem;border-radius:8px;margin-bottom:2rem;">
+    <h3>Profile Details</h3>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="update_profile">
+      
+      <div style="margin-bottom:1rem;">
+        <label for="{{ profile_form.phone.id_for_label }}">Phone:</label>
+        {{ profile_form.phone }}
+      </div>
+      
+      <div style="margin-bottom:1rem;">
+        <label for="{{ profile_form.date_of_birth.id_for_label }}">Date of Birth:</label>
+        {{ profile_form.date_of_birth }}
+      </div>
+      
+      <button type="submit" class="btn">Update Profile</button>
+    </form>
+  </div>
+
+  <!-- Addresses Section -->
+  <div style="background:#fff;border:1px solid #dee2e6;padding:2rem;border-radius:8px;margin-bottom:2rem;">
+    <h3>My Addresses</h3>
+    
+    {% if addresses %}
+      <div style="display:grid;gap:1rem;margin-bottom:2rem;">
+        {% for address in addresses %}
+          <div style="border:1px solid #dee2e6;padding:1rem;border-radius:4px;{% if address.is_default %}background:#e8f5e8;border-color:#28a745;{% endif %}">
+            <div style="display:flex;justify-content:between;align-items:start;">
+              <div>
+                <strong>{{ address.name }}</strong>
+                {% if address.is_default %}
+                  <span style="background:#28a745;color:white;padding:0.2rem 0.5rem;border-radius:3px;font-size:0.8rem;margin-left:0.5rem;">Default {{ address.type|title }}</span>
+                {% else %}
+                  <span style="background:#6c757d;color:white;padding:0.2rem 0.5rem;border-radius:3px;font-size:0.8rem;margin-left:0.5rem;">{{ address.type|title }}</span>
+                {% endif %}
+                <p style="margin:0.5rem 0;">{{ address.street }}</p>
+                <p style="margin:0;">{{ address.city }}, {{ address.state }} {{ address.postal_code }}</p>
+                <p style="margin:0;color:#666;">{{ address.country }}</p>
+              </div>
+              <form method="post" style="margin-left:auto;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_address">
+                <input type="hidden" name="address_id" value="{{ address.id }}">
+                <button type="submit" onclick="return confirm('Are you sure?')" 
+                        style="background:#dc3545;color:white;border:none;padding:0.3rem 0.6rem;border-radius:3px;cursor:pointer;">Delete</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color:#666;margin-bottom:2rem;">No addresses saved yet.</p>
+    {% endif %}
+
+    <!-- Add Address Form -->
+    <details>
+      <summary style="cursor:pointer;font-weight:bold;margin-bottom:1rem;">Add New Address</summary>
+      <form method="post" style="margin-top:1rem;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_address">
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label for="{{ address_form.type.id_for_label }}">Address Type:</label>
+            {{ address_form.type }}
+          </div>
+          <div>
+            <label for="{{ address_form.name.id_for_label }}">Recipient Name:</label>
+            {{ address_form.name }}
+          </div>
+        </div>
+        
+        <div style="margin-bottom:1rem;">
+          <label for="{{ address_form.street.id_for_label }}">Street Address:</label>
+          {{ address_form.street }}
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label for="{{ address_form.city.id_for_label }}">City:</label>
+            {{ address_form.city }}
+          </div>
+          <div>
+            <label for="{{ address_form.state.id_for_label }}">State:</label>
+            {{ address_form.state }}
+          </div>
+          <div>
+            <label for="{{ address_form.postal_code.id_for_label }}">Postal Code:</label>
+            {{ address_form.postal_code }}
+          </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr auto;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label for="{{ address_form.country.id_for_label }}">Country:</label>
+            {{ address_form.country }}
+          </div>
+          <div style="display:flex;align-items:center;">
+            {{ address_form.is_default }}
+            <label for="{{ address_form.is_default.id_for_label }}" style="margin-left:0.5rem;">Set as default</label>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn">Add Address</button>
+      </form>
+    </details>
+  </div>
+
+  <!-- Quick Actions -->
+  <div style="text-align:center;">
+    <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+    <a href="/" class="btn" style="margin-left:1rem;">Back to Home</a>
+  </div>
+</div>
+
+<style>
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  cursor: pointer;
+}
+.btn:hover {
+  background: #0056b3;
+}
+.btn-secondary {
+  background: #6c757d;
+  border-color: #6c757d;
+}
+.btn-secondary:hover {
+  background: #545b62;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-weight: 500;
+}
+
+details summary {
+  background: #f8f9fa;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+details[open] summary {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+details[open] > *:not(summary) {
+  background: #f8f9fa;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+</style>
+{% endblock %}

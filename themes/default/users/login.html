@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:400px;margin:2rem auto;">
+  <h2>Login to {{ SITE_NAME }}</h2>
+  
+  {% if form.errors %}
+    <div style="background:#f8d7da;color:#721c24;padding:1rem;border-radius:4px;margin-bottom:1rem;">
+      {{ form.errors }}
+    </div>
+  {% endif %}
+  
+  <form method="post">
+    {% csrf_token %}
+    <div style="margin-bottom:1rem;">
+      <label for="{{ form.username.id_for_label }}">Username:</label>
+      {{ form.username }}
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label for="{{ form.password.id_for_label }}">Password:</label>
+      {{ form.password }}
+    </div>
+    <button type="submit" class="btn">Login</button>
+    <a href="{% url 'signup' %}" class="btn btn-secondary" style="margin-left:1rem;">Sign Up</a>
+  </form>
+</div>
+{% endblock %}

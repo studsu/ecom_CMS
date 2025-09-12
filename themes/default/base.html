@@ -9,6 +9,13 @@
 <body>
   {% include "_navbar.html" %}
   <main style="max-width:1100px;margin:2rem auto;">
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
   {% include "_footer.html" %}
