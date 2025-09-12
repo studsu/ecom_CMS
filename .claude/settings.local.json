@@ -3,7 +3,11 @@
     "allow": [
       "Bash(python manage.py:*)",
       "Bash(curl:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(del \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\populate_test_data.py\")",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\default\\catalog\")"
     ],
     "deny": [],
     "ask": []
