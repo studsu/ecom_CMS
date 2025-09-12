@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py generate_google_feed:*)",
+      "Bash(python manage.py runserver:*)",
+      "Bash(python manage.py:*)",
+      "Bash(python:*)"
+    ],
+    "deny": []
+  }
+}

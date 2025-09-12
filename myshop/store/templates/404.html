@@ -1,0 +1,181 @@
+{% extends 'store/base.html' %}
+{% block title %}Page Not Found - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<!-- Premium 404 Error Page -->
+<div class="bg-gray-50 min-h-screen py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    
+    <!-- Error Animation & Header -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto mb-8">
+        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      
+      <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-red-100 to-pink-100 text-red-800 text-sm font-medium mb-6">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Error 404
+      </div>
+      
+      <h1 class="text-3xl md:text-6xl font-bold text-gray-900 mb-4">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-pink-600">404</span>
+      </h1>
+      
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+        Page Not Found
+      </h2>
+      
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
+        Sorry, we couldn't find the page you're looking for. The page might have been moved, deleted, or you entered the wrong URL.
+      </p>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+      <div class="p-8">
+        <!-- Suggestions -->
+        <div class="text-center mb-8">
+          <h3 class="text-xl font-bold text-gray-900 mb-6">What can you do next?</h3>
+          
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="text-center p-6 bg-blue-50 rounded-xl">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+              </div>
+              <h4 class="font-semibold text-gray-900 mb-2">Go Home</h4>
+              <p class="text-sm text-gray-600 mb-4">Start fresh from our homepage</p>
+              <a href="{% url 'home' %}" 
+                 class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                Homepage
+              </a>
+            </div>
+            
+            <div class="text-center p-6 bg-yellow-50 rounded-xl">
+              <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+              </div>
+              <h4 class="font-semibold text-gray-900 mb-2">Browse Products</h4>
+              <p class="text-sm text-gray-600 mb-4">Explore our premium collection</p>
+              <a href="{% url 'product_list' %}" 
+                 class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-lg hover:from-yellow-500 hover:to-amber-600 transition-all duration-300">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+                Shop Now
+              </a>
+            </div>
+            
+            <div class="text-center p-6 bg-green-50 rounded-xl">
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+              </div>
+              <h4 class="font-semibold text-gray-900 mb-2">Contact Us</h4>
+              <p class="text-sm text-gray-600 mb-4">Get help from our support team</p>
+              <a href="{% url 'contact_us' %}" 
+                 class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                Contact
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="border-t pt-8">
+          <div class="text-center">
+            <h4 class="font-semibold text-gray-900 mb-4">Or search for what you're looking for</h4>
+            <div class="max-w-md mx-auto">
+              <form method="get" action="{% url 'product_list' %}" class="flex">
+                <input type="text" 
+                       name="search" 
+                       placeholder="Search for cigar accessories..." 
+                       class="flex-1 px-4 py-3 border border-gray-300 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
+                <button type="submit" 
+                        class="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold rounded-r-xl hover:from-yellow-500 hover:to-amber-600 transition-all duration-300">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popular Categories -->
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+      <div class="text-center mb-8">
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Popular Categories</h3>
+        <p class="text-gray-600">Explore our most popular product categories</p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <a href="/products/?category=cigar-cutter" 
+           class="flex items-center p-6 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl hover:from-amber-100 hover:to-yellow-100 transition-all duration-300 group">
+          <div class="w-16 h-16 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900 mb-1">Cigar Cutters</h4>
+            <p class="text-sm text-gray-600">Precision cutting tools for the perfect draw</p>
+          </div>
+        </a>
+        
+        <a href="/products/?category=lighter" 
+           class="flex items-center p-6 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl hover:from-red-100 hover:to-orange-100 transition-all duration-300 group">
+          <div class="w-16 h-16 bg-gradient-to-r from-red-400 to-orange-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900 mb-1">Premium Lighters</h4>
+            <p class="text-sm text-gray-600">Elegant flames for your premium cigars</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fun Animation -->
+<style>
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Add floating animation to the error icon
+  const errorIcon = document.querySelector('.bg-gradient-to-r.from-red-400');
+  if (errorIcon) {
+    errorIcon.classList.add('float-animation');
+  }
+});
+</script>
+{% endblock %}

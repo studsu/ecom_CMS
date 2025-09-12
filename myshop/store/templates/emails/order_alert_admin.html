@@ -1,0 +1,10 @@
+<h2>New Order Received</h2>
+<p><strong>Order ID:</strong> {{ order.id }}</p>
+<p><strong>Customer:</strong> {{ order.full_name }} ({{ order.email }})</p>
+<p><strong>Phone Number:</strong> {{ order.phone_number }}</p>
+<p><strong>Shipping Address:</strong></p>
+<p>
+    {{ order.address_line_1 }}<br>
+    {{ order.city }}, {{ order.state }} {{ order.postal_code }}
+</p>
+<p><strong>Total:</strong> ₹{{ order.total_amount }}</p>

@@ -1,0 +1,347 @@
+{% extends "store/base.html" %}
+{% block title %}My Profile - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<!-- Premium Profile Page -->
+<div class="bg-gray-50 min-h-screen py-8">
+  <div class="max-w-7xl mx-auto px-4">
+    
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 text-sm font-medium mb-6">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        My Account
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+        Welcome Back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-600">{{ user.first_name|default:user.username }}</span>
+      </h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        Manage your account, track orders, and update your preferences.
+      </p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+      <div class="mb-8 max-w-md mx-auto">
+        {% for message in messages %}
+          <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-green-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800{% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %} mb-3 animate-fade-in">
+            <div class="flex items-center">
+              {% if message.tags == 'success' %}
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                </svg>
+              {% elif message.tags == 'error' %}
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                </svg>
+              {% endif %}
+              {{ message }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Main Profile Grid -->
+    <div class="grid lg:grid-cols-3 gap-8">
+      
+      <!-- Left Sidebar: Account Info & Quick Actions -->
+      <div class="lg:col-span-1 space-y-6">
+        
+        <!-- Account Summary Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ user.first_name }} {{ user.last_name }}</h3>
+            <p class="text-gray-600 mb-1">{{ user.email }}</p>
+            <p class="text-sm text-gray-500">Member since {{ user.date_joined|date:"M Y" }}</p>
+          </div>
+          
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-gray-900">{{ orders|length }}</div>
+              <div class="text-sm text-gray-600">Total Orders</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-gray-900">{{ bulk_orders|length }}</div>
+              <div class="text-sm text-gray-600">Bulk Orders</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Quick Actions
+          </h3>
+          <div class="space-y-3">
+            <a href="{% url 'product_list' %}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+              <svg class="w-5 h-5 text-gray-600 mr-3 group-hover:text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
+              <span class="font-medium text-gray-900 group-hover:text-yellow-600">Shop Products</span>
+            </a>
+            <a href="{% url 'view_cart' %}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+              <svg class="w-5 h-5 text-gray-600 mr-3 group-hover:text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m1.6 8L6 6H4m3 7v4a2 2 0 002 2h10a2 2 0 002-2v-4M9 17h.01M20 17h.01"/>
+              </svg>
+              <span class="font-medium text-gray-900 group-hover:text-yellow-600">View Cart</span>
+            </a>
+            <a href="{% url 'contact_us' %}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+              <svg class="w-5 h-5 text-gray-600 mr-3 group-hover:text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+              <span class="font-medium text-gray-900 group-hover:text-yellow-600">Contact Support</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Main Content -->
+      <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Shipping Address Section -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <div class="flex items-center mb-8">
+            <div class="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center mr-4">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">Shipping Address</h2>
+              <p class="text-gray-600">Update your default delivery address</p>
+            </div>
+          </div>
+
+          <form method="post" action="{% url 'update_profile' %}" class="space-y-6">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="{{ form.shipping_address.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                {{ form.shipping_address.label }}
+              </label>
+              <div class="relative">
+                {{ form.shipping_address }}
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                </div>
+              </div>
+              {% if form.shipping_address.errors %}
+                <p class="text-sm text-red-600 mt-2 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
+                    </svg>
+                  {{ form.shipping_address.errors.0 }}
+                </p>
+              {% endif %}
+            </div>
+            
+            <button type="submit" class="bg-gradient-to-r from-yellow-400 to-amber-500 text-black py-3 px-8 rounded-xl font-semibold hover:from-yellow-500 hover:to-amber-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <span class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Update Address
+              </span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Recent Orders Section -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center mr-4">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">Recent Orders</h2>
+                <p class="text-gray-600">Track your order history and status</p>
+              </div>
+            </div>
+            {% if orders %}
+              <a href="#" class="text-yellow-600 hover:text-yellow-700 font-medium text-sm">View All</a>
+            {% endif %}
+          </div>
+
+          {% if orders %}
+            <div class="space-y-4">
+              {% for order in orders %}
+                <div class="border border-gray-200 rounded-xl p-6 hover:border-yellow-300 transition-colors">
+                  <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-4 mb-3">
+                        <a href="{% url 'order_detail' order.id %}" class="text-lg font-semibold text-yellow-600 hover:text-yellow-700">
+                          Order #{{ order.id }}
+                        </a>
+                        <span class="px-3 py-1 rounded-full text-xs font-medium 
+                          {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800
+                          {% elif order.status == 'processing' %}bg-blue-100 text-blue-800
+                          {% elif order.status == 'shipped' %}bg-purple-100 text-purple-800
+                          {% elif order.status == 'delivered' %}bg-green-100 text-green-800
+                          {% else %}bg-gray-100 text-gray-800{% endif %}">
+                          {{ order.status|title }}
+                        </span>
+                      </div>
+                      <div class="text-sm text-gray-600 space-y-1">
+                        <p>Total: <span class="font-semibold text-gray-900">₹{{ order.total_amount }}</span></p>
+                        <p>Placed on {{ order.created_at|date:"M d, Y \a\t H:i" }}</p>
+                        {% if order.tracking_id %}
+                          <div class="flex items-center text-blue-600 bg-blue-50 px-2 py-1 rounded mt-2">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-8-2-8 2"></path>
+                            </svg>
+                            <span class="font-mono text-xs">{{ order.tracking_id }}</span>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="flex flex-col items-end space-y-2">
+                      <a href="{% url 'order_detail' order.id %}" 
+                         class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                        View Details
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-12">
+              <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
+              <p class="text-gray-600 mb-6">Start shopping to see your orders here</p>
+              <a href="{% url 'product_list' %}" 
+                 class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-semibold rounded-lg hover:from-yellow-500 hover:to-amber-600 transition-all duration-300">
+                Shop Now
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Bulk Orders Section -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center mr-4">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">Bulk Order Inquiries</h2>
+                <p class="text-gray-600">Your wholesale and bulk order requests</p>
+              </div>
+            </div>
+          </div>
+
+          {% if bulk_orders %}
+            <div class="overflow-x-auto">
+              <table class="min-w-full">
+                <thead>
+                  <tr class="bg-gray-50">
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider rounded-l-lg">Product</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider rounded-r-lg">Date</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  {% for bulk_order in bulk_orders %}
+                  <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">
+                      <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                          <img class="h-10 w-10 rounded-lg object-contain" src="{{ bulk_order.product.image.url }}" alt="{{ bulk_order.product.name }}">
+                        </div>
+                        <div class="ml-4">
+                          <div class="text-sm font-medium text-gray-900">{{ bulk_order.product.name }}</div>
+                          <div class="text-sm text-gray-500">{{ bulk_order.product.category.name }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="text-sm font-semibold text-gray-900">{{ bulk_order.quantity }}</div>
+                      <div class="text-xs text-gray-500">units</div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <span class="px-3 py-1 rounded-full text-xs font-medium
+                        {% if bulk_order.status == 'pending' %}bg-yellow-100 text-yellow-800
+                        {% elif bulk_order.status == 'approved' %}bg-green-100 text-green-800
+                        {% elif bulk_order.status == 'rejected' %}bg-red-100 text-red-800
+                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                        {{ bulk_order.get_status_display }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="text-sm text-gray-900">{{ bulk_order.created_at|date:"M d, Y" }}</div>
+                      <div class="text-xs text-gray-500">{{ bulk_order.created_at|date:"H:i" }}</div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="text-center py-12">
+              <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">No bulk orders yet</h3>
+              <p class="text-gray-600 mb-6">Contact us for wholesale pricing on large quantities</p>
+              <a href="{% url 'product_list' %}" 
+                 class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-400 to-purple-500 text-white font-semibold rounded-lg hover:from-purple-500 hover:to-purple-600 transition-all duration-300">
+                Explore Products
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Form Styling -->
+<style>
+.form-group textarea {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 min-h-32 resize-none;
+}
+
+.form-group textarea:focus {
+  @apply shadow-lg;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+</style>
+{% endblock %}

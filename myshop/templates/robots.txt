@@ -1,0 +1,14 @@
+# robots.txt for SmokeKing.in
+# Disallow common administrative and user-specific paths
+
+User-agent: *
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /payments/
+Disallow: /cart/
+Disallow: /login/
+Disallow: /logout/
+Disallow: /checkout/
+Disallow: /order-success/
+
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml

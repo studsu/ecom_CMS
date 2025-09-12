@@ -1,0 +1,43 @@
+{% extends 'store/base.html' %}
+{% block title %}Privacy Policy{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 bg-white rounded shadow">
+  <h1 class="text-3xl font-bold mb-6">Privacy Policy</h1>
+
+  <p class="mb-4">
+    This Privacy Policy outlines how {{ SITE_NAME|default:"our store" }} collects, uses, and safeguards your personal data when you use our website.
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6 mb-2">1. Information We Collect</h2>
+  <ul class="list-disc list-inside mb-4">
+    <li>Personal data such as name, phone number, and shipping address are collected during account registration and checkout.</li>
+    <li>We may also collect usage data such as IP address, browser type, and referral sources for analytics purposes.</li>
+  </ul>
+
+  <h2 class="text-xl font-semibold mt-6 mb-2">2. How We Use Your Data</h2>
+  <ul class="list-disc list-inside mb-4">
+    <li>To process and deliver your orders efficiently.</li>
+    <li>To improve our services, customer experience, and marketing strategies.</li>
+    <li>To communicate with you about your orders or any support-related queries.</li>
+  </ul>
+
+  <h2 class="text-xl font-semibold mt-6 mb-2">3. Data Protection</h2>
+  <p class="mb-4">
+    We use appropriate technical and organizational measures to protect your personal data against unauthorized access, loss, or destruction. Your information is stored securely and only accessible by authorized personnel.
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6 mb-2">4. Sharing of Data</h2>
+  <ul class="list-disc list-inside mb-4">
+    <li>We do not sell, rent or trade your personal information with any third party.</li>
+    <li>We may share your data with trusted third-party services (such as payment gateways and shipping providers) only to fulfill your order.</li>
+  </ul>
+
+  <h2 class="text-xl font-semibold mt-6 mb-2">5. Your Rights</h2>
+  <ul class="list-disc list-inside mb-4">
+    <li>You can request access to or correction of your personal data.</li>
+    <li>You can also request deletion of your data by contacting us.</li>
+  </ul>
+
+  <p class="mt-6">For any questions, feel free to <a href="{% url 'contact_us' %}" class="text-blue-600 underline">contact us</a>.</p>
+</div>
+{% endblock %}
