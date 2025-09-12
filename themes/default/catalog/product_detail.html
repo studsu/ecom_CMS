@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load hook_tags %}
+{% block content %}
+<h2>{{ product.title }}</h2>
+<p>₹{{ product.price }}</p>
+<p>{{ product.description|linebreaks }}</p>
+
+<!-- Hook for plugins to inject content (e.g., reviews) -->
+{% render_hook "product_detail_bottom" product=product %}
+{% endblock %}

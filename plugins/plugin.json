@@ -1,0 +1,6 @@
+{
+  "name": "Product Reviews",
+  "description": "Allow customers to leave 1–5 star reviews on products.",
+  "version": "1.0.0",
+  "app_name": "plugins.reviews"
+}

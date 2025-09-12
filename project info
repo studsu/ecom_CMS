@@ -1,0 +1,209 @@
+Ecom_CMS — PROJECT OVERVIEW & PLUGIN SYSTEM
+===========================================
+
+1) GOAL
+-------
+Build a minimal, professional Django e-commerce base that:
+- stays lean (no over-engineering),
+- supports WordPress-like plugins (isolated apps that add models, admin, URLs, frontend),
+- supports themes (switch templates by name),
+- exposes a global SITE_NAME used everywhere.
+
+2) HIGH-LEVEL ARCHITECTURE
+--------------------------
+Ecom_CMS/
+|-- config/                 # Django project (settings, urls)
+|-- core/                   # site utilities, context processors, hook system
+|-- users/                  # custom user (AbstractUser)
+|-- catalog/                # products & categories
+|-- orders/                 # minimal order scaffolding (optional for now)
+|-- plugins/                # drop-in plugins live here
+|   `-- reviews/            # example plugin (complete)
+|-- themes/                 # switchable themes (default, modern)
+|   |-- default/            # base.html, home.html, catalog/, users/
+|   `-- modern/             # alternative base.html (demo)
+|-- templates_shared/       # shared partials (_navbar, _footer)
+|-- static_shared/          # shared CSS/JS (site.css)
+`-- manage.py
+
+WHY THIS SPLIT?
+- core/users/catalog: the smallest clean base to go live.
+- orders: optional scaffolding you can keep or remove today; split later if needed.
+- plugins: all plugin code is isolated inside its own app folder.
+- themes: switching templates is a one-line change (env var or settings).
+
+3) SETTINGS & CONVENTIONS
+-------------------------
+config/settings.py
+- SITE_NAME — globally available via core.context_processors.site_context
+- THEME     — active theme directory (e.g., themes/default or themes/modern)
+- Plugin discovery — reads plugins/*/plugin.json and appends "app_name" to INSTALLED_APPS
+- APP_DIRS=True — lets Django load templates from each app (including plugins)
+
+HOW THEMES WORK
+- TEMPLATES[0]["DIRS"] = [BASE_DIR / "themes" / THEME, BASE_DIR / "templates_shared"]
+- Set THEME=modern (env var) to switch
+
+GLOBAL CONTEXT
+- SITE_NAME, THEME available in every template (headers/footers reflect site name & theme)
+
+4) HOOK SYSTEM (FRONTEND INJECTION POINTS)
+------------------------------------------
+Tiny hook mechanism lets plugins “drop” UI without touching core templates.
+
+TAG
+- core/templatetags/hook_tags.py  ->  {% render_hook "hook_name" ... %}
+
+HOW PLUGINS USE IT
+- Ship a template at: templates/hooks/<hook_name>.html
+- If present, it renders; if not, it’s a no-op.
+
+HOOKS USED BY CORE
+- themes/default/home.html:                    home_after_hero
+- themes/default/catalog/product_detail.html:  product_detail_bottom
+
+5) BASE APPS (WHAT’S INSIDE)
+----------------------------
+users/
+- Custom user model (AUTH_USER_MODEL = "users.User")
+- Basic login/logout views + template
+
+catalog/
+- Models: Category, Product
+- Views: product_list, product_detail
+- Admin wired (prepopulated slugs, filters, search)
+
+orders/ (minimal)
+- Order, OrderItem (scaffold for later cart/checkout work)
+
+core/
+- context_processors.site_context -> injects SITE_NAME & THEME
+- hook_tags.render_hook           -> frontend hook system
+- home view + URL
+
+6) THEMES (READY TODAY)
+-----------------------
+themes/default/
+- base.html, home.html, catalog/product_list.html,
+  catalog/product_detail.html, users/login.html
+- Includes shared partials from templates_shared/_navbar.html and _footer.html
+
+themes/modern/
+- Simple base.html to demonstrate theme switching
+
+SWITCH THEME
+- Set env var: THEME=modern
+
+7) THE REVIEWS PLUGIN (COMPLETE & ISOLATED)
+-------------------------------------------
+Path: plugins/reviews/
+
+CONTAINS
+- plugin.json     — metadata ("app_name": "plugins.reviews") for auto-install
+- apps.py         — label="plugins_reviews" (clean migrations label)
+- models.py       — Review(product, user, rating, title, comment, is_public, created_at)
+                    + unique constraint per (product, user)
+- admin.py        — moderation/search/list filters
+- forms.py        — ReviewForm (1–5 rating validation)
+- views.py        — add_review (create/update current user’s review)
+- urls.py         — reviews/add/<product_slug>/
+- templatetags/   — review_tags.py (product_review_stats: avg & count)
+- templates/
+    hooks/product_detail_bottom.html         # injected into product page via hook
+    plugins/reviews/_review_list.html        # listing
+    plugins/reviews/_review_form.html        # add/edit form
+
+ROUTING
+- Simple include once in config/urls.py:
+    path("reviews/", include("plugins.reviews.urls")),
+
+(OPTIONAL LATER)
+- Dynamic auto-include of plugin URLs
+
+FRONTEND INTEGRATION
+- Core product detail uses:
+    {% load hook_tags %}
+    {% render_hook "product_detail_bottom" product=product %}
+
+- The plugin provides templates/hooks/product_detail_bottom.html, which:
+  * shows average/count stats using: {% load review_tags %}
+  * includes list & form partials
+  * requires login to post; otherwise prompts to log in
+
+MIGRATIONS
+- Run with the app label (from apps.py label):
+    python manage.py makemigrations plugins_reviews
+    python manage.py migrate plugins_reviews
+
+8) HOW TO RUN (FROM ZERO)
+-------------------------
+# create env, install Django (5.x)
+python -m venv .venv
+.venv\Scripts\activate               # Windows
+# source .venv/bin/activate          # macOS/Linux
+pip install "Django>=5.0,<6.0"
+
+# project already scaffolded per instructions, then:
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+
+# run
+python manage.py runserver
+
+OPEN
+- Home:            /
+- Products:        /products/
+- Admin:           /admin/
+- Reviews post:    /reviews/add/<product-slug>/
+
+9) CUSTOMIZE SITE NAME & THEME
+------------------------------
+PREFERRED (PROD): environment variables
+- SITE_NAME="Your Shop"
+- THEME=modern
+
+OR set directly in config/settings.py.
+- All templates pick up SITE_NAME
+- Theme root updates instantly when THEME changes
+
+10) SECURITY & PROFESSIONAL PRACTICES
+-------------------------------------
+- No arbitrary code execution in plugins — standard Django apps only
+- Plugins isolated: models/admin/templates/urls/templatetags live inside the plugin
+- Namespacing: plugin templates under templates/hooks/... and
+               partials under templates/plugins/<plugin>/... to avoid clashes
+- Migrations per plugin (label: plugins_reviews). Removing a plugin -> migrate to zero if desired
+- Review moderation via is_public in admin
+- Test plugins in staging before production
+
+11) COMMON GOTCHAS (QUICK FIX)
+------------------------------
+- Template not rendering:
+  * plugins/reviews/__init__.py exists
+  * plugin.json has "app_name": "plugins.reviews"
+  * APP_DIRS=True in TEMPLATES
+  * Core template actually calls: {% render_hook "..." %}
+
+- Templetetag not found:
+  * Folder must be templatetags/ with __init__.py
+  * Load with: {% load review_tags %}
+
+- Migrations:
+  * Run with app label (plugins_reviews), NOT dotted path
+
+- URLs 404:
+  * config/urls.py includes: path("reviews/", include("plugins.reviews.urls"))
+
+- Import errors:
+  * plugins/__init__.py exists so "plugins" is a package
+
+12) WHAT’S NEXT (ADD WHEN NEEDED)
+---------------------------------
+- Dynamic URL auto-loader for plugins (no manual config/urls.py edits)
+- Cart/Checkout: move from scaffold to real flows (session carts, addresses, shipping, payments)
+- Payments as a plugin (e.g., PhonePe): isolated gateway app with initiate/callback views
+- Theme tooling: Tailwind-based themes + admin theme switcher
+- API layer (DRF/GraphQL) for SPA/mobile
+- Plugin installer command (e.g., manage.py install_plugin <path>) to append registry,
+  run migrate, and perform sanity checks

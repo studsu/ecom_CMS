@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load hook_tags %}
+{% block content %}
+<h1>Welcome to {{ SITE_NAME }}</h1>
+<p>This is your starter eCommerce CMS.</p>
+
+<!-- Example hook for homepage: plugins can drop templates at templates/hooks/home_after_hero.html -->
+{% render_hook "home_after_hero" %}
+{% endblock %}

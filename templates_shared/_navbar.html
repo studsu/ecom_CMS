@@ -1,0 +1,9 @@
+<nav style="padding:1rem; background:#111; color:#fff;">
+  <a href="/" style="color:#fff; margin-right:1rem;">{{ SITE_NAME }}</a>
+  <a href="/products/" style="color:#fff; margin-right:1rem;">Products</a>
+  {% if request.user.is_authenticated %}
+    <a href="/users/logout/" style="color:#fff;">Logout</a>
+  {% else %}
+    <a href="/users/login/" style="color:#fff;">Login</a>
+  {% endif %}
+</nav>
