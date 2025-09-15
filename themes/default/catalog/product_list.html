@@ -159,7 +159,7 @@
               
               <div class="product-actions-modern">
                 {% if product.is_in_stock %}
-                  <form method="post" action="{% url 'cart_add' product.id %}" class="cart-form-modern">
+                  <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="cart-form-modern">
                     {% csrf_token %}
                     <input type="hidden" name="quantity" value="1">
                     <button type="submit" class="btn-modern btn-add-cart">

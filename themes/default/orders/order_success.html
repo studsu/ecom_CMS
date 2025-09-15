@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmation{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="success-card">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                
+                <h1 class="success-title">Order Confirmed!</h1>
+                <p class="success-message">Thank you for your order. We have received your order and it is being processed.</p>
+                
+                <div class="order-details-card">
+                    <h3>Order Details</h3>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Order Number:</span>
+                        <span class="detail-value">#{{ order.order_number }}</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Order Date:</span>
+                        <span class="detail-value">{{ order.created_at|date:"F d, Y" }}</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value status-badge">{{ order.get_status_display }}</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Payment Method:</span>
+                        <span class="detail-value">{{ order.get_payment_method_display }}</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Total Amount:</span>
+                        <span class="detail-value total-amount">₹{{ order.total_amount }}</span>
+                    </div>
+                </div>
+                
+                <div class="shipping-card">
+                    <h4>Shipping Address</h4>
+                    <div class="address">
+                        <p>{{ order.shipping_name }}</p>
+                        <p>{{ order.shipping_address_line_1 }}</p>
+                        {% if order.shipping_address_line_2 %}
+                            <p>{{ order.shipping_address_line_2 }}</p>
+                        {% endif %}
+                        <p>{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}</p>
+                        <p>{{ order.shipping_country }}</p>
+                        <p><strong>Phone:</strong> {{ order.phone }}</p>
+                    </div>
+                </div>
+                
+                <div class="order-items-card">
+                    <h4>Order Items</h4>
+                    {% for item in order.items.all %}
+                        <div class="item-row">
+                            <div class="item-info">
+                                <h5>{{ item.product_name }}</h5>
+                                {% if item.product_sku %}
+                                    <p class="item-sku">SKU: {{ item.product_sku }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="item-quantity">{{ item.quantity }}x</div>
+                            <div class="item-price">₹{{ item.unit_price }}</div>
+                            <div class="item-total">₹{{ item.get_total_price }}</div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="order-summary">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span>₹{{ order.subtotal }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax:</span>
+                            <span>₹{{ order.tax_amount }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span>₹{{ order.shipping_cost }}</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span><strong>Total:</strong></span>
+                            <span><strong>₹{{ order.total_amount }}</strong></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{% url 'orders:order_detail' order.order_number %}" class="btn btn-outline-primary">View Order Details</a>
+                    <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Continue Shopping</a>
+                </div>
+                
+                <div class="next-steps">
+                    <h4>What's Next?</h4>
+                    <ul>
+                        <li>You will receive an order confirmation email shortly</li>
+                        <li>We will process your order within 24 hours</li>
+                        <li>You can track your order status in your order history</li>
+                        <li>For Cash on Delivery, payment will be collected at the time of delivery</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-card {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    box-shadow: var(--shadow-xl);
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: var(--success);
+    margin-bottom: 1rem;
+}
+
+.success-title {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.success-message {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.order-details-card, .shipping-card, .order-items-card {
+    background: var(--light);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.order-details-card h3, .shipping-card h4, .order-items-card h4 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.detail-value {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.status-badge {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.total-amount {
+    color: var(--success);
+    font-size: 1.2rem;
+}
+
+.address {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.address p {
+    margin: 0.25rem 0;
+    color: var(--text);
+}
+
+.item-row {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.item-row:last-child {
+    border-bottom: none;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h5 {
+    margin: 0;
+    color: var(--text);
+}
+
+.item-sku {
+    margin: 0.25rem 0 0 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.item-quantity, .item-price, .item-total {
+    margin-left: 1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.item-total {
+    color: var(--primary);
+}
+
+.order-summary {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.total-row {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--gradient);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.next-steps {
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: left;
+}
+
+.next-steps h4 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.next-steps ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.next-steps li {
+    padding: 0.5rem 0;
+    color: var(--text);
+    position: relative;
+    padding-left: 2rem;
+}
+
+.next-steps li:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--success);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .success-card {
+        padding: 2rem 1rem;
+        margin: 1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .item-row {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .item-quantity, .item-price, .item-total {
+        margin-left: 0;
+    }
+}
+</style>
+{% endblock %}

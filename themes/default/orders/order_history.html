@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1>My Orders</h1>
+                <p class="text-muted">Track and view your order history</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if orders %}
+                <div class="orders-list">
+                    {% for order in orders %}
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-number">
+                                    <h4>Order #{{ order.order_number }}</h4>
+                                    <p class="order-date">{{ order.created_at|date:"F d, Y" }}</p>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status-badge status-{{ order.status }}">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="order-summary">
+                                <div class="summary-item">
+                                    <span class="label">Items:</span>
+                                    <span class="value">{{ order.get_total_items }} item{{ order.get_total_items|pluralize }}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Total:</span>
+                                    <span class="value">₹{{ order.total_amount }}</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Payment:</span>
+                                    <span class="value">{{ order.get_payment_method_display }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="order-items">
+                                {% for item in order.items.all|slice:":3" %}
+                                    <div class="item-preview">
+                                        <span class="item-name">{{ item.product_name }}</span>
+                                        <span class="item-qty">x{{ item.quantity }}</span>
+                                    </div>
+                                {% endfor %}
+                                {% if order.items.count > 3 %}
+                                    <div class="item-preview">
+                                        <span class="item-name">... and {{ order.items.count|add:"-3" }} more item{{ order.items.count|add:"-3"|pluralize }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="order-actions">
+                                <a href="{% url 'orders:order_detail' order.order_number %}" class="btn btn-outline-primary">
+                                    View Details
+                                </a>
+                                {% if order.status == 'pending' or order.status == 'confirmed' %}
+                                    <button class="btn btn-outline-danger" onclick="cancelOrder('{{ order.order_number }}')">
+                                        Cancel Order
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Add pagination if needed -->
+                <!-- {% if is_paginated %} pagination here {% endif %} -->
+                
+            {% else %}
+                <div class="empty-orders">
+                    <div class="empty-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h3>No Orders Yet</h3>
+                    <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
+                    <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Start Shopping</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header h1 {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.orders-list {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.order-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.order-header {
+    background: linear-gradient(135deg, var(--light) 0%, #f1f5f9 100%);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.order-number h4 {
+    margin: 0;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.order-date {
+    margin: 0.25rem 0 0 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-confirmed {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-processing {
+    background: #fde68a;
+    color: #d97706;
+}
+
+.status-shipped {
+    background: #c7d2fe;
+    color: #4338ca;
+}
+
+.status-delivered {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-cancelled {
+    background: #fecaca;
+    color: #b91c1c;
+}
+
+.order-summary {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    background: rgba(99, 102, 241, 0.02);
+}
+
+.summary-item {
+    text-align: center;
+}
+
+.summary-item .label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.summary-item .value {
+    display: block;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.order-items {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.item-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.item-name {
+    flex: 1;
+}
+
+.item-qty {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.order-actions {
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-outline-danger {
+    border: 2px solid var(--danger);
+    color: var(--danger);
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.empty-orders {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.empty-orders h3 {
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.empty-orders p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-primary {
+    background: var(--gradient);
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 768px) {
+    .order-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .order-summary {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .order-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+function cancelOrder(orderNumber) {
+    if (confirm('Are you sure you want to cancel this order?')) {
+        // Implement order cancellation logic here
+        alert('Order cancellation feature will be implemented soon.');
+    }
+}
+</script>
+{% endblock %}

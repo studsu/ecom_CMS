@@ -4,6 +4,8 @@ from .views import (
     cart_remove, cart_update, add_review
 )
 
+app_name = 'catalog'
+
 urlpatterns = [
     path("", product_list, name="product_list"),
     path("cart/", cart_detail, name="cart_detail"),

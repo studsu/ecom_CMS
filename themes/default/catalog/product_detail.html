@@ -88,7 +88,7 @@
 
       <!-- Add to Cart -->
       {% if product.is_in_stock %}
-        <form method="post" action="{% url 'cart_add' product.id %}" class="cart-form">
+        <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="cart-form">
           {% csrf_token %}
           <div class="quantity-section">
             <label for="quantity">Quantity:</label>
@@ -156,7 +156,7 @@
       {% if user.is_authenticated and not user_has_reviewed %}
         <div class="review-form">
           <h4>Write a Review</h4>
-          <form method="post" action="{% url 'add_review' product.id %}">
+          <form method="post" action="{% url 'catalog:add_review' product.id %}">
             {% csrf_token %}
             
             <div class="form-group">

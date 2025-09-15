@@ -1,10 +1,11 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from . import views
+
+app_name = 'orders'
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("core.urls")),
-    path("users/", include("users.urls")),
-    path("products/", include("catalog.urls")),
-    path("orders/", include("orders.urls")),
+    path('checkout/', views.checkout, name='checkout'),
+    path('success/<str:order_number>/', views.order_success, name='order_success'),
+    path('history/', views.order_history, name='order_history'),
+    path('detail/<str:order_number>/', views.order_detail, name='order_detail'),
 ]

@@ -1,0 +1,395 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="checkout-header">
+                <h1>Checkout</h1>
+                {% if user.is_authenticated %}
+                    <p class="text-muted">Welcome back, {{ user.first_name|default:user.username }}! Complete your order below</p>
+                {% else %}
+                    <p class="text-muted">Complete your order below or <a href="{% url 'users:login' %}?next={% url 'orders:checkout' %}">login</a> for faster checkout</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Form -->
+        <div class="col-lg-8">
+            <div class="checkout-form-card">
+                <h3>Shipping Information</h3>
+                <form method="post" class="checkout-form">
+                    {% csrf_token %}
+                    
+                    <!-- Contact Information -->
+                    <div class="form-section">
+                        <h4>Contact Details</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.email.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+                                    {{ form.phone }}
+                                    {% if form.phone.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.phone.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Address -->
+                    <div class="form-section">
+                        <h4>Shipping Address</h4>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="{{ form.shipping_name.id_for_label }}">{{ form.shipping_name.label }}</label>
+                                    {{ form.shipping_name }}
+                                    {% if form.shipping_name.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.shipping_name.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="{{ form.shipping_address_line_1.id_for_label }}">{{ form.shipping_address_line_1.label }}</label>
+                                    {{ form.shipping_address_line_1 }}
+                                    {% if form.shipping_address_line_1.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.shipping_address_line_1.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="{{ form.shipping_address_line_2.id_for_label }}">{{ form.shipping_address_line_2.label }}</label>
+                                    {{ form.shipping_address_line_2 }}
+                                    {% if form.shipping_address_line_2.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.shipping_address_line_2.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.shipping_city.id_for_label }}">{{ form.shipping_city.label }}</label>
+                                    {{ form.shipping_city }}
+                                    {% if form.shipping_city.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.shipping_city.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.shipping_state.id_for_label }}">{{ form.shipping_state.label }}</label>
+                                    {{ form.shipping_state }}
+                                    {% if form.shipping_state.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.shipping_state.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.shipping_postal_code.id_for_label }}">{{ form.shipping_postal_code.label }}</label>
+                                    {{ form.shipping_postal_code }}
+                                    {% if form.shipping_postal_code.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.shipping_postal_code.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.shipping_country.id_for_label }}">{{ form.shipping_country.label }}</label>
+                                    {{ form.shipping_country }}
+                                    {% if form.shipping_country.errors %}
+                                        <div class="error-message">
+                                            {% for error in form.shipping_country.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="form-section">
+                        <h4>Payment Method</h4>
+                        <div class="form-group">
+                            <label for="{{ form.payment_method.id_for_label }}">{{ form.payment_method.label }}</label>
+                            {{ form.payment_method }}
+                            {% if form.payment_method.errors %}
+                                <div class="error-message">
+                                    {% for error in form.payment_method.errors %}
+                                        <small class="text-danger">{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Special Instructions -->
+                    <div class="form-section">
+                        <h4>Special Instructions</h4>
+                        <div class="form-group">
+                            <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                                <div class="error-message">
+                                    {% for error in form.notes.errors %}
+                                        <small class="text-danger">{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg btn-block place-order-btn">
+                        <i class="fas fa-credit-card"></i> Place Order
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="order-summary-card">
+                <h3>Order Summary</h3>
+                
+                <div class="cart-items">
+                    {% for item in cart %}
+                        <div class="cart-item">
+                            <div class="item-details">
+                                <h5>{{ item.product.title }}</h5>
+                                <p class="item-quantity">Quantity: {{ item.quantity }}</p>
+                                <p class="item-price">₹{{ item.price }} x {{ item.quantity }}</p>
+                            </div>
+                            <div class="item-total">
+                                <strong>₹{{ item.total_price }}</strong>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>Your cart is empty.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="order-totals">
+                    <div class="subtotal">
+                        <span>Subtotal:</span>
+                        <span>₹{{ cart_total }}</span>
+                    </div>
+                    <div class="tax">
+                        <span>Tax (18%):</span>
+                        <span>₹{% widthratio cart_total 18 100 %}</span>
+                    </div>
+                    <div class="shipping">
+                        <span>Shipping:</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="total">
+                        <span><strong>Total:</strong></span>
+                        <span><strong>₹{% widthratio cart_total 118 100 %}</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.checkout-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.checkout-header h1 {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.checkout-form-card, .order-summary-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.form-section h4 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.error-message small {
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.place-order-btn {
+    background: var(--gradient);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.place-order-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.order-summary-card h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.item-details h5 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text);
+}
+
+.item-quantity, .item-price {
+    margin: 0.25rem 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.item-total {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.order-totals {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border);
+}
+
+.subtotal, .tax, .shipping {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    color: var(--text-muted);
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .checkout-form-card, .order-summary-card {
+        padding: 1.5rem;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}

@@ -25,7 +25,7 @@
             </div>
             
             <div class="item-details">
-              <h3><a href="{% url 'product_detail' slug=item.product.slug %}">{{ item.product.title }}</a></h3>
+              <h3><a href="{% url 'catalog:product_detail' slug=item.product.slug %}">{{ item.product.title }}</a></h3>
               {% if item.product.category %}
                 <p class="category">{{ item.product.category.name }}</p>
               {% endif %}
@@ -40,7 +40,7 @@
             </div>
 
             <div class="item-quantity">
-              <form method="post" action="{% url 'cart_update' item.product.id %}" class="quantity-form">
+              <form method="post" action="{% url 'catalog:cart_update' item.product.id %}" class="quantity-form">
                 {% csrf_token %}
                 <label for="quantity_{{ item.product.id }}">Qty:</label>
                 <input type="number" id="quantity_{{ item.product.id }}" name="quantity" 
@@ -55,7 +55,7 @@
             </div>
 
             <div class="item-actions">
-              <form method="post" action="{% url 'cart_remove' item.product.id %}">
+              <form method="post" action="{% url 'catalog:cart_remove' item.product.id %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remove this item from cart?')">Remove</button>
               </form>
@@ -79,8 +79,8 @@
           </div>
           
           <div class="checkout-actions">
-            <button class="btn btn-primary btn-large btn-full">Proceed to Checkout</button>
-            <a href="{% url 'product_list' %}" class="btn btn-secondary btn-full">Continue Shopping</a>
+            <a href="{% url 'orders:checkout' %}" class="btn btn-primary btn-large btn-full">Proceed to Checkout</a>
+            <a href="{% url 'catalog:product_list' %}" class="btn btn-secondary btn-full">Continue Shopping</a>
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@
     <div class="empty-cart">
       <h3>Your cart is empty</h3>
       <p>Start adding some products to your cart!</p>
-      <a href="{% url 'product_list' %}" class="btn btn-primary">Start Shopping</a>
+      <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Start Shopping</a>
     </div>
   {% endif %}
 </div>

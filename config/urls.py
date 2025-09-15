@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('core.urls')),           # Homepage
     path('products/', include('catalog.urls')), # Product catalog
     path('users/', include('users.urls')),    # User auth (if exists)
+    path('orders/', include('orders.urls')),  # Order management
 ]
