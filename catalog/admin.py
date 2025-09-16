@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, ProductVariant, ProductReview, SiteSettings
+from .models import Category, Product, ProductImage, ProductVariant, ProductReview, SiteSettings
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -8,6 +8,12 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ["name", "description"]
     fields = ("name", "slug", "parent", "description", "image", "is_active")
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 2
+    fields = ('image', 'alt_text', 'order', 'is_active')
+    ordering = ('order',)
 
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
@@ -21,7 +27,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ["title", "description", "sku"]
     prepopulated_fields = {"slug": ("title",)}
     list_editable = ("price", "sale_price", "stock_quantity", "is_active", "featured")
-    inlines = [ProductVariantInline]
+    inlines = [ProductImageInline, ProductVariantInline]
     fieldsets = (
         ("Basic Information", {
             "fields": ("title", "slug", "category", "short_description", "description")

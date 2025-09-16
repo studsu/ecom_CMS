@@ -133,12 +133,12 @@ def add_review(request, product_id):
     # Check if reviews are enabled
     if not site_settings.enable_reviews:
         messages.error(request, "Product reviews are currently disabled.")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('catalog:product_detail', slug=product.slug)
     
     # Check if user already reviewed this product
     if ProductReview.objects.filter(product=product, user=request.user).exists():
         messages.error(request, "You have already reviewed this product.")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('catalog:product_detail', slug=product.slug)
     
     # Get form data
     rating = request.POST.get('rating')
@@ -152,15 +152,15 @@ def add_review(request, product_id):
             raise ValueError()
     except (ValueError, TypeError):
         messages.error(request, "Please select a valid rating (1-5 stars).")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('catalog:product_detail', slug=product.slug)
     
     if not title:
         messages.error(request, "Please provide a review title.")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('catalog:product_detail', slug=product.slug)
     
     if len(comment) < site_settings.min_review_length:
         messages.error(request, f"Review must be at least {site_settings.min_review_length} characters long.")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('catalog:product_detail', slug=product.slug)
     
     # Create review
     review = ProductReview.objects.create(
@@ -177,7 +177,7 @@ def add_review(request, product_id):
     else:
         messages.success(request, "Thank you for your review!")
     
-    return redirect('product_detail', slug=product.slug)
+    return redirect('catalog:product_detail', slug=product.slug)
 
 @require_POST
 def cart_add(request, product_id):
@@ -187,14 +187,14 @@ def cart_add(request, product_id):
     # Check if product is in stock
     if not product.is_in_stock:
         messages.error(request, f"Sorry, {product.title} is out of stock.")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('catalog:product_detail', slug=product.slug)
     
     quantity = int(request.POST.get('quantity', 1))
     
     # Check if we have enough stock
     if product.manage_stock and quantity > product.stock_quantity:
         messages.error(request, f"Sorry, only {product.stock_quantity} items available for {product.title}.")
-        return redirect('product_detail', slug=product.slug)
+        return redirect('catalog:product_detail', slug=product.slug)
     
     cart.add(product=product, quantity=quantity)
     messages.success(request, f"Added {quantity} x {product.title} to cart.")
@@ -207,7 +207,7 @@ def cart_add(request, product_id):
             'cart_count': len(cart)
         })
     
-    return redirect('product_detail', slug=product.slug)
+    return redirect('catalog:product_detail', slug=product.slug)
 
 def cart_detail(request):
     cart = Cart(request)
@@ -219,7 +219,7 @@ def cart_remove(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
     messages.success(request, f"Removed {product.title} from cart.")
-    return redirect('cart_detail')
+    return redirect('catalog:cart_detail')
 
 @require_POST
 def cart_update(request, product_id):
@@ -234,9 +234,9 @@ def cart_update(request, product_id):
         # Check stock availability
         if product.manage_stock and quantity > product.stock_quantity:
             messages.error(request, f"Sorry, only {product.stock_quantity} items available for {product.title}.")
-            return redirect('cart_detail')
+            return redirect('catalog:cart_detail')
         
         cart.update_quantity(product, quantity)
         messages.success(request, f"Updated {product.title} quantity to {quantity}.")
     
-    return redirect('cart_detail')
+    return redirect('catalog:cart_detail')

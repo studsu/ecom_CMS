@@ -80,24 +80,83 @@ class Product(models.Model):
             self.save()
             return True
         return False
-    
+
     def get_related_products(self, limit=4):
         """Get related products from same category"""
         return Product.objects.filter(
             category=self.category,
             is_active=True
         ).exclude(id=self.id)[:limit]
-    
+
     def get_average_rating(self):
         """Calculate average rating from reviews"""
         reviews = self.reviews.filter(is_approved=True)
         if reviews.exists():
             return round(reviews.aggregate(models.Avg('rating'))['rating__avg'], 1)
         return 0
-    
+
     def get_review_count(self):
         """Get count of approved reviews"""
         return self.reviews.filter(is_approved=True).count()
+
+    def get_all_images(self):
+        """Get all product images including main image"""
+        images = []
+        if self.image:
+            images.append({
+                'image': self.image,
+                'is_main': True,
+                'alt_text': f"{self.title} - Main Image",
+                'order': 0
+            })
+
+        # Add additional images from ProductImage model
+        for img in self.additional_images.all().order_by('order'):
+            images.append({
+                'image': img.image,
+                'is_main': False,
+                'alt_text': img.alt_text or f"{self.title} - Image {img.order}",
+                'order': img.order
+            })
+
+        return images
+
+    @property
+    def main_image(self):
+        """Get the primary display image"""
+        if self.image:
+            return self.image
+
+        # Fallback to first additional image
+        first_additional = self.additional_images.first()
+        if first_additional:
+            return first_additional.image
+
+        return None
+
+
+class ProductImage(models.Model):
+    """Additional product images for gallery"""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='additional_images')
+    image = models.ImageField(upload_to='products/gallery/')
+    alt_text = models.CharField(max_length=200, blank=True, help_text="Alt text for accessibility")
+    order = models.PositiveIntegerField(default=0, help_text="Display order")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+        verbose_name = "Product Image"
+        verbose_name_plural = "Product Images"
+
+    def __str__(self):
+        return f"{self.product.title} - Image {self.order}"
+
+    def save(self, *args, **kwargs):
+        if not self.alt_text:
+            self.alt_text = f"{self.product.title} - Image {self.order}"
+        super().save(*args, **kwargs)
+
 
 class ProductVariant(models.Model):
     """Product variants for size, color, etc."""

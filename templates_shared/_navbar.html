@@ -1,19 +1,1205 @@
-<nav class="navbar">
-  <div style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;">
-    <a href="/" class="logo">{{ SITE_NAME }}</a>
-    <div>
-      <a href="{% url 'catalog:product_list' %}">Products</a>
-      <a href="{% url 'catalog:cart_detail' %}" class="cart-link">
-        Cart
-        <span id="cart-count" class="cart-count">0</span>
-      </a>
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'orders:order_history' %}">My Orders</a>
-        <a href="{% url 'users:profile' %}">My Profile</a>
-        <a href="{% url 'users:logout' %}">Logout</a>
-      {% else %}
-        <a href="{% url 'users:login' %}">Login</a>
-      {% endif %}
+<nav class="main-navbar">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-container">
+      <div class="top-bar-left">
+        <span class="top-info">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          +91 9876543210
+        </span>
+        <span class="top-info">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          support@{{ SITE_NAME|lower }}.com
+        </span>
+      </div>
+      <div class="top-bar-right">
+        <span class="top-offer">🎉 Free shipping on orders over ₹500!</span>
+      </div>
     </div>
   </div>
+
+  <!-- Main Navigation -->
+  <div class="navbar-main">
+    <div class="navbar-container">
+      <!-- Logo Section -->
+      <div class="navbar-brand">
+        <a href="/" class="brand-link">
+          <div class="brand-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">{{ SITE_NAME }}</span>
+            <span class="brand-tagline">Premium Store</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Navigation Menu -->
+      <div class="navbar-nav">
+        <div class="nav-item dropdown-trigger" data-dropdown="categories">
+          <a href="{% url 'catalog:product_list' %}" class="nav-link">
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Categories
+            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+
+          <!-- Mega Menu for Categories -->
+          <div class="mega-menu" id="categories-mega">
+            <div class="mega-menu-content">
+              <div class="mega-section">
+                <h4 class="mega-title">All Categories</h4>
+                <div class="mega-grid">
+                  <a href="{% url 'catalog:product_list' %}?category=electronics" class="mega-item">
+                    <div class="mega-icon">📱</div>
+                    <div class="mega-info">
+                      <span class="mega-name">Electronics</span>
+                      <span class="mega-desc">Latest gadgets</span>
+                    </div>
+                  </a>
+                  <a href="{% url 'catalog:product_list' %}?category=fashion" class="mega-item">
+                    <div class="mega-icon">👕</div>
+                    <div class="mega-info">
+                      <span class="mega-name">Fashion</span>
+                      <span class="mega-desc">Trendy styles</span>
+                    </div>
+                  </a>
+                  <a href="{% url 'catalog:product_list' %}?category=books-media" class="mega-item">
+                    <div class="mega-icon">📚</div>
+                    <div class="mega-info">
+                      <span class="mega-name">Books & Media</span>
+                      <span class="mega-desc">Knowledge hub</span>
+                    </div>
+                  </a>
+                  <a href="{% url 'catalog:product_list' %}?category=home-garden" class="mega-item">
+                    <div class="mega-icon">🏠</div>
+                    <div class="mega-info">
+                      <span class="mega-name">Home & Garden</span>
+                      <span class="mega-desc">Living essentials</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="mega-featured">
+                <h4 class="mega-title">Featured</h4>
+                <div class="featured-banner">
+                  <div class="featured-content">
+                    <h5>Summer Sale</h5>
+                    <p>Up to 50% off on electronics</p>
+                    <a href="{% url 'catalog:product_list' %}?category=electronics" class="featured-btn">Shop Now</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a href="{% url 'catalog:product_list' %}" class="nav-link">
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            All Products
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a href="#" class="nav-link">
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+            </svg>
+            Deals
+          </a>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="navbar-search">
+        <form method="get" action="{% url 'catalog:product_list' %}" class="search-form">
+          <input type="text" name="search" placeholder="Search products..." class="search-input" value="{{ search_query|default:'' }}" autocomplete="off">
+          <button type="submit" class="search-submit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Action Items -->
+      <div class="navbar-actions">
+        <!-- Wishlist -->
+        <div class="action-item">
+          <button class="action-btn" title="Wishlist">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span class="action-badge">3</span>
+          </button>
+        </div>
+
+        <!-- Cart -->
+        <div class="action-item">
+          <a href="{% url 'catalog:cart_detail' %}" class="action-btn cart-btn" title="Shopping Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="action-badge cart-count" id="cart-count">0</span>
+          </a>
+        </div>
+
+        <!-- User Account -->
+        <div class="action-item dropdown-trigger" data-dropdown="user">
+          {% if request.user.is_authenticated %}
+          <button class="action-btn user-btn" title="My Account">
+            <div class="user-avatar">
+              <span>{{ request.user.username|slice:":1"|upper }}</span>
+            </div>
+            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <!-- User Dropdown -->
+          <div class="dropdown-menu user-dropdown" id="user-dropdown">
+            <div class="dropdown-header">
+              <div class="user-info">
+                <div class="user-avatar-large">
+                  <span>{{ request.user.username|slice:":1"|upper }}</span>
+                </div>
+                <div class="user-details">
+                  <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+                  <span class="user-email">{{ request.user.email }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-body">
+              <a href="{% url 'users:profile' %}" class="dropdown-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                My Profile
+              </a>
+              <a href="{% url 'orders:order_history' %}" class="dropdown-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                My Orders
+                <span class="link-badge">2</span>
+              </a>
+              <a href="#" class="dropdown-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                My Wishlist
+              </a>
+              <a href="#" class="dropdown-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                Settings
+              </a>
+            </div>
+
+            <div class="dropdown-footer">
+              <a href="{% url 'users:logout' %}" class="dropdown-link logout-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign Out
+              </a>
+            </div>
+          </div>
+          {% else %}
+          <a href="{% url 'users:login' %}" class="action-btn login-btn" title="Sign In">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span class="action-text">Sign In</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-toggle" id="mobile-toggle">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-header">
+      <h3>Navigation</h3>
+      <button class="mobile-close" id="mobile-close">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mobile-nav-body">
+      <div class="mobile-search">
+        <form method="get" action="{% url 'catalog:product_list' %}">
+          <input type="text" name="search" placeholder="Search products..." class="mobile-search-input">
+          <button type="submit" class="mobile-search-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <div class="mobile-menu">
+        <a href="{% url 'catalog:product_list' %}" class="mobile-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          All Categories
+        </a>
+
+        <a href="{% url 'catalog:product_list' %}" class="mobile-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          All Products
+        </a>
+
+        <a href="#" class="mobile-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+          </svg>
+          Deals & Offers
+        </a>
+
+        {% if request.user.is_authenticated %}
+        <div class="mobile-divider"></div>
+        <a href="{% url 'users:profile' %}" class="mobile-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          My Profile
+        </a>
+
+        <a href="{% url 'orders:order_history' %}" class="mobile-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          My Orders
+        </a>
+
+        <a href="{% url 'catalog:cart_detail' %}" class="mobile-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          Shopping Cart
+          <span class="mobile-badge">2</span>
+        </a>
+
+        <div class="mobile-divider"></div>
+        <a href="{% url 'users:logout' %}" class="mobile-link logout">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Sign Out
+        </a>
+        {% else %}
+        <div class="mobile-divider"></div>
+        <a href="{% url 'users:login' %}" class="mobile-link primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          Sign In
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobile-overlay"></div>
 </nav>
+
+<style>
+/* CSS Variables */
+:root {
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary-color: #64748b;
+  --accent-color: #f59e0b;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --border-radius: 0.5rem;
+  --transition: all 0.15s ease-in-out;
+}
+
+/* Reset */
+.main-navbar * {
+  box-sizing: border-box;
+}
+
+/* Main Navbar */
+.main-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Top Bar */
+.top-bar {
+  background: var(--gray-900);
+  color: var(--gray-300);
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+
+.top-bar-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-bar-left {
+  display: flex;
+  gap: 2rem;
+}
+
+.top-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top-offer {
+  font-weight: 500;
+  color: var(--accent-color);
+}
+
+/* Main Navigation */
+.navbar-main {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.navbar-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  height: 4rem;
+  gap: 2rem;
+}
+
+/* Brand */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--gray-900);
+  transition: var(--transition);
+}
+
+.brand-link:hover {
+  color: var(--primary-color);
+}
+
+.brand-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.brand-tagline {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  line-height: 1;
+}
+
+/* Navigation Menu */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--gray-700);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--primary-color);
+  background: var(--gray-50);
+}
+
+.nav-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke-width: 1.5;
+}
+
+.dropdown-arrow {
+  transition: transform 0.2s ease;
+}
+
+.dropdown-trigger:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Mega Menu */
+.mega-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xl);
+  padding: 2rem;
+  min-width: 600px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  border: 1px solid var(--gray-200);
+  margin-top: 0.5rem;
+}
+
+.dropdown-trigger:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mega-menu-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.mega-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+}
+
+.mega-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mega-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  text-decoration: none;
+  color: var(--gray-700);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.mega-item:hover {
+  background: var(--gray-50);
+  color: var(--primary-color);
+}
+
+.mega-icon {
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-100);
+  border-radius: var(--border-radius);
+}
+
+.mega-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mega-name {
+  font-weight: 500;
+  color: var(--gray-900);
+}
+
+.mega-desc {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+}
+
+.featured-banner {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  color: var(--white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+}
+
+.featured-content h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.featured-content p {
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.featured-btn {
+  background: var(--white);
+  color: var(--primary-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.featured-btn:hover {
+  background: var(--gray-100);
+}
+
+/* Search Bar */
+.navbar-search {
+  flex: 0 1 300px;
+  position: relative;
+  margin: 0 1rem;
+}
+
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.5rem 2.5rem 0.5rem 1rem;
+  border: none;
+  border-bottom: 2px solid var(--gray-300);
+  border-radius: 0;
+  font-size: 0.875rem;
+  background: transparent;
+  transition: var(--transition);
+  height: 2.25rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-bottom-color: var(--primary-color);
+  background: transparent;
+}
+
+.search-submit {
+  position: absolute;
+  right: 0.25rem;
+  background: none;
+  color: var(--gray-500);
+  border: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.search-submit:hover {
+  color: var(--primary-color);
+}
+
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  margin-top: 0.25rem;
+  display: none;
+  z-index: 50;
+}
+
+/* Action Items */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-item {
+  position: relative;
+}
+
+.action-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--gray-600);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.action-btn:hover {
+  color: var(--primary-color);
+  background: var(--gray-50);
+}
+
+.action-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: var(--danger-color);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.75rem;
+  min-width: 1.25rem;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  background: var(--primary-color);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.login-btn {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+}
+
+.login-btn:hover {
+  background: var(--primary-hover);
+  color: var(--white);
+}
+
+.action-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* User Dropdown */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xl);
+  min-width: 280px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.dropdown-trigger:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-header {
+  padding: 1.5rem;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar-large {
+  width: 3rem;
+  height: 3rem;
+  background: var(--primary-color);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.user-email {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+}
+
+.dropdown-body {
+  padding: 0.5rem;
+}
+
+.dropdown-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--gray-700);
+  text-decoration: none;
+  border-radius: 0.375rem;
+  transition: var(--transition);
+  position: relative;
+}
+
+.dropdown-link:hover {
+  background: var(--gray-50);
+  color: var(--primary-color);
+}
+
+.link-badge {
+  margin-left: auto;
+  background: var(--primary-color);
+  color: var(--white);
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+}
+
+.dropdown-footer {
+  border-top: 1px solid var(--gray-200);
+  padding: 0.5rem;
+}
+
+.logout-link {
+  color: var(--danger-color);
+}
+
+.logout-link:hover {
+  background: rgb(239 68 68 / 0.1);
+  color: var(--danger-color);
+}
+
+/* Mobile Toggle */
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.hamburger-line {
+  width: 1.5rem;
+  height: 2px;
+  background: var(--gray-600);
+  border-radius: 1px;
+  transition: var(--transition);
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 320px;
+  height: 100vh;
+  background: var(--white);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+}
+
+.mobile-nav.active {
+  right: 0;
+}
+
+.mobile-nav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.mobile-nav-header h3 {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: 1.125rem;
+}
+
+.mobile-close {
+  background: none;
+  border: none;
+  color: var(--gray-500);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.mobile-nav-body {
+  padding: 1.5rem;
+}
+
+.mobile-search {
+  margin-bottom: 2rem;
+}
+
+.mobile-search form {
+  position: relative;
+  display: flex;
+}
+
+.mobile-search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.mobile-search-btn {
+  position: absolute;
+  right: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 0.375rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  color: var(--gray-700);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  position: relative;
+}
+
+.mobile-link:hover {
+  background: var(--gray-50);
+  color: var(--primary-color);
+}
+
+.mobile-link.primary {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+.mobile-link.logout {
+  color: var(--danger-color);
+}
+
+.mobile-badge {
+  margin-left: auto;
+  background: var(--primary-color);
+  color: var(--white);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-weight: 500;
+}
+
+.mobile-divider {
+  height: 1px;
+  background: var(--gray-200);
+  margin: 1rem 0;
+}
+
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .navbar-nav {
+    display: none;
+  }
+
+  .navbar-search {
+    flex: 0 1 250px;
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    display: none;
+  }
+
+  .navbar-container {
+    gap: 1rem;
+  }
+
+  .brand-text {
+    display: none;
+  }
+
+  .navbar-search {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: flex;
+  }
+
+  .action-text {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-actions {
+    gap: 0.25rem;
+  }
+
+  .action-btn {
+    padding: 0.5rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Mobile menu toggle
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+  const mobileOverlay = document.getElementById('mobile-overlay');
+  const mobileClose = document.getElementById('mobile-close');
+
+  function openMobileMenu() {
+    mobileNav.classList.add('active');
+    mobileOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileMenu() {
+    mobileNav.classList.remove('active');
+    mobileOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  if (mobileToggle) {
+    mobileToggle.addEventListener('click', openMobileMenu);
+  }
+
+  if (mobileClose) {
+    mobileClose.addEventListener('click', closeMobileMenu);
+  }
+
+  if (mobileOverlay) {
+    mobileOverlay.addEventListener('click', closeMobileMenu);
+  }
+
+  // Search suggestions (placeholder)
+  const searchInput = document.querySelector('.search-input');
+  const searchSuggestions = document.getElementById('search-suggestions');
+
+  if (searchInput && searchSuggestions) {
+    searchInput.addEventListener('focus', function() {
+      // Show search suggestions when input is focused
+      // This would typically connect to an API
+    });
+
+    searchInput.addEventListener('blur', function() {
+      setTimeout(() => {
+        searchSuggestions.style.display = 'none';
+      }, 200);
+    });
+  }
+
+  // Update cart count
+  function updateCartCount() {
+    // This would typically fetch from an API
+    const cartCount = document.getElementById('cart-count');
+    if (cartCount) {
+      // Example: fetch('/api/cart/count/')
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     cartCount.textContent = data.count;
+      //     cartCount.style.display = data.count > 0 ? 'block' : 'none';
+      //   });
+    }
+  }
+
+  updateCartCount();
+
+  // Dropdown positioning on smaller screens
+  function adjustDropdowns() {
+    const dropdowns = document.querySelectorAll('.mega-menu, .dropdown-menu');
+    dropdowns.forEach(dropdown => {
+      const rect = dropdown.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+
+      if (rect.right > viewportWidth) {
+        dropdown.style.left = 'auto';
+        dropdown.style.right = '0';
+      }
+    });
+  }
+
+  window.addEventListener('resize', adjustDropdowns);
+  adjustDropdowns();
+});
+</script>

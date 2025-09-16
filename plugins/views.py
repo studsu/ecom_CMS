@@ -24,4 +24,4 @@ def add_review(request, product_slug):
             messages.success(request, "Thank you! Your review has been saved.")
         else:
             messages.error(request, "Please fix the errors and try again.")
-    return redirect(reverse("product_detail", kwargs={"slug": product.slug}))
+    return redirect(reverse("catalog:product_detail", kwargs={"slug": product.slug}))
