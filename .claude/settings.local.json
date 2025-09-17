@@ -10,7 +10,9 @@
       "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\default\\catalog\")",
       "Bash(del:*)",
       "Read(//c/Users/dragon/Documents/GitHub/smokeking.in/myshop/store/templates/**)",
-      "Read(//c/Users/dragon/Documents/GitHub/smokeking.in/myshop/**)"
+      "Read(//c/Users/dragon/Documents/GitHub/smokeking.in/myshop/**)",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\")",
+      "Bash(copy:*)"
     ],
     "deny": [],
     "ask": []

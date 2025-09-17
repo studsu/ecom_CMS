@@ -1,16 +1,259 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="utf-8">
-  <title>{{ SITE_NAME }} — Modern</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }} - Modern E-commerce{% endblock %}</title>
+    <meta name="description" content="{% block description %}Modern e-commerce platform with premium products{% endblock %}">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e'
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark-glass {
+            backdrop-filter: blur(16px);
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
-<body style="font-family:system-ui; background:#0b0d10; color:#e8eaed;">
-  <header style="padding:1rem 2rem; background:#111;">
-    <strong style="color:#4dd0e1;">{{ SITE_NAME }}</strong>
-  </header>
-  <main style="max-width:1000px; margin:2rem auto;">
-    {% block content %}{% endblock %}
-  </main>
+<body class="bg-gradient-to-br from-dark-50 to-dark-100 min-h-screen font-sans antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-store text-white text-lg"></i>
+                    </div>
+                    <a href="{% url 'core:home' %}" class="text-2xl font-bold text-dark-800 hover:text-primary-600 transition-colors">
+                        {{ SITE_NAME }}
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'core:home' %}" class="text-dark-700 hover:text-primary-600 font-medium transition-colors">Home</a>
+                    <a href="{% url 'catalog:product_list' %}" class="text-dark-700 hover:text-primary-600 font-medium transition-colors">Products</a>
+                    <a href="#" class="text-dark-700 hover:text-primary-600 font-medium transition-colors">Categories</a>
+                    <a href="#" class="text-dark-700 hover:text-primary-600 font-medium transition-colors">About</a>
+                    <a href="#" class="text-dark-700 hover:text-primary-600 font-medium transition-colors">Contact</a>
+                </div>
+
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <button class="p-2 text-dark-600 hover:text-primary-600 transition-colors">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    <!-- Cart -->
+                    <a href="{% url 'catalog:cart_detail' %}" class="relative p-2 text-dark-600 hover:text-primary-600 transition-colors">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </a>
+
+                    <!-- User Menu -->
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 p-2 text-dark-600 hover:text-primary-600 transition-colors">
+                                <i class="fas fa-user"></i>
+                                <span class="hidden sm:block font-medium">{{ user.get_full_name|default:user.username }}</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <a href="{% url 'users:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Profile</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Orders</a>
+                                <hr class="my-2">
+                                <a href="{% url 'users:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium">
+                            Login
+                        </a>
+                    {% endif %}
+
+                    <!-- Mobile Menu Button -->
+                    <button class="md:hidden p-2 text-dark-600 hover:text-primary-600 transition-colors">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-20">
+        {% block banner %}{% endblock %}
+
+        <main>
+            {% if messages %}
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                            <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-3 text-red-500"></i>
+                                {{ message }}
+                            </div>
+                        {% elif message.tags == 'success' %}
+                            <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4 flex items-center">
+                                <i class="fas fa-check-circle mr-3 text-green-500"></i>
+                                {{ message }}
+                            </div>
+                        {% elif message.tags == 'warning' %}
+                            <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg mb-4 flex items-center">
+                                <i class="fas fa-exclamation-triangle mr-3 text-yellow-500"></i>
+                                {{ message }}
+                            </div>
+                        {% else %}
+                            <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-4 flex items-center">
+                                <i class="fas fa-info-circle mr-3 text-blue-500"></i>
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark-800 text-white mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-store text-white text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold">{{ SITE_NAME }}</span>
+                    </div>
+                    <p class="text-gray-400 mb-4 max-w-md">
+                        Your premium destination for quality products. We curate the best items to enhance your lifestyle with style and sophistication.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary-400 transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'core:home' %}" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="{% url 'catalog:product_list' %}" class="text-gray-400 hover:text-white transition-colors">Products</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Shipping Info</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Returns</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Size Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    © {% now "Y" %} {{ SITE_NAME }}. All rights reserved.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Add smooth scrolling and other interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add mobile menu functionality
+            const mobileMenuButton = document.querySelector('[data-mobile-menu-button]');
+            const mobileMenu = document.querySelector('[data-mobile-menu]');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
