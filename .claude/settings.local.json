@@ -8,7 +8,9 @@
       "Bash(python:*)",
       "Bash(del \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\populate_test_data.py\")",
       "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\default\\catalog\")",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Read(//c/Users/dragon/Documents/GitHub/smokeking.in/myshop/store/templates/**)",
+      "Read(//c/Users/dragon/Documents/GitHub/smokeking.in/myshop/**)"
     ],
     "deny": [],
     "ask": []

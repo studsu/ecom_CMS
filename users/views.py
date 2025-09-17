@@ -16,11 +16,11 @@ class UserLoginView(LoginView):
     redirect_authenticated_user = True
     
     def get_success_url(self):
-        return reverse_lazy("home")
+        return reverse_lazy("core:home")
 
 class UserLogoutView(LogoutView):
     template_name = "users/logout.html"
-    next_page = reverse_lazy("home")
+    next_page = reverse_lazy("core:home")
     http_method_names = ['get', 'post', 'options']
     
     def get(self, request, *args, **kwargs):
@@ -35,7 +35,7 @@ class CustomUserCreationForm(UserCreationForm):
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
     template_name = "users/signup.html"
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy("core:home")
     
     def form_valid(self, form):
         response = super().form_valid(form)

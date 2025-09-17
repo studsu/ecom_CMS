@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-jy2m4m5_*q+tc0#e%+sn791+04@biau^7@=z7ai*-w-dzqs5jr
 
 # --------- Site-level customization ----------
 SITE_NAME = os.getenv("SITE_NAME", "Ecom_CMS")  # 👈 change via env
-THEME = os.getenv("THEME", "default")           # 👈 switch templates: "default" or "modern"
+THEME = os.getenv("THEME", "smoke")           # 👈 switch templates: "default", "modern", or "smoke"
 DEBUG = True
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
 ALLOWED_HOSTS = ["*"]
@@ -174,6 +174,11 @@ CART_SESSION_ID = 'cart'
 LOGIN_URL = "/users/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+# CSRF Settings for development
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
 
 
 # Default primary key field type
