@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-rose-25 via-white to-champagne-25">
+    <!-- Elegant Breadcrumb -->
+    <div class="bg-white/80 backdrop-blur-lg border-b border-rose-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <nav class="flex" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'core:home' %}" class="text-gray-500 hover:text-primary-600 transition-colors duration-300 font-elegant flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                            </svg>
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-rose-300 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-900 font-serif font-medium">Shopping Cart</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl lg:text-5xl font-serif font-bold text-gray-900 mb-4">Your Exquisite Collection</h1>
+            <p class="text-gray-600 font-elegant text-xl">Beautiful pieces selected for your luxury collection</p>
+        </div>
+
+        {% if cart %}
+            <div class="lg:grid lg:grid-cols-3 lg:gap-12">
+                <!-- Cart Items -->
+                <div class="lg:col-span-2 mb-12 lg:mb-0">
+                    <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8 ring-1 ring-rose-100">
+                        <h2 class="text-2xl font-serif font-semibold text-gray-900 mb-8 border-b border-rose-100 pb-4">Cart Items ({{ cart|length }})</h2>
+
+                        <div class="space-y-8">
+                            {% for item in cart %}
+                            <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 p-6 bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl border border-rose-100 hover:shadow-lg transition-all duration-300">
+                                <!-- Product Image -->
+                                <div class="flex-shrink-0">
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" class="w-24 h-24 object-cover rounded-2xl shadow-lg ring-2 ring-white">
+                                    {% else %}
+                                        <div class="w-24 h-24 bg-gradient-to-br from-primary-100 via-white to-gold-100 rounded-2xl flex items-center justify-center shadow-lg ring-2 ring-white">
+                                            <svg class="w-8 h-8 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M5 16L3 14l5.5-11h7L21 14l-2 2H5zm2.7-5h8.6l-1.5-3H8.2l-1.5 3zm1.8 3l2.5 2.5L14.5 14H7.5z"/>
+                                            </svg>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Product Details -->
+                                <div class="flex-1 text-center md:text-left">
+                                    <h3 class="text-lg font-serif font-semibold text-gray-900 mb-2">
+                                        <a href="{% url 'catalog:product_detail' slug=item.product.slug %}" class="hover:text-primary-600 transition-colors duration-300">{{ item.product.title }}</a>
+                                    </h3>
+                                    {% if item.product.category %}
+                                        <p class="text-primary-600 font-elegant text-sm mb-1">{{ item.product.category.name }}</p>
+                                    {% endif %}
+                                    {% if item.product.sku %}
+                                        <p class="text-gray-500 font-elegant text-sm">SKU: {{ item.product.sku }}</p>
+                                    {% endif %}
+                                    <p class="text-lg font-serif font-bold text-primary-600 mt-2">${{ item.price }}</p>
+                                </div>
+
+                                <!-- Quantity Controls -->
+                                <div class="flex flex-col items-center space-y-3">
+                                    <form method="post" action="{% url 'catalog:cart_update' item.product.id %}" class="flex items-center bg-white border-2 border-rose-200 rounded-2xl overflow-hidden">
+                                        {% csrf_token %}
+                                        <button type="button" onclick="decreaseQuantity(this)" class="px-4 py-2 text-gray-600 hover:text-primary-600 hover:bg-rose-50 transition-all duration-300 font-serif font-medium">−</button>
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                                               {% if item.product.manage_stock %}max="{{ item.product.stock_quantity }}"{% endif %}
+                                               class="w-16 text-center border-0 focus:ring-0 outline-none font-serif font-medium py-2"
+                                               onchange="this.form.submit()">
+                                        <button type="button" onclick="increaseQuantity(this)" class="px-4 py-2 text-gray-600 hover:text-primary-600 hover:bg-rose-50 transition-all duration-300 font-serif font-medium">+</button>
+                                    </form>
+
+                                    <p class="text-lg font-serif font-bold text-gray-900">${{ item.total_price }}</p>
+                                </div>
+
+                                <!-- Remove Button -->
+                                <div class="flex-shrink-0">
+                                    <form method="post" action="{% url 'catalog:cart_remove' item.product.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" onclick="return confirm('Remove this elegant piece from your collection?')" class="p-3 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 transform hover:scale-110">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Continue Shopping -->
+                        <div class="mt-8 pt-6 border-t border-rose-100">
+                            <a href="{% url 'catalog:product_list' %}" class="inline-flex items-center text-primary-600 hover:text-primary-700 font-serif font-medium transition-colors duration-300">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
+                                Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8 ring-1 ring-rose-100 sticky top-24">
+                        <h2 class="text-2xl font-serif font-semibold text-gray-900 mb-8 border-b border-rose-100 pb-4">Order Summary</h2>
+
+                        <div class="space-y-4 mb-8">
+                            <div class="flex justify-between items-center">
+                                <span class="font-elegant text-gray-600">Items ({{ cart|length }})</span>
+                                <span class="font-serif font-medium text-gray-900">${{ cart.get_total_price }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-elegant text-gray-600">Shipping</span>
+                                <span class="font-serif font-medium text-emerald-600">FREE</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-elegant text-gray-600">Tax</span>
+                                <span class="font-serif font-medium text-gray-900">Calculated at checkout</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-rose-100 pt-6 mb-8">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xl font-serif font-bold text-gray-900">Total</span>
+                                <span class="text-2xl font-serif font-bold bg-gradient-to-r from-primary-600 to-rose-600 bg-clip-text text-transparent">${{ cart.get_total_price }}</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <a href="{% url 'orders:checkout' %}" class="w-full bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white py-4 px-6 rounded-2xl font-serif font-semibold text-center hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl relative overflow-hidden group block">
+                                <span class="relative z-10">Proceed to Checkout</span>
+                                <div class="absolute inset-0 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            </a>
+
+                            <div class="text-center">
+                                <p class="text-sm text-gray-500 font-elegant">Secure checkout powered by luxury standards</p>
+                            </div>
+                        </div>
+
+                        <!-- Trust Indicators -->
+                        <div class="mt-8 pt-6 border-t border-rose-100">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="flex items-center text-gray-600 bg-gradient-to-r from-emerald-50 to-green-50 p-3 rounded-2xl">
+                                    <svg class="w-5 h-5 mr-2 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="font-elegant">Free Shipping</span>
+                                </div>
+                                <div class="flex items-center text-gray-600 bg-gradient-to-r from-blue-50 to-indigo-50 p-3 rounded-2xl">
+                                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="font-elegant">Secure</span>
+                                </div>
+                                <div class="flex items-center text-gray-600 bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-2xl">
+                                    <svg class="w-5 h-5 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="font-elegant">Authentic</span>
+                                </div>
+                                <div class="flex items-center text-gray-600 bg-gradient-to-r from-amber-50 to-yellow-50 p-3 rounded-2xl">
+                                    <svg class="w-5 h-5 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="font-elegant">Returns</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Empty Cart -->
+            <div class="text-center py-20">
+                <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-12 ring-1 ring-rose-100 max-w-2xl mx-auto">
+                    <div class="w-32 h-32 bg-gradient-to-br from-primary-100 via-white to-gold-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <svg class="w-16 h-16 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                    </div>
+
+                    <h2 class="text-3xl font-serif font-bold text-gray-900 mb-4">Your Collection Awaits</h2>
+                    <p class="text-gray-600 font-elegant text-lg mb-8 leading-relaxed">
+                        Discover our exquisite collection of luxury jewelry and add beautiful pieces to your cart.
+                    </p>
+
+                    <a href="{% url 'catalog:product_list' %}" class="inline-flex items-center bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-8 py-4 rounded-2xl font-serif font-semibold hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl relative overflow-hidden group">
+                        <span class="relative z-10 mr-2">Start Shopping</span>
+                        <svg class="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                        <div class="absolute inset-0 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Quantity control functions
+function decreaseQuantity(button) {
+    const input = button.parentNode.querySelector('input[name="quantity"]');
+    const currentValue = parseInt(input.value);
+    if (currentValue > 1) {
+        input.value = currentValue - 1;
+        input.form.submit();
+    }
+}
+
+function increaseQuantity(button) {
+    const input = button.parentNode.querySelector('input[name="quantity"]');
+    const currentValue = parseInt(input.value);
+    const maxValue = parseInt(input.getAttribute('max')) || 999;
+    if (currentValue < maxValue) {
+        input.value = currentValue + 1;
+        input.form.submit();
+    }
+}
+</script>
+{% endblock %}

@@ -2,7 +2,23 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.http import HttpResponseRedirect
 from .models import UpdateSettings, UpdateCheck, UpdateLog, AvailableUpdate, UpdateNotification
+
+
+class UpdatesAdminSite(admin.AdminSite):
+    """Custom admin site for updates management"""
+    site_header = 'CMS Updates Management'
+    site_title = 'Updates Admin'
+    index_title = 'Update System Dashboard'
+
+    def index(self, request, extra_context=None):
+        """Redirect to updates dashboard"""
+        return HttpResponseRedirect('/updates/')
+
+
+# Create separate admin site instance for updates
+updates_admin_site = UpdatesAdminSite(name='updates_admin')
 
 
 @admin.register(UpdateSettings)

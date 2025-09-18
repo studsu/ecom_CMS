@@ -26,16 +26,35 @@ def checkout(request):
                 order.user = request.user
             order.save()
             
-            # Create order items
+            # Create order items and reduce stock
             for item in cart:
-                OrderItem.objects.create(
+                # Create order item with variant support
+                variant = item.get('variant')
+                order_item = OrderItem.objects.create(
                     order=order,
                     product=item['product'],
+                    product_variant=variant,
                     product_name=item['product'].title,
-                    product_sku=getattr(item['product'], 'sku', ''),
+                    product_sku=getattr(item['product'], 'sku', '') or '',
+                    variant_name=variant.name if variant else None,
+                    variant_value=variant.value if variant else None,
                     quantity=item['quantity'],
                     unit_price=item['price']
                 )
+
+                # Reduce stock quantities
+                if item.get('variant'):
+                    # Reduce variant stock if variant was selected
+                    variant = item['variant']
+                    if not variant.reduce_stock(item['quantity']):
+                        # This shouldn't happen due to cart validation, but handle gracefully
+                        messages.warning(request, f"Insufficient stock for {item['product'].title} ({variant.name}: {variant.value})")
+                else:
+                    # Reduce main product stock if no variant
+                    product = item['product']
+                    if product.manage_stock:
+                        if not product.reduce_stock(item['quantity']):
+                            messages.warning(request, f"Insufficient stock for {item['product'].title}")
             
             # Calculate totals
             order.calculate_total()

@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-jy2m4m5_*q+tc0#e%+sn791+04@biau^7@=z7ai*-w-dzqs5jr
 
 # --------- Site-level customization ----------
 SITE_NAME = os.getenv("SITE_NAME", "Ecom_CMS")  # 👈 change via env
-THEME = os.getenv("THEME", "glam")           # 👈 switch templates: "default", "modern", or "smoke"
+THEME = os.getenv("THEME", "glam")           # 👈 switch templates: "default", "modern", "glam", or "smoke"
 DEBUG = True
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
 ALLOWED_HOSTS = ["*"]
@@ -164,6 +164,10 @@ STATICFILES_DIRS = [
     BASE_DIR / "themes" / THEME / "static",  # theme-specific static
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Media files (User uploads)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

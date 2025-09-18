@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from decimal import Decimal
 from catalog.models import Product
 
 class Order(models.Model):
@@ -71,8 +72,8 @@ class Order(models.Model):
         return sum(item.quantity for item in self.items.all())
     
     def calculate_total(self):
-        self.subtotal = sum(item.get_total_price() for item in self.items.all())
-        self.tax_amount = self.subtotal * 0.18  # 18% GST
+        self.subtotal = Decimal(str(sum(item.get_total_price() for item in self.items.all())))
+        self.tax_amount = self.subtotal * Decimal('0.18')  # 18% GST
         self.total_amount = self.subtotal + self.tax_amount + self.shipping_cost
         self.save()
         return self.total_amount
@@ -80,8 +81,11 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product_variant = models.ForeignKey('catalog.ProductVariant', on_delete=models.SET_NULL, null=True, blank=True)
     product_name = models.CharField(max_length=200)  # Store product name in case product is deleted
     product_sku = models.CharField(max_length=100, blank=True)
+    variant_name = models.CharField(max_length=100, blank=True, null=True)  # e.g., "Color"
+    variant_value = models.CharField(max_length=100, blank=True, null=True)  # e.g., "Gold"
     quantity = models.PositiveIntegerField(default=1)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     

@@ -208,12 +208,12 @@
                     </a>
 
                     <!-- Cart -->
-                    <button class="relative p-2 text-gray-700 hover:text-primary-600 transition-all duration-300 group">
+                    <a href="{% url 'catalog:cart_detail' %}" class="relative p-2 text-gray-700 hover:text-primary-600 transition-all duration-300 group">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                         </svg>
-                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-gold-500 to-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium animate-glow">0</span>
-                    </button>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-gradient-to-r from-gold-500 to-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium animate-glow">{{ cart_count|default:0 }}</span>
+                    </a>
                 </div>
 
                 <!-- Mobile menu button -->
@@ -232,6 +232,22 @@
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <a href="{% url 'core:home' %}" class="block px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 rounded-2xl transition-all duration-300">Home</a>
                 <a href="{% url 'catalog:product_list' %}" class="block px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 rounded-2xl transition-all duration-300">All Collections</a>
+
+                <!-- Mobile Cart and Wishlist -->
+                <div class="flex space-x-4 px-3 py-2">
+                    <a href="{% url 'catalog:cart_detail' %}" class="flex items-center text-gray-700 hover:text-primary-600 transition-all duration-300">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        Cart ({{ cart_count|default:0 }})
+                    </a>
+                    <a href="{% url 'wishlist:wishlist' %}" class="flex items-center text-gray-700 hover:text-primary-600 transition-all duration-300">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                        Wishlist ({{ wishlist_count }})
+                    </a>
+                </div>
 
                 <!-- Mobile Categories -->
                 <div class="px-3 py-2">

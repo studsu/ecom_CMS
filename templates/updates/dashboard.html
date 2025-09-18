@@ -1,0 +1,379 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Updates Dashboard{% endblock %}
+
+{% block extrahead %}
+<style>
+    .update-dashboard {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .stat-number {
+        font-size: 2em;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .content-section {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .section-header {
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    .update-item, .notification-item {
+        padding: 15px;
+        border: 1px solid #eee;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .critical-update {
+        border-left: 4px solid #dc3545;
+        background: #fff5f5;
+    }
+
+    .normal-update {
+        border-left: 4px solid #28a745;
+        background: #f8fff8;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    @media (max-width: 768px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="update-dashboard">
+    <div class="dashboard-header">
+        <h1>🚀 CMS Updates Dashboard</h1>
+        <p>Manage your CMS updates, monitor system health, and keep your site secure</p>
+        <p><strong>Current Version:</strong> {{ current_version }}</p>
+    </div>
+
+    <!-- Statistics Overview -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ available_updates.count }}</div>
+            <div>Available Updates</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ recent_checks.count }}</div>
+            <div>Recent Checks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ notifications.count }}</div>
+            <div>Unread Notifications</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ recent_updates.count }}</div>
+            <div>Recent Updates</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="content-section" style="margin-bottom: 30px;">
+        <div class="section-header">⚡ Quick Actions</div>
+        <button id="check-updates-btn" class="btn btn-primary">🔍 Check for Updates</button>
+        <a href="{% url 'updates:settings' %}" class="btn btn-warning">⚙️ Update Settings</a>
+        <a href="{% url 'updates:notifications' %}" class="btn btn-success">🔔 View Notifications</a>
+        <a href="{% url 'updates:version_history' %}" class="btn btn-success">📊 Version History</a>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+        <!-- Available Updates -->
+        <div class="content-section">
+            <div class="section-header">📦 Available Updates</div>
+            {% if available_updates %}
+                {% for update in available_updates %}
+                <div class="update-item {% if update.critical %}critical-update{% else %}normal-update{% endif %}">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>Version {{ update.version }}</strong>
+                            {% if update.critical %}
+                                <span style="color: #dc3545; font-weight: bold;">(CRITICAL)</span>
+                            {% endif %}
+                            <br>
+                            <small>{{ update.release_date|date:"M d, Y" }} • {{ update.file_size_mb }} MB</small>
+                        </div>
+                        <button class="btn btn-primary install-update-btn" data-version="{{ update.version }}">
+                            Install
+                        </button>
+                    </div>
+                    {% if update.release_notes %}
+                    <div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        {{ update.release_notes|truncatewords:20 }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: #666; padding: 20px;">
+                    🎉 No updates available. Your CMS is up to date!
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="content-section">
+            <div class="section-header">📋 Recent Activity</div>
+
+            <!-- Recent Update Logs -->
+            {% if recent_updates %}
+                <h4>Latest Updates</h4>
+                {% for log in recent_updates %}
+                <div class="update-item">
+                    <strong>{{ log.from_version }} → {{ log.to_version }}</strong>
+                    <span style="float: right; color:
+                        {% if log.status == 'completed' %}#28a745
+                        {% elif log.status == 'failed' %}#dc3545
+                        {% else %}#ffc107{% endif %};">
+                        {{ log.get_status_display }}
+                    </span>
+                    <br>
+                    <small>{{ log.started_at|date:"M d, Y H:i" }}
+                        {% if log.initiated_by %} by {{ log.initiated_by.username }}{% endif %}
+                    </small>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Recent Notifications -->
+            {% if notifications %}
+                <h4 style="margin-top: 20px;">Recent Notifications</h4>
+                {% for notification in notifications %}
+                <div class="notification-item">
+                    <strong>{{ notification.title }}</strong>
+                    <br>
+                    <small>{{ notification.created_at|date:"M d, Y H:i" }}</small>
+                    <div style="margin-top: 5px; font-size: 0.9em;">
+                        {{ notification.message|truncatewords:15 }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Update Progress Modal -->
+<div id="update-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 8px; min-width: 400px;">
+        <h3 id="modal-title">Update Progress</h3>
+        <div id="modal-content">
+            <div style="margin: 20px 0;">
+                <div id="progress-bar" style="width: 100%; background: #f0f0f0; height: 20px; border-radius: 10px;">
+                    <div id="progress-fill" style="width: 0%; background: #667eea; height: 100%; border-radius: 10px; transition: width 0.3s;"></div>
+                </div>
+                <div id="progress-text" style="text-align: center; margin-top: 10px;">Preparing...</div>
+            </div>
+        </div>
+        <div style="text-align: right; margin-top: 20px;">
+            <button id="modal-close" class="btn btn-primary" style="display: none;">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for updates
+    document.getElementById('check-updates-btn').addEventListener('click', function() {
+        this.disabled = true;
+        this.textContent = '🔄 Checking...';
+
+        fetch('{% url "updates:check_updates" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.update_available) {
+                    alert(`Update available: Version ${data.latest_version}${data.critical ? ' (CRITICAL)' : ''}`);
+                } else {
+                    alert('No updates available. Your CMS is up to date!');
+                }
+                location.reload(); // Refresh to show new updates
+            } else {
+                alert('Error checking for updates: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Network error: ' + error);
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.textContent = '🔍 Check for Updates';
+        });
+    });
+
+    // Install update buttons
+    document.querySelectorAll('.install-update-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const version = this.dataset.version;
+            if (confirm(`Install version ${version}? This will create a backup first.`)) {
+                installUpdate(version);
+            }
+        });
+    });
+
+    function installUpdate(version) {
+        showModal('Installing Update', 'Preparing installation...');
+
+        fetch('{% url "updates:install_update" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({version: version})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                monitorUpdate(data.update_log_id);
+            } else {
+                showModal('Installation Failed', data.error, true);
+            }
+        })
+        .catch(error => {
+            showModal('Installation Failed', 'Network error: ' + error, true);
+        });
+    }
+
+    function monitorUpdate(updateLogId) {
+        const progressStates = {
+            'pending': 10,
+            'downloading': 30,
+            'backing_up': 50,
+            'installing': 80,
+            'completed': 100,
+            'failed': 100
+        };
+
+        function checkStatus() {
+            fetch(`/updates/status/${updateLogId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const progress = progressStates[data.status] || 0;
+                    updateProgress(progress, data.status.replace('_', ' '));
+
+                    if (data.completed) {
+                        if (data.status === 'completed') {
+                            showModal('Update Completed', 'Update installed successfully!', true);
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            showModal('Update Failed', data.error_message || 'Update failed', true);
+                        }
+                    } else {
+                        setTimeout(checkStatus, 2000); // Check again in 2 seconds
+                    }
+                }
+            })
+            .catch(error => {
+                showModal('Monitoring Failed', 'Error monitoring update: ' + error, true);
+            });
+        }
+
+        checkStatus();
+    }
+
+    function showModal(title, content, showClose = false) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-content').innerHTML = content;
+        document.getElementById('modal-close').style.display = showClose ? 'inline-block' : 'none';
+        document.getElementById('update-modal').style.display = 'block';
+    }
+
+    function updateProgress(percent, text) {
+        document.getElementById('progress-fill').style.width = percent + '%';
+        document.getElementById('progress-text').textContent = text;
+    }
+
+    document.getElementById('modal-close').addEventListener('click', function() {
+        document.getElementById('update-modal').style.display = 'none';
+    });
+});
+</script>
+{% endblock %}

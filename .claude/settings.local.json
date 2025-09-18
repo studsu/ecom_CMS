@@ -18,7 +18,9 @@
       "Bash(mkdir:*)",
       "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\smoke\\users\")",
       "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\default\\users\")",
-      "Bash(dir C:UsersdragonDocumentsGitHubecom_CMS)"
+      "Bash(dir C:UsersdragonDocumentsGitHubecom_CMS)",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\media\\products\\images\\22\\gallery\")",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\media\\products\\images\\22\")"
     ],
     "deny": [],
     "ask": []

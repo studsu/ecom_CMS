@@ -1,11 +1,48 @@
 from django.db import models
 from django.conf import settings
+import os
+from django.utils.text import slugify
+
+
+def category_image_path(instance, filename):
+    """Generate upload path for category images"""
+    ext = filename.split('.')[-1]
+    filename = f"{slugify(instance.name)}.{ext}"
+    return f"categories/{filename}"
+
+
+def product_image_path(instance, filename):
+    """Generate upload path for product images: products/images/{product_id}/{filename}"""
+    ext = filename.split('.')[-1]
+    # Clean filename and make it safe
+    base_name = os.path.splitext(filename)[0]
+    safe_filename = f"{slugify(base_name)}.{ext}"
+
+    # If product doesn't have ID yet (creating new), use temporary folder
+    if instance.pk:
+        return f"products/images/{instance.pk}/{safe_filename}"
+    else:
+        return f"products/images/temp/{safe_filename}"
+
+
+def product_gallery_image_path(instance, filename):
+    """Generate upload path for product gallery images: products/images/{product_id}/{filename}"""
+    ext = filename.split('.')[-1]
+    base_name = os.path.splitext(filename)[0]
+    safe_filename = f"{slugify(base_name)}.{ext}"
+
+    # If product doesn't have ID yet, use temp folder
+    if instance.product.pk:
+        return f"products/images/{instance.product.pk}/{safe_filename}"
+    else:
+        return f"products/images/temp/{safe_filename}"
+
 
 class Category(models.Model):
     name = models.CharField(max_length=120)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True, default="")
-    image = models.ImageField(upload_to='categories/', blank=True, null=True)
+    image = models.ImageField(upload_to=category_image_path, blank=True, null=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='children')
     is_active = models.BooleanField(default=True)
 
@@ -31,7 +68,7 @@ class Product(models.Model):
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text="Leave empty if no sale")
     description = models.TextField(blank=True, default="")
     short_description = models.CharField(max_length=300, blank=True, default="")
-    image = models.ImageField(upload_to='products/', blank=True, null=True)
+    image = models.ImageField(upload_to=product_image_path, blank=True, null=True)
     stock_quantity = models.PositiveIntegerField(default=0)
     manage_stock = models.BooleanField(default=True, help_text="Enable stock management for this product")
     is_active = models.BooleanField(default=True)
@@ -134,11 +171,62 @@ class Product(models.Model):
 
         return None
 
+    def save(self, *args, **kwargs):
+        """Custom save method to handle image organization"""
+        # Check if this is a new product (no pk) and has an image
+        is_new_product = not self.pk
+        old_image_path = None
+
+        if is_new_product and self.image:
+            # Store the temporary path
+            old_image_path = self.image.name
+
+        # Save the product first to get the ID
+        super().save(*args, **kwargs)
+
+        # If this was a new product with an image in temp folder, move it to the proper location
+        if is_new_product and old_image_path and old_image_path.startswith('products/images/temp/'):
+            self._move_temp_image_to_product_folder()
+
+    def _move_temp_image_to_product_folder(self):
+        """Move image from temp folder to product-specific folder"""
+        if not self.image:
+            return
+
+        try:
+            from django.core.files.storage import default_storage
+            import shutil
+
+            old_path = self.image.path
+            old_name = self.image.name
+
+            if 'temp/' in old_name:
+                # Generate new path
+                filename = os.path.basename(old_name)
+                new_name = f"products/images/{self.pk}/{filename}"
+                new_path = os.path.join(settings.MEDIA_ROOT, new_name)
+
+                # Create directory if it doesn't exist
+                os.makedirs(os.path.dirname(new_path), exist_ok=True)
+
+                # Move the file
+                if os.path.exists(old_path):
+                    shutil.move(old_path, new_path)
+
+                    # Update the image field
+                    self.image.name = new_name
+                    super().save(update_fields=['image'])
+
+        except Exception as e:
+            # Log error but don't break the save process
+            print(f"Error moving product image: {e}")
+            pass
+
 
 class ProductImage(models.Model):
     """Additional product images for gallery"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='additional_images')
-    image = models.ImageField(upload_to='products/gallery/')
+    image = models.ImageField(upload_to=product_gallery_image_path)
     alt_text = models.CharField(max_length=200, blank=True, help_text="Alt text for accessibility")
     order = models.PositiveIntegerField(default=0, help_text="Display order")
     is_active = models.BooleanField(default=True)
@@ -155,7 +243,51 @@ class ProductImage(models.Model):
     def save(self, *args, **kwargs):
         if not self.alt_text:
             self.alt_text = f"{self.product.title} - Image {self.order}"
+
+        # Check if this is a new image and has a temp path
+        is_new_image = not self.pk
+        old_image_path = None
+
+        if is_new_image and self.image:
+            old_image_path = self.image.name
+
         super().save(*args, **kwargs)
+
+        # Move temp image to proper location if needed
+        if is_new_image and old_image_path and 'temp/' in old_image_path:
+            self._move_temp_image_to_product_folder()
+
+    def _move_temp_image_to_product_folder(self):
+        """Move gallery image from temp folder to product-specific folder"""
+        if not self.image:
+            return
+
+        try:
+            import shutil
+
+            old_path = self.image.path
+            old_name = self.image.name
+
+            if 'temp/' in old_name:
+                # Generate new path
+                filename = os.path.basename(old_name)
+                new_name = f"products/images/{self.product.pk}/{filename}"
+                new_path = os.path.join(settings.MEDIA_ROOT, new_name)
+
+                # Create directory if it doesn't exist
+                os.makedirs(os.path.dirname(new_path), exist_ok=True)
+
+                # Move the file
+                if os.path.exists(old_path):
+                    shutil.move(old_path, new_path)
+
+                    # Update the image field
+                    self.image.name = new_name
+                    super().save(update_fields=['image'])
+
+        except Exception as e:
+            print(f"Error moving gallery image: {e}")
+            pass
 
 
 class ProductVariant(models.Model):
@@ -181,6 +313,19 @@ class ProductVariant(models.Model):
     def final_price(self):
         """Calculate final price with variant adjustment"""
         return self.product.get_price + self.price_adjustment
+
+    @property
+    def is_in_stock(self):
+        """Check if variant is in stock"""
+        return self.stock_quantity > 0
+
+    def reduce_stock(self, quantity):
+        """Reduce variant stock quantity (used when order is placed)"""
+        if self.stock_quantity >= quantity:
+            self.stock_quantity -= quantity
+            self.save()
+            return True
+        return False
 
 class ProductReview(models.Model):
     """Product reviews and ratings"""

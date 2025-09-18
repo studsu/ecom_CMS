@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404, redirect
 from django.forms import ModelForm
 from django.forms.widgets import DateInput
+from django import forms
 from .models import User, UserProfile, UserAddress
 
 class UserLoginView(LoginView):
@@ -43,12 +44,38 @@ class SignUpView(CreateView):
         messages.success(self.request, "Welcome! Your account has been created successfully.")
         return response
 
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'w-full px-6 py-4 border-2 border-rose-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-300 bg-white/50 backdrop-blur-sm font-elegant text-gray-700',
+                'placeholder': 'First Name'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'w-full px-6 py-4 border-2 border-rose-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-300 bg-white/50 backdrop-blur-sm font-elegant text-gray-700',
+                'placeholder': 'Last Name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-6 py-4 border-2 border-rose-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-300 bg-white/50 backdrop-blur-sm font-elegant text-gray-700',
+                'placeholder': 'Email Address'
+            }),
+        }
+
 class UserProfileForm(ModelForm):
     class Meta:
         model = UserProfile
         fields = ['phone', 'date_of_birth']
         widgets = {
-            'date_of_birth': DateInput(attrs={'type': 'date'}),
+            'phone': forms.TextInput(attrs={
+                'class': 'w-full px-6 py-4 border-2 border-rose-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-300 bg-white/50 backdrop-blur-sm font-elegant text-gray-700',
+                'placeholder': 'Phone Number'
+            }),
+            'date_of_birth': DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-6 py-4 border-2 border-rose-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-300 bg-white/50 backdrop-blur-sm font-elegant text-gray-700'
+            }),
         }
 
 class UserAddressForm(ModelForm):
@@ -63,12 +90,13 @@ class ProfileView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        
+
         # Get or create user profile
         profile, created = UserProfile.objects.get_or_create(user=user)
-        
+
         context['profile'] = profile
         context['addresses'] = user.addresses.all()
+        context['user_form'] = UserForm(instance=user)
         context['profile_form'] = UserProfileForm(instance=profile)
         context['address_form'] = UserAddressForm()
         return context
@@ -76,8 +104,16 @@ class ProfileView(TemplateView):
     def post(self, request, *args, **kwargs):
         user = request.user
         action = request.POST.get('action')
-        
-        if action == 'update_profile':
+
+        if action == 'update_personal_info':
+            user_form = UserForm(request.POST, instance=user)
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, "Personal information updated successfully!")
+            else:
+                messages.error(request, "Please correct the errors in personal information.")
+
+        elif action == 'update_profile':
             profile, created = UserProfile.objects.get_or_create(user=user)
             form = UserProfileForm(request.POST, instance=profile)
             if form.is_valid():
@@ -105,4 +141,4 @@ class ProfileView(TemplateView):
             except UserAddress.DoesNotExist:
                 messages.error(request, "Address not found.")
         
-        return redirect('profile')
+        return redirect('users:profile')

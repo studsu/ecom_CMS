@@ -181,32 +181,65 @@ def add_review(request, product_id):
 
 @require_POST
 def cart_add(request, product_id):
+    from .models import ProductVariant
+
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    
-    # Check if product is in stock
-    if not product.is_in_stock:
-        messages.error(request, f"Sorry, {product.title} is out of stock.")
-        return redirect('catalog:product_detail', slug=product.slug)
-    
+
+    # Get variant if specified
+    variant_id = request.POST.get('variant_id')
+    variant = None
+
+    # Check if product has variants and require selection
+    available_variants = product.variants.filter(is_active=True)
+    if available_variants.exists():
+        if not variant_id:
+            messages.error(request, "Please select a variation before adding to cart.")
+            return redirect('catalog:product_detail', slug=product.slug)
+
+        try:
+            variant = ProductVariant.objects.get(id=variant_id, product=product, is_active=True)
+        except ProductVariant.DoesNotExist:
+            messages.error(request, "Selected product variation is not available.")
+            return redirect('catalog:product_detail', slug=product.slug)
+
+    # Check if product/variant is in stock
+    if variant:
+        if variant.stock_quantity <= 0:
+            messages.error(request, f"Sorry, {product.title} ({variant.name}: {variant.value}) is out of stock.")
+            return redirect('catalog:product_detail', slug=product.slug)
+    else:
+        if not product.is_in_stock:
+            messages.error(request, f"Sorry, {product.title} is out of stock.")
+            return redirect('catalog:product_detail', slug=product.slug)
+
     quantity = int(request.POST.get('quantity', 1))
-    
-    # Check if we have enough stock
-    if product.manage_stock and quantity > product.stock_quantity:
-        messages.error(request, f"Sorry, only {product.stock_quantity} items available for {product.title}.")
+
+    # Validate quantity using cart's validation method
+    is_valid, available_stock, error_message = cart.validate_quantity(product, quantity, variant)
+
+    if not is_valid:
+        messages.error(request, f"Sorry, {error_message}.")
         return redirect('catalog:product_detail', slug=product.slug)
-    
-    cart.add(product=product, quantity=quantity)
-    messages.success(request, f"Added {quantity} x {product.title} to cart.")
-    
+
+    # Add to cart with variant support
+    cart.add(product=product, quantity=quantity, variant=variant)
+
+    # Create success message
+    item_name = product.title
+    if variant:
+        item_name += f" ({variant.name}: {variant.value})"
+
+    messages.success(request, f"Added {quantity} x {item_name} to cart.")
+
     # Return JSON response for AJAX requests
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({
             'success': True,
-            'message': f"Added {quantity} x {product.title} to cart.",
+            'message': f"Added {quantity} x {item_name} to cart.",
             'cart_count': len(cart)
         })
-    
+
     return redirect('catalog:product_detail', slug=product.slug)
 
 def cart_detail(request):
