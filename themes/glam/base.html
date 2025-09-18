@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+
+    <!-- Preconnects for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Elegant Fonts for Luxury Jewelry Brand -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        },
+                        gold: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        },
+                        champagne: {
+                            50: '#fefdfb',
+                            100: '#fdf9f0',
+                            200: '#f9f0df',
+                            300: '#f4e4c1',
+                            400: '#edd5a3',
+                            500: '#e5c085',
+                            600: '#d4a574',
+                            700: '#b8935f',
+                            800: '#9c7f4f',
+                            900: '#7a6340',
+                        }
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'elegant': ['Cormorant Garamond', 'serif'],
+                        'sans': ['Montserrat', 'system-ui', 'sans-serif']
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            'from': { boxShadow: '0 0 20px rgba(219, 39, 119, 0.5)' },
+                            'to': { boxShadow: '0 0 30px rgba(219, 39, 119, 0.8), 0 0 40px rgba(219, 39, 119, 0.3)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="{% block description %}Exquisite Luxury Jewelry Collection - Elegant, Sophisticated, Timeless{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}luxury jewelry, diamond jewelry, gold jewelry, elegant accessories, fine jewelry, women's jewelry{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-sans bg-gradient-to-br from-pink-50 via-white to-rose-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white/90 backdrop-blur-lg border-b border-rose-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="{% url 'core:home' %}" class="text-3xl font-serif font-bold bg-gradient-to-r from-primary-600 via-gold-500 to-primary-600 bg-clip-text text-transparent tracking-wide">
+                        {{ SITE_NAME }}
+                    </a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="{% url 'core:home' %}" class="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-all duration-300 relative group">
+                            Home
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-500 to-gold-500 group-hover:w-full transition-all duration-300"></span>
+                        </a>
+                        <a href="{% url 'catalog:product_list' %}" class="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-all duration-300 relative group">
+                            Collections
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-500 to-gold-500 group-hover:w-full transition-all duration-300"></span>
+                        </a>
+
+                        <!-- Categories Dropdown -->
+                        <div class="relative group">
+                            <button class="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-all duration-300 flex items-center relative">
+                                Categories
+                                <svg class="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-500 to-gold-500 group-hover:w-full transition-all duration-300"></span>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div class="absolute left-0 mt-2 w-72 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-rose-100 py-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                                <div class="px-6 py-3 text-xs font-serif font-semibold text-primary-700 uppercase tracking-wider border-b border-rose-100">Jewelry Collections</div>
+                                {% for category in main_categories %}
+                                <a href="{% url 'catalog:product_list' %}?category={{ category.slug }}"
+                                   class="flex items-center px-6 py-4 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 hover:text-primary-600 transition-all duration-300 group/item">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-primary-100 to-gold-100 rounded-full flex items-center justify-center mr-4 group-hover/item:shadow-lg transition-all duration-300">
+                                        <svg class="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">{{ category.name }}</div>
+                                        <div class="text-xs text-gray-500">Premium Collection</div>
+                                    </div>
+                                </a>
+                                {% empty %}
+                                <div class="px-6 py-4 text-sm text-gray-500">No categories available</div>
+                                {% endfor %}
+                                <hr class="my-3 border-rose-100">
+                                <a href="{% url 'catalog:product_list' %}" class="flex items-center px-6 py-4 text-sm text-primary-600 hover:bg-gradient-to-r hover:from-primary-50 hover:to-rose-50 transition-all duration-300 font-medium">
+                                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                    </svg>
+                                    View All Collections
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-6">
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center text-sm font-medium text-gray-700 hover:text-primary-600 transition-all duration-300">
+                                <div class="w-8 h-8 bg-gradient-to-br from-primary-100 to-gold-100 rounded-full flex items-center justify-center mr-2">
+                                    <span class="text-xs font-serif font-semibold text-primary-700">{{ user.first_name.0|default:user.username.0|upper }}</span>
+                                </div>
+                                <span>{{ user.first_name|default:user.username }}</span>
+                                <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-rose-100 py-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                                <a href="{% url 'users:profile' %}" class="block px-6 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 hover:text-primary-600 transition-all duration-300">My Profile</a>
+                                <a href="{% url 'orders:order_history' %}" class="block px-6 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 hover:text-primary-600 transition-all duration-300">My Orders</a>
+                                <a href="{% url 'wishlist:wishlist' %}" class="block px-6 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 hover:text-primary-600 transition-all duration-300">Wishlist</a>
+                                <hr class="my-3 border-rose-100">
+                                <a href="{% url 'users:logout' %}" class="block px-6 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 hover:text-primary-600 transition-all duration-300">Sign Out</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="text-gray-700 hover:text-primary-600 px-4 py-2 text-sm font-medium transition-all duration-300">
+                            Sign In
+                        </a>
+                        <a href="{% url 'users:signup' %}" class="bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-6 py-3 rounded-full text-sm font-medium hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            Join Glam
+                        </a>
+                    {% endif %}
+
+                    <!-- Wishlist -->
+                    <a href="{% url 'wishlist:wishlist' %}" class="relative p-2 text-gray-700 hover:text-primary-600 transition-all duration-300 group">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                        <span id="wishlist-count" class="absolute -top-1 -right-1 bg-gradient-to-r from-primary-500 to-rose-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">{{ wishlist_count }}</span>
+                    </a>
+
+                    <!-- Cart -->
+                    <button class="relative p-2 text-gray-700 hover:text-primary-600 transition-all duration-300 group">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-gold-500 to-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium animate-glow">0</span>
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-primary-600 p-2">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white/95 backdrop-blur-lg border-t border-rose-100">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{% url 'core:home' %}" class="block px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 rounded-2xl transition-all duration-300">Home</a>
+                <a href="{% url 'catalog:product_list' %}" class="block px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 rounded-2xl transition-all duration-300">All Collections</a>
+
+                <!-- Mobile Categories -->
+                <div class="px-3 py-2">
+                    <div class="text-sm font-serif font-semibold text-primary-700 mb-2">Categories</div>
+                    {% for category in main_categories %}
+                    <a href="{% url 'catalog:product_list' %}?category={{ category.slug }}"
+                       class="block px-2 py-1 text-sm text-gray-600 hover:text-primary-600 transition-all duration-300">
+                        {{ category.name }}
+                    </a>
+                    {% empty %}
+                    <div class="px-2 py-1 text-sm text-gray-500">No categories available</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="fixed top-24 right-4 z-50 space-y-3">
+            {% for message in messages %}
+                <div class="bg-white/95 backdrop-blur-lg border-l-4 {% if message.tags == 'error' %}border-red-400{% elif message.tags == 'success' %}border-emerald-400{% elif message.tags == 'warning' %}border-amber-400{% else %}border-primary-400{% endif %} p-4 rounded-r-3xl shadow-xl max-w-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            {% if message.tags == 'error' %}
+                                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                            {% elif message.tags == 'success' %}
+                                <svg class="h-5 w-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            {% else %}
+                                <svg class="h-5 w-5 text-primary-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                            {% endif %}
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-800">{{ message }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        {% block banner %}{% endblock %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white relative overflow-hidden">
+        <!-- Elegant background pattern -->
+        <div class="absolute inset-0 opacity-5">
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <pattern id="footer-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" stroke-width="0.5"/>
+                    <circle cx="10" cy="10" r="2" fill="white" opacity="0.3"/>
+                </pattern>
+                <rect width="100" height="100" fill="url(#footer-pattern)" />
+            </svg>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-serif font-bold bg-gradient-to-r from-primary-400 via-gold-400 to-primary-400 bg-clip-text text-transparent mb-6">
+                        {{ SITE_NAME }}
+                    </h3>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed font-elegant">
+                        Discover the epitome of elegance with our exquisite collection of luxury jewelry. Each piece is crafted with passion, precision, and the finest materials to create timeless beauty that speaks to your soul.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-12 h-12 bg-gradient-to-br from-primary-500 to-rose-500 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 group">
+                            <svg class="w-5 h-5 text-white group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-gradient-to-br from-primary-500 to-rose-500 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 group">
+                            <svg class="w-5 h-5 text-white group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-gradient-to-br from-primary-500 to-rose-500 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 group">
+                            <svg class="w-5 h-5 text-white group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.719-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.098.119.112.223.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-gradient-to-br from-primary-500 to-rose-500 rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 group">
+                            <svg class="w-5 h-5 text-white group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-serif font-semibold mb-6 text-primary-300">Collections</h4>
+                    <ul class="space-y-3">
+                        <li><a href="{% url 'core:home' %}" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-primary-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Diamond Elegance
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-primary-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Gold Luxe
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-primary-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Rose Romance
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-primary-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Vintage Charm
+                        </a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-serif font-semibold mb-6 text-primary-300">Customer Care</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-gold-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Personal Styling
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-gold-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Jewelry Care
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-gold-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Size Guide
+                        </a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-primary-400 transition-all duration-300 flex items-center group">
+                            <span class="w-2 h-2 bg-gold-400 rounded-full mr-3 group-hover:w-4 transition-all duration-300"></span>
+                            Returns & Exchange
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="my-12 border-gray-700">
+
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm font-elegant">
+                    © {% now "Y" %} {{ SITE_NAME }}. All rights reserved. Crafted with passion for timeless elegance.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-primary-400 transition-all duration-300 text-sm">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-primary-400 transition-all duration-300 text-sm">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-primary-400 transition-all duration-300 text-sm">Authenticity</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.fixed.top-24 > div');
+            messages.forEach(function(message) {
+                message.style.opacity = '0';
+                message.style.transform = 'translateX(100%)';
+                setTimeout(function() {
+                    message.remove();
+                }, 300);
+            });
+        }, 5000);
+
+        // Add elegant hover effects to navigation
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-1px)';
+            });
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

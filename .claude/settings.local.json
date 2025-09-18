@@ -12,7 +12,13 @@
       "Read(//c/Users/dragon/Documents/GitHub/smokeking.in/myshop/store/templates/**)",
       "Read(//c/Users/dragon/Documents/GitHub/smokeking.in/myshop/**)",
       "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\")",
-      "Bash(copy:*)"
+      "Bash(copy:*)",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\smoke\")",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\smoke\\catalog\")",
+      "Bash(mkdir:*)",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\smoke\\users\")",
+      "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\default\\users\")",
+      "Bash(dir C:UsersdragonDocumentsGitHubecom_CMS)"
     ],
     "deny": [],
     "ask": []

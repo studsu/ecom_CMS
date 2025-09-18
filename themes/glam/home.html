@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% block title %}{{ SITE_NAME }} - Exquisite Luxury Jewelry Collection{% endblock %}
+
+{% block banner %}
+<!-- Luxurious Hero Section with Carousel -->
+<section class="relative overflow-hidden bg-gradient-to-br from-rose-100 via-pink-50 to-champagne-100 min-h-screen flex items-center">
+    <!-- Elegant background pattern -->
+    <div class="absolute inset-0 opacity-30">
+        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+                <radialGradient id="elegantGradient" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" style="stop-color:rgba(219, 39, 119, 0.1);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:rgba(245, 158, 11, 0.1);stop-opacity:0" />
+                </radialGradient>
+            </defs>
+            <circle cx="20" cy="30" r="15" fill="url(#elegantGradient)" class="animate-float"/>
+            <circle cx="80" cy="70" r="20" fill="url(#elegantGradient)" class="animate-float" style="animation-delay: -2s"/>
+            <circle cx="60" cy="20" r="10" fill="url(#elegantGradient)" class="animate-float" style="animation-delay: -4s"/>
+        </svg>
+    </div>
+
+    <!-- Hero Carousel -->
+    <div class="relative w-full">
+        <div class="hero-carousel">
+            <!-- Slide 1 -->
+            <div class="carousel-slide active">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="text-center lg:text-left space-y-8">
+                            <h1 class="text-5xl lg:text-7xl font-serif font-bold leading-tight">
+                                <span class="block text-gray-800 mb-2">Timeless</span>
+                                <span class="block bg-gradient-to-r from-primary-600 via-gold-500 to-rose-600 bg-clip-text text-transparent animate-shimmer">
+                                    Elegance
+                                </span>
+                            </h1>
+                            <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed font-elegant max-w-xl">
+                                Discover our exquisite collection of handcrafted jewelry, where every piece tells a story of passion, artistry, and timeless beauty.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+                                <a href="{% url 'catalog:product_list' %}" class="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-rose-600 text-white px-10 py-5 rounded-full font-semibold text-lg hover:from-primary-700 hover:via-primary-800 hover:to-rose-700 transition-all duration-500 transform hover:scale-105 shadow-2xl hover:shadow-3xl overflow-hidden">
+                                    <span class="relative z-10">Explore Collection</span>
+                                    <div class="absolute inset-0 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                </a>
+                                <button class="group border-2 border-primary-600 text-primary-600 px-10 py-5 rounded-full font-semibold text-lg hover:bg-primary-600 hover:text-white transition-all duration-500 relative overflow-hidden">
+                                    <span class="relative z-10">Watch Story</span>
+                                    <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Hero Image/Jewelry Display -->
+                        <div class="flex justify-center lg:justify-end">
+                            <div class="relative">
+                                <div class="w-96 h-96 bg-gradient-to-br from-primary-100 via-white to-gold-100 rounded-full backdrop-blur-sm flex items-center justify-center shadow-2xl ring-1 ring-primary-200 animate-glow">
+                                    <!-- Jewelry Icon -->
+                                    <svg class="w-48 h-48 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M5 16L3 14l5.5-11h7L21 14l-2 2H5zm2.7-5h8.6l-1.5-3H8.2l-1.5 3zm1.8 3l2.5 2.5L14.5 14H7.5z"/>
+                                    </svg>
+                                </div>
+                                <!-- Floating elements -->
+                                <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-gold-300 to-gold-500 rounded-full opacity-80 animate-float shadow-lg"></div>
+                                <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-rose-300 to-primary-400 rounded-full opacity-60 animate-float shadow-lg" style="animation-delay: -2s"></div>
+                                <div class="absolute top-16 -right-12 w-16 h-16 bg-gradient-to-br from-champagne-300 to-gold-400 rounded-full opacity-70 animate-float shadow-lg" style="animation-delay: -4s"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-slide">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="text-center lg:text-left space-y-8">
+                            <h1 class="text-5xl lg:text-7xl font-serif font-bold leading-tight">
+                                <span class="block text-gray-800 mb-2">Diamond</span>
+                                <span class="block bg-gradient-to-r from-gold-600 via-yellow-500 to-gold-600 bg-clip-text text-transparent animate-shimmer">
+                                    Dreams
+                                </span>
+                            </h1>
+                            <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed font-elegant max-w-xl">
+                                Experience the brilliance of our diamond collection, where each stone is carefully selected for its exceptional cut, clarity, and fire.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+                                <a href="{% url 'catalog:product_list' %}" class="group relative bg-gradient-to-r from-gold-600 via-yellow-500 to-gold-600 text-white px-10 py-5 rounded-full font-semibold text-lg hover:from-gold-700 hover:via-yellow-600 hover:to-gold-700 transition-all duration-500 transform hover:scale-105 shadow-2xl hover:shadow-3xl overflow-hidden">
+                                    <span class="relative z-10">Shop Diamonds</span>
+                                    <div class="absolute inset-0 bg-gradient-to-r from-primary-400 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex justify-center lg:justify-end">
+                            <div class="relative">
+                                <div class="w-96 h-96 bg-gradient-to-br from-gold-100 via-white to-yellow-100 rounded-full backdrop-blur-sm flex items-center justify-center shadow-2xl ring-1 ring-gold-200 animate-glow">
+                                    <svg class="w-48 h-48 text-gold-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2L8.5 8.5H3l4.5 4.5L6 18l6-3 6 3-1.5-5L21 8.5h-5.5L12 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-yellow-300 to-gold-500 rounded-full opacity-80 animate-float shadow-lg"></div>
+                                <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-gold-300 to-yellow-400 rounded-full opacity-60 animate-float shadow-lg" style="animation-delay: -2s"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-slide">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="text-center lg:text-left space-y-8">
+                            <h1 class="text-5xl lg:text-7xl font-serif font-bold leading-tight">
+                                <span class="block text-gray-800 mb-2">Romantic</span>
+                                <span class="block bg-gradient-to-r from-rose-600 via-primary-500 to-pink-600 bg-clip-text text-transparent animate-shimmer">
+                                    Roses
+                                </span>
+                            </h1>
+                            <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed font-elegant max-w-xl">
+                                Embrace the romance with our rose gold collection, featuring delicate designs that capture the essence of feminine beauty and grace.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+                                <a href="{% url 'catalog:product_list' %}" class="group relative bg-gradient-to-r from-rose-600 via-primary-600 to-pink-600 text-white px-10 py-5 rounded-full font-semibold text-lg hover:from-rose-700 hover:via-primary-700 hover:to-pink-700 transition-all duration-500 transform hover:scale-105 shadow-2xl hover:shadow-3xl overflow-hidden">
+                                    <span class="relative z-10">Discover Romance</span>
+                                    <div class="absolute inset-0 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex justify-center lg:justify-end">
+                            <div class="relative">
+                                <div class="w-96 h-96 bg-gradient-to-br from-rose-100 via-white to-pink-100 rounded-full backdrop-blur-sm flex items-center justify-center shadow-2xl ring-1 ring-rose-200 animate-glow">
+                                    <svg class="w-48 h-48 text-rose-600" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                </div>
+                                <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-pink-300 to-rose-500 rounded-full opacity-80 animate-float shadow-lg"></div>
+                                <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-rose-300 to-pink-400 rounded-full opacity-60 animate-float shadow-lg" style="animation-delay: -2s"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel Navigation -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+            <button class="carousel-dot active w-3 h-3 bg-primary-600 rounded-full transition-all duration-300 hover:scale-125" data-slide="0"></button>
+            <button class="carousel-dot w-3 h-3 bg-primary-300 rounded-full transition-all duration-300 hover:scale-125" data-slide="1"></button>
+            <button class="carousel-dot w-3 h-3 bg-primary-300 rounded-full transition-all duration-300 hover:scale-125" data-slide="2"></button>
+        </div>
+
+        <!-- Carousel Arrows -->
+        <button class="carousel-prev absolute left-8 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm text-primary-600 p-3 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+        <button class="carousel-next absolute right-8 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm text-primary-600 p-3 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Elegant wave bottom -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-full h-16 lg:h-24">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="white"></path>
+        </svg>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<!-- Trust & Luxury Indicators -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl lg:text-4xl font-serif font-bold text-gray-900 mb-4">
+                The Glam Promise
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto font-elegant">
+                Every piece in our collection represents our commitment to exceptional quality, timeless design, and unparalleled elegance.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-gradient-to-br from-primary-400 via-primary-500 to-rose-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-serif font-semibold text-gray-900 mb-3">Certified Authentic</h3>
+                <p class="text-gray-600 font-elegant">Every piece comes with certification of authenticity and quality assurance from master craftsmen</p>
+            </div>
+
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-gradient-to-br from-gold-400 via-gold-500 to-yellow-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-serif font-semibold text-gray-900 mb-3">Exquisite Craftsmanship</h3>
+                <p class="text-gray-600 font-elegant">Handcrafted by skilled artisans using time-honored techniques passed down through generations</p>
+            </div>
+
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-gradient-to-br from-rose-400 via-rose-500 to-pink-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-serif font-semibold text-gray-900 mb-3">Lifetime Warranty</h3>
+                <p class="text-gray-600 font-elegant">Comprehensive protection and maintenance services to preserve your jewelry's beauty forever</p>
+            </div>
+
+            <div class="text-center group">
+                <div class="w-20 h-20 bg-gradient-to-br from-champagne-400 via-gold-400 to-yellow-400 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-serif font-semibold text-gray-900 mb-3">Personal Styling</h3>
+                <p class="text-gray-600 font-elegant">Complimentary styling consultation to help you find the perfect pieces for your unique style</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Jewelry Collections -->
+<section class="py-24 bg-gradient-to-br from-rose-50 via-pink-25 to-champagne-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20">
+            <h2 class="text-4xl lg:text-6xl font-serif font-bold text-gray-900 mb-6">
+                Featured Collections
+            </h2>
+            <p class="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto font-elegant leading-relaxed">
+                Discover our curated selection of exquisite jewelry pieces, each meticulously crafted to embody elegance, sophistication, and timeless beauty.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {% for product in featured_products %}
+            <a href="{% url 'catalog:product_detail' product.slug %}" class="group bg-white rounded-3xl shadow-xl hover:shadow-3xl transition-all duration-500 overflow-hidden block transform hover:scale-105 ring-1 ring-gray-100 hover:ring-primary-200">
+                <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-rose-50 to-champagne-50 rounded-t-3xl overflow-hidden relative">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700">
+                    {% else %}
+                        <div class="w-full h-80 bg-gradient-to-br from-primary-100 via-white to-gold-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 relative">
+                            <svg class="w-24 h-24 text-primary-600 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M5 16L3 14l5.5-11h7L21 14l-2 2H5zm2.7-5h8.6l-1.5-3H8.2l-1.5 3zm1.8 3l2.5 2.5L14.5 14H7.5z"/>
+                            </svg>
+                            <div class="absolute inset-0 bg-gradient-to-br from-primary-600/10 to-gold-600/10 group-hover:from-primary-600/20 group-hover:to-gold-600/20 transition-all duration-500"></div>
+                        </div>
+                    {% endif %}
+                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-primary-600 px-3 py-1 rounded-full text-sm font-medium">
+                        New
+                    </div>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-serif font-semibold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">{{ product.title }}</h3>
+                    <p class="text-gray-600 mb-6 font-elegant leading-relaxed">{{ product.short_description|default:product.description|truncatewords:15 }}</p>
+                    <div class="flex items-center justify-between">
+                        {% if product.sale_price and product.sale_price < product.price %}
+                            <div class="flex items-center space-x-3">
+                                <span class="text-3xl font-serif font-bold text-primary-600">${{ product.sale_price }}</span>
+                                <span class="text-lg text-gray-500 line-through font-elegant">${{ product.price }}</span>
+                            </div>
+                        {% else %}
+                            <span class="text-3xl font-serif font-bold text-primary-600">${{ product.price }}</span>
+                        {% endif %}
+                        <div class="bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-6 py-3 rounded-full hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
+                            View Details
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <!-- Elegant fallback jewelry showcase when no products exist -->
+            <div class="group bg-white rounded-3xl shadow-xl hover:shadow-3xl transition-all duration-500 overflow-hidden transform hover:scale-105 ring-1 ring-gray-100 hover:ring-primary-200">
+                <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-rose-50 to-champagne-50 rounded-t-3xl overflow-hidden relative">
+                    <div class="w-full h-80 bg-gradient-to-br from-primary-100 via-white to-gold-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 relative">
+                        <svg class="w-24 h-24 text-primary-600 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M5 16L3 14l5.5-11h7L21 14l-2 2H5zm2.7-5h8.6l-1.5-3H8.2l-1.5 3zm1.8 3l2.5 2.5L14.5 14H7.5z"/>
+                        </svg>
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-600/10 to-gold-600/10 group-hover:from-primary-600/20 group-hover:to-gold-600/20 transition-all duration-500"></div>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-primary-600 px-3 py-1 rounded-full text-sm font-medium">
+                        Signature
+                    </div>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-serif font-semibold text-gray-900 mb-3">Diamond Eternity Ring</h3>
+                    <p class="text-gray-600 mb-6 font-elegant leading-relaxed">Exquisite 18k white gold ring featuring brilliant cut diamonds in a classic eternity setting.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-serif font-bold text-primary-600">$2,999</span>
+                        <button class="bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-6 py-3 rounded-full hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-3xl shadow-xl hover:shadow-3xl transition-all duration-500 overflow-hidden transform hover:scale-105 ring-1 ring-gray-100 hover:ring-primary-200">
+                <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-rose-50 to-champagne-50 rounded-t-3xl overflow-hidden relative">
+                    <div class="w-full h-80 bg-gradient-to-br from-gold-100 via-white to-yellow-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 relative">
+                        <svg class="w-24 h-24 text-gold-600 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L8.5 8.5H3l4.5 4.5L6 18l6-3 6 3-1.5-5L21 8.5h-5.5L12 2z"/>
+                        </svg>
+                        <div class="absolute inset-0 bg-gradient-to-br from-gold-600/10 to-yellow-600/10 group-hover:from-gold-600/20 group-hover:to-yellow-600/20 transition-all duration-500"></div>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gold-600 px-3 py-1 rounded-full text-sm font-medium">
+                        Limited
+                    </div>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-serif font-semibold text-gray-900 mb-3">Golden Starburst Necklace</h3>
+                    <p class="text-gray-600 mb-6 font-elegant leading-relaxed">Stunning 22k gold necklace with intricate starburst pendant, adorned with precious gemstones.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-serif font-bold text-primary-600">$4,599</span>
+                        <button class="bg-gradient-to-r from-gold-500 via-yellow-500 to-gold-600 text-white px-6 py-3 rounded-full hover:from-gold-600 hover:via-yellow-600 hover:to-gold-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="group bg-white rounded-3xl shadow-xl hover:shadow-3xl transition-all duration-500 overflow-hidden transform hover:scale-105 ring-1 ring-gray-100 hover:ring-primary-200">
+                <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-rose-50 to-champagne-50 rounded-t-3xl overflow-hidden relative">
+                    <div class="w-full h-80 bg-gradient-to-br from-rose-100 via-white to-pink-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 relative">
+                        <svg class="w-24 h-24 text-rose-600 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <div class="absolute inset-0 bg-gradient-to-br from-rose-600/10 to-pink-600/10 group-hover:from-rose-600/20 group-hover:to-pink-600/20 transition-all duration-500"></div>
+                    </div>
+                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-rose-600 px-3 py-1 rounded-full text-sm font-medium">
+                        Romantic
+                    </div>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-serif font-semibold text-gray-900 mb-3">Rose Gold Heart Earrings</h3>
+                    <p class="text-gray-600 mb-6 font-elegant leading-relaxed">Delicate rose gold earrings featuring heart-shaped design with sparkling diamond accents.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-serif font-bold text-primary-600">$1,899</span>
+                        <button class="bg-gradient-to-r from-rose-500 via-primary-600 to-pink-600 text-white px-6 py-3 rounded-full hover:from-rose-600 hover:via-primary-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-16">
+            <a href="{% url 'catalog:product_list' %}" class="inline-block bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white px-12 py-5 rounded-full font-serif font-semibold text-lg hover:from-black hover:via-gray-900 hover:to-gray-800 transition-all duration-500 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
+                Explore All Collections
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Exclusive Newsletter Section -->
+<section class="py-24 bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
+    <!-- Elegant background elements -->
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-primary-400 to-gold-400 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-20 right-20 w-40 h-40 bg-gradient-to-br from-rose-400 to-pink-400 rounded-full blur-3xl animate-float" style="animation-delay: -3s"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-gradient-to-br from-gold-400 to-champagne-400 rounded-full blur-3xl animate-float" style="animation-delay: -6s"></div>
+    </div>
+
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl lg:text-6xl font-serif font-bold text-white mb-6">
+            Join the
+            <span class="bg-gradient-to-r from-primary-400 via-gold-400 to-rose-400 bg-clip-text text-transparent">
+                Glam Elite
+            </span>
+        </h2>
+        <p class="text-xl lg:text-2xl text-gray-300 mb-12 font-elegant leading-relaxed max-w-3xl mx-auto">
+            Be the first to discover our exclusive collections, receive styling tips from our experts, and enjoy special privileges reserved for our most valued members.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6 max-w-lg mx-auto">
+            <input type="email" placeholder="Enter your email address" class="flex-1 px-8 py-5 rounded-full border-0 focus:ring-2 focus:ring-primary-500 outline-none text-lg font-elegant bg-white/90 backdrop-blur-sm placeholder-gray-500">
+            <button class="bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-10 py-5 rounded-full font-serif font-semibold text-lg hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                Subscribe
+            </button>
+        </div>
+        <p class="text-sm text-gray-400 mt-6 font-elegant">
+            *Exclusive access to limited collections and VIP events
+        </p>
+    </div>
+</section>
+
+<!-- Carousel Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+    let currentSlide = 0;
+    let isAnimating = false;
+
+    function showSlide(index) {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        // Hide all slides
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+
+        // Show current slide
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+
+        // Update dot colors
+        dots.forEach((dot, i) => {
+            if (i === index) {
+                dot.classList.remove('bg-primary-300');
+                dot.classList.add('bg-primary-600');
+            } else {
+                dot.classList.remove('bg-primary-600');
+                dot.classList.add('bg-primary-300');
+            }
+        });
+
+        setTimeout(() => {
+            isAnimating = false;
+        }, 500);
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    // Event listeners
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentSlide = index;
+            showSlide(currentSlide);
+        });
+    });
+
+    // Auto-advance carousel
+    setInterval(nextSlide, 6000);
+});
+</script>
+
+<style>
+.carousel-slide {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-slide.active {
+    display: block;
+    opacity: 1;
+}
+</style>
+{% endblock %}

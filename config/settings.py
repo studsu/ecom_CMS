@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-jy2m4m5_*q+tc0#e%+sn791+04@biau^7@=z7ai*-w-dzqs5jr
 
 # --------- Site-level customization ----------
 SITE_NAME = os.getenv("SITE_NAME", "Ecom_CMS")  # 👈 change via env
-THEME = os.getenv("THEME", "modern")           # 👈 switch templates: "default", "modern", or "smoke"
+THEME = os.getenv("THEME", "glam")           # 👈 switch templates: "default", "modern", or "smoke"
 DEBUG = True
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
 ALLOWED_HOSTS = ["*"]
@@ -66,7 +66,9 @@ INSTALLED_APPS = [
     "core",
     "users",
     "catalog",
-    "orders",   # remove if you don’t want it now
+    "orders",   # remove if you don't want it now
+    "wishlist",  # Wishlist functionality
+    "updates",   # Auto-update system
 ]
 
 # Add discovered plugin apps

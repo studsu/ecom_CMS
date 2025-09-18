@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Out - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-white to-champagne-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Elegant background elements -->
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/4 right-1/4 w-64 h-64 bg-gradient-to-br from-primary-200 to-gold-200 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-1/4 left-1/4 w-80 h-80 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full blur-3xl animate-float" style="animation-delay: -4s"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-gradient-to-br from-champagne-200 to-gold-200 rounded-full blur-3xl animate-float" style="animation-delay: -2s"></div>
+    </div>
+
+    <div class="relative max-w-md w-full space-y-8">
+        <!-- Elegant Header -->
+        <div class="text-center">
+            <div class="w-24 h-24 bg-gradient-to-br from-primary-100 to-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+                <svg class="w-12 h-12 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+            </div>
+            <h2 class="text-4xl font-serif font-bold bg-gradient-to-r from-primary-600 via-gold-500 to-rose-600 bg-clip-text text-transparent mb-4">
+                Until We Meet Again
+            </h2>
+            <p class="text-gray-600 font-elegant text-lg leading-relaxed max-w-sm mx-auto">
+                Are you sure you want to sign out from your exclusive {{ SITE_NAME }} account?
+            </p>
+        </div>
+
+        <!-- Luxury Logout Form -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-10 ring-1 ring-rose-100 relative overflow-hidden">
+            <!-- Decorative pattern -->
+            <div class="absolute inset-0 opacity-5">
+                <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <pattern id="luxury-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <circle cx="10" cy="10" r="1.5" fill="currentColor" opacity="0.4"/>
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="0.3"/>
+                    </pattern>
+                    <rect width="100" height="100" fill="url(#luxury-pattern)" />
+                </svg>
+            </div>
+
+            <div class="relative text-center space-y-8">
+                <div class="space-y-4">
+                    <h3 class="text-xl font-serif font-semibold text-gray-900">We'll Miss You</h3>
+                    <p class="text-gray-600 font-elegant">
+                        Your jewelry collection and preferences will be safely stored for your return.
+                    </p>
+                </div>
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+
+                    <!-- Member Benefits Reminder -->
+                    <div class="bg-gradient-to-r from-primary-50 via-rose-50 to-gold-50 rounded-2xl p-6 border border-primary-100">
+                        <h4 class="text-lg font-serif font-semibold text-gray-900 mb-4">What You'll Miss</h4>
+                        <div class="space-y-3 text-left">
+                            <div class="flex items-center text-gray-700">
+                                <svg class="w-5 h-5 text-primary-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="font-elegant text-sm">Exclusive early access to new collections</span>
+                            </div>
+                            <div class="flex items-center text-gray-700">
+                                <svg class="w-5 h-5 text-primary-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="font-elegant text-sm">Personal jewelry concierge service</span>
+                            </div>
+                            <div class="flex items-center text-gray-700">
+                                <svg class="w-5 h-5 text-primary-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="font-elegant text-sm">VIP member pricing and offers</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <!-- Logout Button -->
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 text-white py-4 px-8 rounded-2xl font-serif font-semibold text-lg hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            Yes, Sign Out
+                        </button>
+
+                        <!-- Cancel Button -->
+                        <a href="{% url 'core:home' %}" class="flex-1 bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white py-4 px-8 rounded-2xl font-serif font-semibold text-lg hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-center">
+                            Stay with Glam
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Return Promise -->
+        <div class="text-center">
+            <div class="bg-gradient-to-r from-primary-50 to-rose-50 rounded-2xl p-6 border border-primary-100">
+                <h4 class="text-lg font-serif font-semibold text-gray-900 mb-2">We'll Be Here When You Return</h4>
+                <p class="text-gray-600 font-elegant text-sm">
+                    Your wishlist, order history, and preferences are securely saved. Welcome back anytime to continue your jewelry journey.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Add elegant hover effects */
+form button:hover, form a:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    transition: all 0.3s ease;
+}
+</style>
+{% endblock %}

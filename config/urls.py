@@ -23,4 +23,6 @@ urlpatterns = [
     path('products/', include('catalog.urls')), # Product catalog
     path('users/', include('users.urls')),    # User auth (if exists)
     path('orders/', include('orders.urls')),  # Order management
+    path('wishlist/', include('wishlist.urls')), # Wishlist functionality
+    path('admin/updates/', include('updates.urls')), # Update management
 ]
