@@ -150,13 +150,20 @@
           {% csrf_token %}
           <div class="quantity-section">
             <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" value="1" min="1" 
-                   {% if product.manage_stock %}max="{{ product.stock_quantity }}"{% endif %}
-                   class="quantity-input">
+            <div class="quantity-wrapper">
+              <button type="button" id="decrease-qty" class="qty-btn">−</button>
+              <input type="number" id="quantity" name="quantity" value="1" min="1"
+                    {% if product.manage_stock %}max="{{ product.stock_quantity }}"{% endif %}
+                    class="quantity-input">
+              <button type="button" id="increase-qty" class="qty-btn">+</button>
+            </div>
           </div>
           <button type="submit" class="btn-primary btn-large">Add to Cart</button>
         </form>
       {% endif %}
+
+
+
 
       <!-- Additional Info -->
       {% if product.sku %}
@@ -583,6 +590,27 @@
   margin-bottom: 25px;
 }
 
+.quantity-wrapper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.qty-btn {
+  background: #f1f1f1;
+  border: none;
+  padding: 8px 14px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.qty-btn:hover {
+  background: #e0e0e0;
+}
+
+
 .quantity-section {
   margin-bottom: 20px;
 }
@@ -880,95 +908,170 @@
   }
 }
 </style>
-
 <script>
-// Product Image Gallery JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-  const imageData = document.getElementById('product-images');
-  if (!imageData) return;
+  /* -------------------------
+     QUANTITY ADJUSTMENT
+  ------------------------- */
+  const qtyInput = document.getElementById('quantity');
+  const decreaseBtn = document.getElementById('decrease-qty');
+  const increaseBtn = document.getElementById('increase-qty');
 
-  const images = JSON.parse(imageData.textContent);
-  let currentImageIndex = 0;
-
-  const mainImage = document.getElementById('main-image');
-  const currentImageSpan = document.getElementById('current-image');
-  const thumbnails = document.querySelectorAll('.thumbnail');
-
-  // Function to update main image and counter
-  function updateMainImage(index) {
-    if (images[index]) {
-      mainImage.src = images[index].url;
-      mainImage.alt = images[index].alt;
-
-      if (currentImageSpan) {
-        currentImageSpan.textContent = index + 1;
+  if (decreaseBtn && increaseBtn && qtyInput) {
+    decreaseBtn.addEventListener('click', function() {
+      let currentQty = parseInt(qtyInput.value) || 1;
+      if (currentQty > 1) {
+        qtyInput.value = currentQty - 1;
+        animateQty(qtyInput);
       }
+    });
 
-      // Update thumbnail active state
-      thumbnails.forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === index);
-      });
-
-      currentImageIndex = index;
-    }
+    increaseBtn.addEventListener('click', function() {
+      let currentQty = parseInt(qtyInput.value) || 1;
+      let maxQty = parseInt(qtyInput.getAttribute('max')) || 999;
+      if (currentQty < maxQty) {
+        qtyInput.value = currentQty + 1;
+        animateQty(qtyInput);
+      }
+    });
   }
 
-  // Function to change image with navigation
-  window.changeImage = function(direction) {
-    const newIndex = currentImageIndex + direction;
+  function animateQty(input) {
+    input.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+      input.style.transform = 'scale(1)';
+    }, 150);
+  }
 
-    if (newIndex >= 0 && newIndex < images.length) {
-      updateMainImage(newIndex);
-    } else if (newIndex >= images.length) {
-      updateMainImage(0); // Loop to first
-    } else if (newIndex < 0) {
-      updateMainImage(images.length - 1); // Loop to last
+  /* -------------------------
+     PRODUCT IMAGE GALLERY
+  ------------------------- */
+  const imageData = document.getElementById('product-images');
+  if (imageData) {
+    const images = JSON.parse(imageData.textContent);
+    let currentImageIndex = 0;
+
+    const mainImage = document.getElementById('main-image');
+    const currentImageSpan = document.getElementById('current-image');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+
+    function updateMainImage(index) {
+      if (images[index]) {
+        mainImage.src = images[index].url;
+        mainImage.alt = images[index].alt;
+
+        if (currentImageSpan) {
+          currentImageSpan.textContent = index + 1;
+        }
+
+        thumbnails.forEach((thumb, i) => {
+          thumb.classList.toggle('active', i === index);
+        });
+
+        currentImageIndex = index;
+      }
     }
-  };
 
-  // Function to select specific image
-  window.selectImage = function(index) {
-    updateMainImage(index);
-  };
+    window.changeImage = function(direction) {
+      const newIndex = currentImageIndex + direction;
+      if (newIndex >= 0 && newIndex < images.length) {
+        updateMainImage(newIndex);
+      } else if (newIndex >= images.length) {
+        updateMainImage(0);
+      } else if (newIndex < 0) {
+        updateMainImage(images.length - 1);
+      }
+    };
 
-  // Keyboard navigation
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowLeft') {
-      changeImage(-1);
-    } else if (e.key === 'ArrowRight') {
-      changeImage(1);
-    }
-  });
+    window.selectImage = function(index) {
+      updateMainImage(index);
+    };
 
-  // Touch/swipe support for mobile
-  let touchStartX = 0;
-  let touchEndX = 0;
-
-  if (mainImage) {
-    mainImage.addEventListener('touchstart', function(e) {
-      touchStartX = e.changedTouches[0].screenX;
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft') changeImage(-1);
+      else if (e.key === 'ArrowRight') changeImage(1);
     });
 
-    mainImage.addEventListener('touchend', function(e) {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-    });
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-    function handleSwipe() {
-      const swipeThreshold = 50; // Minimum distance for swipe
-      const diff = touchStartX - touchEndX;
+    if (mainImage) {
+      mainImage.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+      });
 
-      if (Math.abs(diff) > swipeThreshold) {
-        if (diff > 0) {
-          // Swiped left - next image
-          changeImage(1);
-        } else {
-          // Swiped right - previous image
-          changeImage(-1);
+      mainImage.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) changeImage(1);     // swipe left
+          else changeImage(-1);             // swipe right
         }
       }
     }
   }
+
+  /* -------------------------
+     IMAGE ZOOM MODAL
+  ------------------------- */
+  const mainImageZoom = document.querySelector('#main-image');
+  if (mainImageZoom) {
+    mainImageZoom.addEventListener('click', () => {
+      if (mainImageZoom.tagName !== 'IMG') return;
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="relative max-w-5xl max-h-full p-4">
+          <img src="${mainImageZoom.src}" alt="${mainImageZoom.alt}" class="max-w-full max-h-full object-contain rounded-2xl">
+          <button onclick="this.closest('.fixed').remove()" class="absolute top-6 right-6 text-white text-2xl">✕</button>
+        </div>`;
+      modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+      document.body.appendChild(modal);
+    });
+  }
+
+  /* -------------------------
+     WISHLIST
+  ------------------------- */
+  window.addToWishlist = async function(productId) {
+    try {
+      const response = await fetch('{% url "wishlist:add_to_wishlist" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ product_id: productId })
+      });
+      const data = await response.json();
+      alert(data.message);
+    } catch {
+      alert('Error adding to wishlist');
+    }
+  };
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let c of cookies) {
+        c = c.trim();
+        if (c.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(c.slice(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 });
 </script>
+
 {% endblock %}

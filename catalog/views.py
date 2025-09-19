@@ -202,6 +202,9 @@ def cart_add(request, product_id):
         except ProductVariant.DoesNotExist:
             messages.error(request, "Selected product variation is not available.")
             return redirect('catalog:product_detail', slug=product.slug)
+    elif variant_id:
+        # If variant_id is provided but product has no variants, ignore it
+        variant_id = None
 
     # Check if product/variant is in stock
     if variant:
@@ -248,28 +251,64 @@ def cart_detail(request):
 
 @require_POST
 def cart_remove(request, product_id):
+    from .models import ProductVariant
+
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.remove(product)
-    messages.success(request, f"Removed {product.title} from cart.")
+    variant_id = request.POST.get('variant_id')
+
+    # Get variant if specified
+    variant = None
+    if variant_id:
+        try:
+            variant = ProductVariant.objects.get(id=variant_id, product=product, is_active=True)
+        except ProductVariant.DoesNotExist:
+            pass  # Ignore invalid variant, just remove the product
+
+    # Determine item name for messages
+    item_name = product.title
+    if variant:
+        item_name += f" ({variant.name}: {variant.value})"
+
+    cart.remove(product, variant)
+    messages.success(request, f"Removed {item_name} from cart.")
     return redirect('catalog:cart_detail')
 
 @require_POST
 def cart_update(request, product_id):
+    from .models import ProductVariant
+
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     quantity = int(request.POST.get('quantity', 1))
-    
-    if quantity <= 0:
-        cart.remove(product)
-        messages.success(request, f"Removed {product.title} from cart.")
-    else:
-        # Check stock availability
-        if product.manage_stock and quantity > product.stock_quantity:
-            messages.error(request, f"Sorry, only {product.stock_quantity} items available for {product.title}.")
+    variant_id = request.POST.get('variant_id')
+
+    # Get variant if specified
+    variant = None
+    if variant_id:
+        try:
+            variant = ProductVariant.objects.get(id=variant_id, product=product, is_active=True)
+        except ProductVariant.DoesNotExist:
+            messages.error(request, "Selected product variation is not available.")
             return redirect('catalog:cart_detail')
-        
-        cart.update_quantity(product, quantity)
-        messages.success(request, f"Updated {product.title} quantity to {quantity}.")
-    
+
+    # Determine item name for messages
+    item_name = product.title
+    if variant:
+        item_name += f" ({variant.name}: {variant.value})"
+
+    if quantity <= 0:
+        cart.remove(product, variant)
+        messages.success(request, f"Removed {item_name} from cart.")
+    else:
+        # Check stock availability for the NEW total quantity (not adding to existing)
+        available_stock = cart.get_available_stock(product, variant)
+
+        if available_stock != float('inf') and quantity > available_stock:
+            messages.error(request, f"Sorry, only {available_stock} items available in stock.")
+            return redirect('catalog:cart_detail')
+
+        cart.update_quantity(product, quantity, variant)
+        messages.success(request, f"Updated {item_name} quantity to {quantity}.")
+
     return redirect('catalog:cart_detail')

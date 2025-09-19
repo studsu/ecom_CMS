@@ -67,31 +67,40 @@
                                     {% if item.product.category %}
                                         <p class="text-primary-600 font-elegant text-sm mb-1">{{ item.product.category.name }}</p>
                                     {% endif %}
+                                    {% if item.variant %}
+                                        <p class="text-purple-600 font-semibold text-sm mb-1">{{ item.variant.name }}: {{ item.variant.value }}</p>
+                                    {% endif %}
                                     {% if item.product.sku %}
                                         <p class="text-gray-500 font-elegant text-sm">SKU: {{ item.product.sku }}</p>
                                     {% endif %}
-                                    <p class="text-lg font-serif font-bold text-primary-600 mt-2">${{ item.price }}</p>
+                                    <p class="text-lg font-serif font-bold text-primary-600 mt-2">₹{{ item.price }}</p>
                                 </div>
 
                                 <!-- Quantity Controls -->
                                 <div class="flex flex-col items-center space-y-3">
                                     <form method="post" action="{% url 'catalog:cart_update' item.product.id %}" class="flex items-center bg-white border-2 border-rose-200 rounded-2xl overflow-hidden">
                                         {% csrf_token %}
+                                        {% if item.variant %}
+                                            <input type="hidden" name="variant_id" value="{{ item.variant.id }}">
+                                        {% endif %}
                                         <button type="button" onclick="decreaseQuantity(this)" class="px-4 py-2 text-gray-600 hover:text-primary-600 hover:bg-rose-50 transition-all duration-300 font-serif font-medium">−</button>
                                         <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
-                                               {% if item.product.manage_stock %}max="{{ item.product.stock_quantity }}"{% endif %}
+                                               {% if item.variant %}max="{{ item.variant.stock_quantity }}"{% elif item.product.manage_stock %}max="{{ item.product.stock_quantity }}"{% endif %}
                                                class="w-16 text-center border-0 focus:ring-0 outline-none font-serif font-medium py-2"
                                                onchange="this.form.submit()">
                                         <button type="button" onclick="increaseQuantity(this)" class="px-4 py-2 text-gray-600 hover:text-primary-600 hover:bg-rose-50 transition-all duration-300 font-serif font-medium">+</button>
                                     </form>
 
-                                    <p class="text-lg font-serif font-bold text-gray-900">${{ item.total_price }}</p>
+                                    <p class="text-lg font-serif font-bold text-gray-900">₹{{ item.total_price }}</p>
                                 </div>
 
                                 <!-- Remove Button -->
                                 <div class="flex-shrink-0">
                                     <form method="post" action="{% url 'catalog:cart_remove' item.product.id %}">
                                         {% csrf_token %}
+                                        {% if item.variant %}
+                                            <input type="hidden" name="variant_id" value="{{ item.variant.id }}">
+                                        {% endif %}
                                         <button type="submit" onclick="return confirm('Remove this elegant piece from your collection?')" class="p-3 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 transform hover:scale-110">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -228,9 +237,17 @@ function increaseQuantity(button) {
     const input = button.parentNode.querySelector('input[name="quantity"]');
     const currentValue = parseInt(input.value);
     const maxValue = parseInt(input.getAttribute('max')) || 999;
+    console.log('Increase quantity clicked:');
+    console.log('Current value:', currentValue);
+    console.log('Max value:', maxValue);
+    console.log('Can increase?', currentValue < maxValue);
+
     if (currentValue < maxValue) {
         input.value = currentValue + 1;
+        console.log('New value:', input.value);
         input.form.submit();
+    } else {
+        console.log('Cannot increase - at maximum stock limit');
     }
 }
 </script>

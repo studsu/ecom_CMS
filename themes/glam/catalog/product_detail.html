@@ -203,6 +203,7 @@
                                                             onclick="decreaseVariantQty('{{ variant.id }}')">−</button>
                                                     <input type="number"
                                                            id="variant_qty_{{ variant.id }}"
+                                                           name="variant_qty_{{ variant.id }}"
                                                            value="0"
                                                            min="0"
                                                            max="{{ variant.stock_quantity }}"
@@ -223,6 +224,13 @@
                             {% endfor %}
                         </div>
 
+                        <!-- Add Selected Variants Button -->
+                        <div class="mt-6">
+                            <button onclick="addSelectedVariantsToCart()" class="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 text-white py-4 px-8 rounded-2xl font-serif font-semibold text-lg hover:from-purple-600 hover:via-purple-700 hover:to-indigo-700 transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                                Add Selected Variants to Cart
+                            </button>
+                        </div>
+
                         <!-- Selected Variation Display -->
                         <div id="selected-variations" class="mt-6 p-4 bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl border border-rose-100" style="display: none;">
                             <h4 class="font-serif font-semibold text-gray-900 mb-2">Selected:</h4>
@@ -233,8 +241,9 @@
                     {% endif %}
 
                     <!-- Luxury Stock Status -->
+                    <!-- Debug: Product stock: {{ product.is_in_stock }}, Has variants: {{ variants|length }} -->
                     <div class="mb-10">
-                        {% if product.is_in_stock %}
+                        {% if product.is_in_stock or variants %}
                             <div class="flex items-center text-emerald-600 bg-emerald-50 px-6 py-4 rounded-2xl">
                                 <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -254,8 +263,8 @@
                         {% endif %}
                     </div>
 
-                    <!-- Elegant Add to Cart Form -->
-                    {% if product.is_in_stock %}
+                    <!-- Elegant Add to Cart Form (only for products without variants) -->
+                    {% if product.is_in_stock and not variants %}
                     <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="mb-10" id="add-to-cart-form">
                         {% csrf_token %}
                         <input type="hidden" name="variant_id" id="selected-variant-id" value="">
@@ -289,7 +298,7 @@
                     </div>
                     {% endif %}
 
-                    {% else %}
+                    {% elif not product.is_in_stock and not variants %}
                     <div class="mb-10">
                         <button disabled class="w-full bg-gray-300 text-gray-500 py-5 px-10 rounded-2xl font-serif font-semibold text-lg cursor-not-allowed shadow-lg">
                             Currently Unavailable
@@ -486,6 +495,129 @@
 </div>
 
 <script>
+// Variant quantity control functions
+function decreaseVariantQty(variantId) {
+    console.log('Decrease button clicked for variant:', variantId);
+    const input = document.getElementById('variant_qty_' + variantId);
+    console.log('Found input:', input);
+    if (!input) {
+        console.error('Input not found for variant:', variantId);
+        return;
+    }
+    const currentValue = parseInt(input.value) || 0;
+    console.log('Current value:', currentValue);
+    if (currentValue > 0) {
+        input.value = currentValue - 1;
+        console.log('New value:', input.value);
+    }
+}
+
+function increaseVariantQty(variantId, maxStock) {
+    console.log('Increase button clicked for variant:', variantId, 'max stock:', maxStock);
+    const input = document.getElementById('variant_qty_' + variantId);
+    console.log('Found input:', input);
+    if (!input) {
+        console.error('Input not found for variant:', variantId);
+        return;
+    }
+    const currentValue = parseInt(input.value) || 0;
+    console.log('Current value:', currentValue, 'Max value:', maxStock);
+    if (currentValue < maxStock) {
+        input.value = currentValue + 1;
+        console.log('New value:', input.value);
+    }
+}
+
+function addSelectedVariantsToCart() {
+    console.log('Add selected variants to cart clicked');
+
+    // Collect all variant quantities > 0
+    const selectedVariants = [];
+    const variantInputs = document.querySelectorAll('input[name^="variant_qty_"]');
+    console.log('Found variant inputs:', variantInputs.length);
+
+    variantInputs.forEach(input => {
+        const quantity = parseInt(input.value) || 0;
+        if (quantity > 0) {
+            const variantId = input.name.replace('variant_qty_', '');
+            selectedVariants.push({
+                variantId: variantId,
+                quantity: quantity
+            });
+        }
+    });
+
+    console.log('Selected variants:', selectedVariants);
+
+    if (selectedVariants.length === 0) {
+        alert('Please select at least one variation with quantity > 0');
+        return;
+    }
+
+    // Add each variant to cart sequentially
+    addVariantsSequentially(selectedVariants, 0, variantInputs);
+}
+
+function addVariantsSequentially(variants, index, variantInputs) {
+    if (index >= variants.length) {
+        // All variants added successfully
+        variantInputs.forEach(input => {
+            input.value = '0';
+        });
+        alert('All selected variations added to cart successfully!');
+        return;
+    }
+
+    const variant = variants[index];
+    console.log(`Adding variant ${index + 1}/${variants.length}: ${variant.variantId} (qty: ${variant.quantity})`);
+
+    addVariantToCart(variant.variantId, variant.quantity, () => {
+        // Successfully added this variant, move to next one
+        addVariantsSequentially(variants, index + 1, variantInputs);
+    });
+}
+
+function addVariantToCart(variantId, quantity, callback) {
+    fetch("{% url 'catalog:cart_add' product.id %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `variant_id=${variantId}&quantity=${quantity}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Successfully added variant', variantId, 'to cart');
+            if (callback) callback();
+        } else {
+            alert(data.message || 'Failed to add variant to cart');
+            console.error('Failed to add variant:', variantId, data);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding to cart');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 // Enhanced quantity controls with elegant animations
 document.addEventListener('DOMContentLoaded', function() {
     const qtyInput = document.getElementById('quantity');
