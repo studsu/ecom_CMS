@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Developer Guide - E-commerce CMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .nav-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .nav-link {
+            color: #667eea;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e6ff;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            color: #764ba2;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e0e6ff;
+        }
+
+        .section h3 {
+            color: #667eea;
+            font-size: 1.6rem;
+            margin: 30px 0 15px 0;
+        }
+
+        .section h4 {
+            color: #555;
+            font-size: 1.3rem;
+            margin: 20px 0 10px 0;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+            position: relative;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .variable {
+            color: #9cdcfe;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .tag {
+            color: #569cd6;
+        }
+
+        .attribute {
+            color: #92c5f7;
+        }
+
+        .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e6ff;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e0e6ff 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .card h4 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left-color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        .warning h4 {
+            color: #d68910;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border-left-color: #17a2b8;
+            border: 1px solid #17a2b8;
+        }
+
+        .info h4 {
+            color: #138496;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left-color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .success h4 {
+            color: #1e7e34;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px 5px 2px 0;
+        }
+
+        .badge.required {
+            background: #e74c3c;
+        }
+
+        .badge.optional {
+            background: #95a5a6;
+        }
+
+        .badge.context {
+            background: #27ae60;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .nav-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Template Developer Guide</h1>
+            <p>Complete documentation for developing themes in our E-commerce CMS</p>
+            <span class="version-badge">Version 2.0</span>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <h3>Quick Navigation</h3>
+            <div class="nav-links">
+                <a href="#project-overview" class="nav-link">Project Overview</a>
+                <a href="#template-structure" class="nav-link">Template Structure</a>
+                <a href="#context-variables" class="nav-link">Context Variables</a>
+                <a href="#shortcodes" class="nav-link">Shortcodes</a>
+                <a href="#theme-examples" class="nav-link">Theme Examples</a>
+                <a href="#best-practices" class="nav-link">Best Practices</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Project Overview -->
+            <section id="project-overview" class="section">
+                <h2>🏗️ Project Overview</h2>
+
+                <div class="card info">
+                    <h4>Django E-commerce CMS</h4>
+                    <p>A multi-theme Django-based e-commerce content management system with support for multiple store themes, product variants, shopping cart, and order management.</p>
+                </div>
+
+                <h3>System Architecture</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>🎨 Multi-Theme System</h4>
+                        <p>Supports multiple themes: <span class="badge">default</span> <span class="badge">modern</span> <span class="badge">glam</span> <span class="badge">smoke</span></p>
+                    </div>
+                    <div class="card">
+                        <h4>🛍️ E-commerce Features</h4>
+                        <p>Products, Categories, Variants, Cart, Orders, Reviews, Wishlist</p>
+                    </div>
+                    <div class="card">
+                        <h4>👥 User Management</h4>
+                        <p>Authentication, Profiles, Admin Panel</p>
+                    </div>
+                    <div class="card">
+                        <h4>📱 Responsive Design</h4>
+                        <p>Mobile-first approach with modern CSS frameworks</p>
+                    </div>
+                </div>
+
+                <h3>Directory Structure</h3>
+                <div class="code-block" data-lang="structure">
+<pre>
+ecom_CMS/
+├── themes/
+│   ├── default/        # Default theme
+│   ├── modern/         # Modern theme (Tailwind CSS)
+│   ├── glam/          # Glamorous theme (Luxury design)
+│   └── smoke/         # Smoke theme (Dark/minimalist)
+├── catalog/           # Product catalog app
+├── users/             # User management app
+├── cart/              # Shopping cart app
+├── orders/            # Order management app
+├── config/            # Django settings
+└── static/            # Static files
+</pre>
+                </div>
+            </section>
+
+            <!-- Template Structure -->
+            <section id="template-structure" class="section">
+                <h2>📁 Template Structure</h2>
+
+                <h3>Theme Directory Layout</h3>
+                <div class="code-block" data-lang="structure">
+<pre>
+themes/your_theme/
+├── base.html                    # Base template
+├── catalog/
+│   ├── product_list.html       # Product listing page
+│   ├── product_detail.html     # Product detail page
+│   └── category_list.html      # Category listing
+├── users/
+│   ├── login.html             # Login page
+│   ├── register.html          # Registration page
+│   └── profile.html           # User profile
+├── cart/
+│   ├── cart_detail.html       # Shopping cart
+│   └── checkout.html          # Checkout page
+└── orders/
+    ├── order_list.html        # Order history
+    └── order_detail.html      # Order details
+</pre>
+                </div>
+
+                <div class="card warning">
+                    <h4>⚠️ Important</h4>
+                    <p>All themes must maintain the same template file structure and naming conventions for compatibility.</p>
+                </div>
+
+                <h3>Base Template Requirements</h3>
+                <div class="code-block" data-lang="html">
+<pre>
+<span class="comment">&lt;!-- base.html structure --&gt;</span>
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attribute">lang</span>=<span class="string">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attribute">charset</span>=<span class="string">"UTF-8"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attribute">name</span>=<span class="string">"viewport"</span> <span class="attribute">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span><span class="variable">{% block title %}{{ SITE_NAME }}{% endblock %}</span><span class="tag">&lt;/title&gt;</span>
+
+    <span class="comment">&lt;!-- Required CSS includes --&gt;</span>
+    <span class="variable">{% block extra_css %}{% endblock %}</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+    <span class="comment">&lt;!-- Navigation --&gt;</span>
+    <span class="variable">{% include 'partials/navbar.html' %}</span>
+
+    <span class="comment">&lt;!-- Main Content --&gt;</span>
+    <span class="tag">&lt;main&gt;</span>
+        <span class="variable">{% block content %}{% endblock %}</span>
+    <span class="tag">&lt;/main&gt;</span>
+
+    <span class="comment">&lt;!-- Footer --&gt;</span>
+    <span class="variable">{% include 'partials/footer.html' %}</span>
+
+    <span class="comment">&lt;!-- Required JS includes --&gt;</span>
+    <span class="variable">{% block extra_js %}{% endblock %}</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span>
+</pre>
+                </div>
+            </section>
+
+            <!-- Context Variables -->
+            <section id="context-variables" class="section">
+                <h2>🔄 Context Variables</h2>
+
+                <div class="card info">
+                    <h4>💡 Context Variables</h4>
+                    <p>These variables are automatically available in your templates through Django's context processors and views.</p>
+                </div>
+
+                <h3>Global Variables</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Variable</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>{{ SITE_NAME }}</code></td>
+                                <td><span class="badge">String</span></td>
+                                <td>Site name from settings</td>
+                                <td>"My Store"</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ CURRENCY_SYMBOL }}</code></td>
+                                <td><span class="badge">String</span></td>
+                                <td>Currency symbol</td>
+                                <td>"₹", "$", "€"</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ user }}</code></td>
+                                <td><span class="badge">Object</span></td>
+                                <td>Current logged-in user</td>
+                                <td>User object or AnonymousUser</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ request }}</code></td>
+                                <td><span class="badge">Object</span></td>
+                                <td>Current HTTP request</td>
+                                <td>Django request object</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Product Variables</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Variable</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>{{ product.title }}</code></td>
+                                <td><span class="badge">String</span></td>
+                                <td>Product name</td>
+                                <td>Display product title</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.slug }}</code></td>
+                                <td><span class="badge">String</span></td>
+                                <td>URL-friendly identifier</td>
+                                <td>Generate product URLs</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.price }}</code></td>
+                                <td><span class="badge">Decimal</span></td>
+                                <td>Original price</td>
+                                <td>Show original price</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.sale_price }}</code></td>
+                                <td><span class="badge">Decimal</span></td>
+                                <td>Sale price (if on sale)</td>
+                                <td>Show discounted price</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.is_on_sale }}</code></td>
+                                <td><span class="badge">Boolean</span></td>
+                                <td>Whether product is on sale</td>
+                                <td>Conditional sale display</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.is_in_stock }}</code></td>
+                                <td><span class="badge">Boolean</span></td>
+                                <td>Stock availability</td>
+                                <td>Enable/disable add to cart</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.image }}</code></td>
+                                <td><span class="badge">Image</span></td>
+                                <td>Main product image</td>
+                                <td>Display product image</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.category }}</code></td>
+                                <td><span class="badge">Object</span></td>
+                                <td>Product category</td>
+                                <td>Show category info</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ product.variants.all }}</code></td>
+                                <td><span class="badge">QuerySet</span></td>
+                                <td>Product variants</td>
+                                <td>Show size/color options</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Cart Variables</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Variable</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>{{ cart_items }}</code></td>
+                                <td><span class="badge">QuerySet</span></td>
+                                <td>Items in cart</td>
+                                <td>Display cart contents</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ cart_total }}</code></td>
+                                <td><span class="badge">Decimal</span></td>
+                                <td>Total cart value</td>
+                                <td>Show total price</td>
+                            </tr>
+                            <tr>
+                                <td><code>{{ cart_count }}</code></td>
+                                <td><span class="badge">Integer</span></td>
+                                <td>Number of items in cart</td>
+                                <td>Cart badge counter</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Shortcodes -->
+            <section id="shortcodes" class="section">
+                <h2>⚡ Template Shortcodes & Snippets</h2>
+
+                <div class="card success">
+                    <h4>✅ Ready-to-Use Shortcodes</h4>
+                    <p>Copy and paste these tested code snippets directly into your templates.</p>
+                </div>
+
+                <h3>Product Card Template</h3>
+                <div class="code-block" data-lang="html">
+<pre>
+<span class="comment">&lt;!-- Product Card - Responsive and Mobile-Optimized --&gt;</span>
+<span class="tag">&lt;article</span> <span class="attribute">class</span>=<span class="string">"product-card"</span><span class="tag">&gt;</span>
+    <span class="comment">&lt;!-- Product Image --&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"product-image"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'catalog:product_detail' product.slug %}"</span><span class="tag">&gt;</span>
+            <span class="variable">{% if product.image %}</span>
+                <span class="tag">&lt;img</span> <span class="attribute">src</span>=<span class="string">"{{ product.image.url }}"</span>
+                     <span class="attribute">alt</span>=<span class="string">"{{ product.title }}"</span>
+                     <span class="attribute">class</span>=<span class="string">"w-full h-64 object-cover"</span><span class="tag">&gt;</span>
+            <span class="variable">{% else %}</span>
+                <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"w-full h-64 bg-gray-200 flex items-center justify-center"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"text-gray-500"</span><span class="tag">&gt;</span>No Image<span class="tag">&lt;/span&gt;</span>
+                <span class="tag">&lt;/div&gt;</span>
+            <span class="variable">{% endif %}</span>
+        <span class="tag">&lt;/a&gt;</span>
+
+        <span class="comment">&lt;!-- Sale Badge --&gt;</span>
+        <span class="variable">{% if product.is_on_sale %}</span>
+            <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-sm"</span><span class="tag">&gt;</span>
+                Sale
+            <span class="tag">&lt;/span&gt;</span>
+        <span class="variable">{% endif %}</span>
+    <span class="tag">&lt;/div&gt;</span>
+
+    <span class="comment">&lt;!-- Product Content --&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"product-content p-4"</span><span class="tag">&gt;</span>
+        <span class="comment">&lt;!-- Category --&gt;</span>
+        <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"text-sm text-gray-500 uppercase"</span><span class="tag">&gt;</span>{{ product.category.name }}<span class="tag">&lt;/span&gt;</span>
+
+        <span class="comment">&lt;!-- Title --&gt;</span>
+        <span class="tag">&lt;h3</span> <span class="attribute">class</span>=<span class="string">"font-semibold text-lg mb-2"</span><span class="tag">&gt;</span>
+            <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'catalog:product_detail' product.slug %}"</span><span class="tag">&gt;</span>
+                {{ product.title|truncatechars:45 }}
+            <span class="tag">&lt;/a&gt;</span>
+        <span class="tag">&lt;/h3&gt;</span>
+
+        <span class="comment">&lt;!-- Description --&gt;</span>
+        <span class="variable">{% if product.short_description %}</span>
+            <span class="tag">&lt;p</span> <span class="attribute">class</span>=<span class="string">"text-gray-600 text-sm mb-4"</span><span class="tag">&gt;</span>
+                {{ product.short_description|truncatewords:12 }}
+            <span class="tag">&lt;/p&gt;</span>
+        <span class="variable">{% endif %}</span>
+
+        <span class="comment">&lt;!-- Price Section --&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"price-section mb-3"</span><span class="tag">&gt;</span>
+            <span class="variable">{% if product.is_on_sale %}</span>
+                <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"text-xl font-bold text-green-600"</span><span class="tag">&gt;</span>
+                    {{ CURRENCY_SYMBOL }}{{ product.sale_price }}
+                <span class="tag">&lt;/span&gt;</span>
+                <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"text-sm text-gray-500 line-through ml-2"</span><span class="tag">&gt;</span>
+                    {{ CURRENCY_SYMBOL }}{{ product.price }}
+                <span class="tag">&lt;/span&gt;</span>
+            <span class="variable">{% else %}</span>
+                <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"text-xl font-bold text-gray-800"</span><span class="tag">&gt;</span>
+                    {{ CURRENCY_SYMBOL }}{{ product.price }}
+                <span class="tag">&lt;/span&gt;</span>
+            <span class="variable">{% endif %}</span>
+        <span class="tag">&lt;/div&gt;</span>
+
+        <span class="comment">&lt;!-- Add to Cart Button --&gt;</span>
+        <span class="variable">{% if product.is_in_stock %}</span>
+            <span class="tag">&lt;form</span> <span class="attribute">method</span>=<span class="string">"post"</span> <span class="attribute">action</span>=<span class="string">"{% url 'catalog:cart_add' product.id %}"</span> <span class="attribute">class</span>=<span class="string">"w-full"</span><span class="tag">&gt;</span>
+                <span class="variable">{% csrf_token %}</span>
+                <span class="tag">&lt;input</span> <span class="attribute">type</span>=<span class="string">"hidden"</span> <span class="attribute">name</span>=<span class="string">"quantity"</span> <span class="attribute">value</span>=<span class="string">"1"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;button</span> <span class="attribute">type</span>=<span class="string">"submit"</span>
+                        <span class="attribute">class</span>=<span class="string">"w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"</span><span class="tag">&gt;</span>
+                    Add to Cart
+                <span class="tag">&lt;/button&gt;</span>
+            <span class="tag">&lt;/form&gt;</span>
+        <span class="variable">{% else %}</span>
+            <span class="tag">&lt;button</span> <span class="attribute">disabled</span> <span class="attribute">class</span>=<span class="string">"w-full bg-gray-300 text-gray-500 py-2 px-4 rounded cursor-not-allowed"</span><span class="tag">&gt;</span>
+                Out of Stock
+            <span class="tag">&lt;/button&gt;</span>
+        <span class="variable">{% endif %}</span>
+    <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/article&gt;</span>
+</pre>
+                </div>
+
+                <h3>Product Variants Selector</h3>
+                <div class="code-block" data-lang="html">
+<pre>
+<span class="comment">&lt;!-- Product Variants Section --&gt;</span>
+<span class="variable">{% if product.variants.all %}</span>
+    <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"variants-section mt-6"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h4</span> <span class="attribute">class</span>=<span class="string">"font-semibold mb-4"</span><span class="tag">&gt;</span>Available Options<span class="tag">&lt;/h4&gt;</span>
+
+        <span class="tag">&lt;div</span> <span class="attribute">id</span>=<span class="string">"variants-container"</span> <span class="attribute">class</span>=<span class="string">"space-y-4"</span><span class="tag">&gt;</span>
+            <span class="variable">{% for variant in product.variants.all %}</span>
+                <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"variant-item border rounded-lg p-4"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"flex justify-between items-center"</span><span class="tag">&gt;</span>
+                        <span class="tag">&lt;div&gt;</span>
+                            <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"font-medium"</span><span class="tag">&gt;</span>{{ variant.size }} - {{ variant.color }}<span class="tag">&lt;/span&gt;</span>
+                            <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"text-lg font-bold text-green-600 ml-4"</span><span class="tag">&gt;</span>
+                                {{ CURRENCY_SYMBOL }}{{ variant.price }}
+                            <span class="tag">&lt;/span&gt;</span>
+                            <span class="variable">{% if variant.stock_quantity &lt; 5 %}</span>
+                                <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"text-red-500 text-sm ml-2"</span><span class="tag">&gt;</span>
+                                    (Only {{ variant.stock_quantity }} left)
+                                <span class="tag">&lt;/span&gt;</span>
+                            <span class="variable">{% endif %}</span>
+                        <span class="tag">&lt;/div&gt;</span>
+
+                        <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"flex items-center space-x-2"</span><span class="tag">&gt;</span>
+                            <span class="tag">&lt;button</span> <span class="attribute">type</span>=<span class="string">"button"</span>
+                                    <span class="attribute">onclick</span>=<span class="string">"decreaseVariantQty({{ variant.id }})"</span>
+                                    <span class="attribute">class</span>=<span class="string">"bg-gray-200 px-3 py-1 rounded"</span><span class="tag">&gt;</span>-<span class="tag">&lt;/button&gt;</span>
+
+                            <span class="tag">&lt;input</span> <span class="attribute">type</span>=<span class="string">"number"</span>
+                                   <span class="attribute">id</span>=<span class="string">"variant-qty-{{ variant.id }}"</span>
+                                   <span class="attribute">value</span>=<span class="string">"0"</span>
+                                   <span class="attribute">min</span>=<span class="string">"0"</span>
+                                   <span class="attribute">max</span>=<span class="string">"{{ variant.stock_quantity }}"</span>
+                                   <span class="attribute">class</span>=<span class="string">"w-16 text-center border rounded"</span><span class="tag">&gt;</span>
+
+                            <span class="tag">&lt;button</span> <span class="attribute">type</span>=<span class="string">"button"</span>
+                                    <span class="attribute">onclick</span>=<span class="string">"increaseVariantQty({{ variant.id }})"</span>
+                                    <span class="attribute">class</span>=<span class="string">"bg-gray-200 px-3 py-1 rounded"</span><span class="tag">&gt;</span>+<span class="tag">&lt;/button&gt;</span>
+                        <span class="tag">&lt;/div&gt;</span>
+                    <span class="tag">&lt;/div&gt;</span>
+                <span class="tag">&lt;/div&gt;</span>
+            <span class="variable">{% endfor %}</span>
+        <span class="tag">&lt;/div&gt;</span>
+
+        <span class="comment">&lt;!-- Add Selected Variants to Cart --&gt;</span>
+        <span class="tag">&lt;button</span> <span class="attribute">onclick</span>=<span class="string">"addSelectedVariantsToCart()"</span>
+                <span class="attribute">class</span>=<span class="string">"mt-4 w-full bg-blue-500 text-white py-3 px-4 rounded font-semibold hover:bg-blue-600"</span><span class="tag">&gt;</span>
+            Add Selected Variants to Cart
+        <span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+<span class="variable">{% endif %}</span>
+</pre>
+                </div>
+
+                <h3>Navigation Bar</h3>
+                <div class="code-block" data-lang="html">
+<pre>
+<span class="comment">&lt;!-- Navigation Bar --&gt;</span>
+<span class="tag">&lt;nav</span> <span class="attribute">class</span>=<span class="string">"bg-white shadow-lg"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"max-w-7xl mx-auto px-4"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"flex justify-between items-center py-4"</span><span class="tag">&gt;</span>
+            <span class="comment">&lt;!-- Logo --&gt;</span>
+            <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"flex items-center"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'catalog:product_list' %}"</span> <span class="attribute">class</span>=<span class="string">"text-2xl font-bold text-blue-600"</span><span class="tag">&gt;</span>
+                    {{ SITE_NAME }}
+                <span class="tag">&lt;/a&gt;</span>
+            <span class="tag">&lt;/div&gt;</span>
+
+            <span class="comment">&lt;!-- Navigation Links --&gt;</span>
+            <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"hidden md:flex space-x-8"</span><span class="tag">&gt;</span>
+                <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'catalog:product_list' %}"</span> <span class="attribute">class</span>=<span class="string">"text-gray-700 hover:text-blue-600"</span><span class="tag">&gt;</span>Products<span class="tag">&lt;/a&gt;</span>
+                <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'catalog:category_list' %}"</span> <span class="attribute">class</span>=<span class="string">"text-gray-700 hover:text-blue-600"</span><span class="tag">&gt;</span>Categories<span class="tag">&lt;/a&gt;</span>
+            <span class="tag">&lt;/div&gt;</span>
+
+            <span class="comment">&lt;!-- User Actions --&gt;</span>
+            <span class="tag">&lt;div</span> <span class="attribute">class</span>=<span class="string">"flex items-center space-x-4"</span><span class="tag">&gt;</span>
+                <span class="variable">{% if user.is_authenticated %}</span>
+                    <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'users:profile' %}"</span> <span class="attribute">class</span>=<span class="string">"text-gray-700 hover:text-blue-600"</span><span class="tag">&gt;</span>
+                        {{ user.first_name|default:user.username }}
+                    <span class="tag">&lt;/a&gt;</span>
+                    <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'users:logout' %}"</span> <span class="attribute">class</span>=<span class="string">"text-gray-700 hover:text-blue-600"</span><span class="tag">&gt;</span>Logout<span class="tag">&lt;/a&gt;</span>
+                <span class="variable">{% else %}</span>
+                    <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'users:login' %}"</span> <span class="attribute">class</span>=<span class="string">"text-gray-700 hover:text-blue-600"</span><span class="tag">&gt;</span>Login<span class="tag">&lt;/a&gt;</span>
+                    <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'users:register' %}"</span> <span class="attribute">class</span>=<span class="string">"bg-blue-500 text-white px-4 py-2 rounded"</span><span class="tag">&gt;</span>Register<span class="tag">&lt;/a&gt;</span>
+                <span class="variable">{% endif %}</span>
+
+                <span class="comment">&lt;!-- Cart Icon --&gt;</span>
+                <span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'cart:cart_detail' %}"</span> <span class="attribute">class</span>=<span class="string">"relative text-gray-700 hover:text-blue-600"</span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;svg</span> <span class="attribute">class</span>=<span class="string">"w-6 h-6"</span> <span class="attribute">fill</span>=<span class="string">"none"</span> <span class="attribute">stroke</span>=<span class="string">"currentColor"</span> <span class="attribute">viewBox</span>=<span class="string">"0 0 24 24"</span><span class="tag">&gt;</span>
+                        <span class="tag">&lt;path</span> <span class="attribute">stroke-linecap</span>=<span class="string">"round"</span> <span class="attribute">stroke-linejoin</span>=<span class="string">"round"</span> <span class="attribute">stroke-width</span>=<span class="string">"2"</span>
+                              <span class="attribute">d</span>=<span class="string">"M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5M17 18a2 2 0 11-4 0 2 2 0 014 0zM9 18a2 2 0 11-4 0 2 2 0 014 0z"</span><span class="tag">&gt;</span>
+                        <span class="tag">&lt;/path&gt;</span>
+                    <span class="tag">&lt;/svg&gt;</span>
+                    <span class="variable">{% if cart_count &gt; 0 %}</span>
+                        <span class="tag">&lt;span</span> <span class="attribute">class</span>=<span class="string">"absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"</span><span class="tag">&gt;</span>
+                            {{ cart_count }}
+                        <span class="tag">&lt;/span&gt;</span>
+                    <span class="variable">{% endif %}</span>
+                <span class="tag">&lt;/a&gt;</span>
+            <span class="tag">&lt;/div&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/nav&gt;</span>
+</pre>
+                </div>
+
+                <h3>JavaScript Functions</h3>
+                <div class="code-block" data-lang="javascript">
+<pre>
+<span class="comment">// Variant Quantity Management</span>
+<span class="tag">function</span> <span class="variable">decreaseVariantQty</span>(<span class="variable">variantId</span>) {
+    <span class="tag">const</span> <span class="variable">input</span> = document.getElementById(<span class="string">`variant-qty-${variantId}`</span>);
+    <span class="tag">if</span> (input.value > 0) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+<span class="tag">function</span> <span class="variable">increaseVariantQty</span>(<span class="variable">variantId</span>) {
+    <span class="tag">const</span> <span class="variable">input</span> = document.getElementById(<span class="string">`variant-qty-${variantId}`</span>);
+    <span class="tag">const</span> <span class="variable">max</span> = parseInt(input.getAttribute(<span class="string">'max'</span>));
+    <span class="tag">if</span> (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+<span class="comment">// Add Selected Variants to Cart</span>
+<span class="tag">function</span> <span class="variable">addSelectedVariantsToCart</span>() {
+    <span class="tag">const</span> <span class="variable">variants</span> = [];
+
+    <span class="comment">// Collect all variant quantities</span>
+    document.querySelectorAll(<span class="string">'[id^="variant-qty-"]'</span>).forEach(<span class="variable">input</span> => {
+        <span class="tag">const</span> <span class="variable">variantId</span> = input.id.split(<span class="string">'-'</span>)[2];
+        <span class="tag">const</span> <span class="variable">quantity</span> = parseInt(input.value);
+
+        <span class="tag">if</span> (quantity > 0) {
+            variants.push({
+                variant_id: variantId,
+                quantity: quantity
+            });
+        }
+    });
+
+    <span class="tag">if</span> (variants.length === 0) {
+        alert(<span class="string">'Please select at least one variant'</span>);
+        <span class="tag">return</span>;
+    }
+
+    <span class="comment">// Submit to cart</span>
+    <span class="tag">fetch</span>(<span class="string">'/cart/add-variants/'</span>, {
+        method: <span class="string">'POST'</span>,
+        headers: {
+            <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+            <span class="string">'X-CSRFToken'</span>: getCookie(<span class="string">'csrftoken'</span>)
+        },
+        body: JSON.stringify({ variants: variants })
+    })
+    .then(<span class="variable">response</span> => response.json())
+    .then(<span class="variable">data</span> => {
+        <span class="tag">if</span> (data.success) {
+            location.reload();
+        } <span class="tag">else</span> {
+            alert(data.message || <span class="string">'Error adding to cart'</span>);
+        }
+    });
+}
+
+<span class="comment">// Get CSRF Cookie</span>
+<span class="tag">function</span> <span class="variable">getCookie</span>(<span class="variable">name</span>) {
+    <span class="tag">let</span> <span class="variable">cookieValue</span> = <span class="tag">null</span>;
+    <span class="tag">if</span> (document.cookie && document.cookie !== <span class="string">''</span>) {
+        <span class="tag">const</span> <span class="variable">cookies</span> = document.cookie.split(<span class="string">';'</span>);
+        <span class="tag">for</span> (<span class="tag">let</span> <span class="variable">i</span> = 0; i < cookies.length; i++) {
+            <span class="tag">const</span> <span class="variable">cookie</span> = cookies[i].trim();
+            <span class="tag">if</span> (cookie.substring(0, name.length + 1) === (name + <span class="string">'='</span>)) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                <span class="tag">break</span>;
+            }
+        }
+    }
+    <span class="tag">return</span> cookieValue;
+}
+</pre>
+                </div>
+            </section>
+
+            <!-- Theme Examples -->
+            <section id="theme-examples" class="section">
+                <h2>🎨 Theme Examples</h2>
+
+                <div class="grid">
+                    <div class="card">
+                        <h4>🏢 Default Theme</h4>
+                        <p><span class="badge">CSS</span> <span class="badge">Modern</span></p>
+                        <p>Clean, professional design with custom CSS and modern layouts.</p>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Modern Theme</h4>
+                        <p><span class="badge">Tailwind CSS</span> <span class="badge">Responsive</span></p>
+                        <p>Utility-first CSS framework with rapid development capabilities.</p>
+                    </div>
+                    <div class="card">
+                        <h4>💎 Glam Theme</h4>
+                        <p><span class="badge">Luxury</span> <span class="badge">Elegant</span></p>
+                        <p>High-end jewelry store design with sophisticated typography.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🌫️ Smoke Theme</h4>
+                        <p><span class="badge">Dark</span> <span class="badge">Minimalist</span></p>
+                        <p>Clean, minimal design with dark color schemes.</p>
+                    </div>
+                </div>
+
+                <h3>CSS Framework Examples</h3>
+                <div class="code-block" data-lang="css">
+<pre>
+<span class="comment">/* Custom CSS Example (Default Theme) */</span>
+<span class="tag">.product-card</span> {
+    <span class="attribute">background</span>: <span class="string">white</span>;
+    <span class="attribute">border-radius</span>: <span class="string">12px</span>;
+    <span class="attribute">box-shadow</span>: <span class="string">0 4px 6px rgba(0, 0, 0, 0.1)</span>;
+    <span class="attribute">overflow</span>: <span class="string">hidden</span>;
+    <span class="attribute">transition</span>: <span class="string">transform 0.3s ease</span>;
+}
+
+<span class="tag">.product-card:hover</span> {
+    <span class="attribute">transform</span>: <span class="string">translateY(-4px)</span>;
+    <span class="attribute">box-shadow</span>: <span class="string">0 8px 25px rgba(0, 0, 0, 0.15)</span>;
+}
+
+<span class="comment">/* Tailwind CSS Example (Modern Theme) */</span>
+<span class="comment">/* Use classes directly in HTML: */</span>
+<span class="comment">/* bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 */</span>
+</pre>
+                </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section id="best-practices" class="section">
+                <h2>⭐ Best Practices</h2>
+
+                <div class="grid">
+                    <div class="card success">
+                        <h4>✅ Do's</h4>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Use semantic HTML5 elements</li>
+                            <li>Implement responsive design</li>
+                            <li>Include proper alt text for images</li>
+                            <li>Use CSRF tokens in forms</li>
+                            <li>Follow Django template conventions</li>
+                            <li>Test across different devices</li>
+                        </ul>
+                    </div>
+                    <div class="card warning">
+                        <h4>❌ Don'ts</h4>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Don't hardcode URLs in templates</li>
+                            <li>Don't forget to handle empty states</li>
+                            <li>Don't ignore mobile responsiveness</li>
+                            <li>Don't use inline styles excessively</li>
+                            <li>Don't skip error handling</li>
+                            <li>Don't forget to escape user content</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Performance Tips</h3>
+                <div class="card info">
+                    <h4>🚀 Performance Optimization</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Image Optimization:</strong> Use appropriate image formats and sizes</li>
+                        <li><strong>CSS Minification:</strong> Minimize CSS files in production</li>
+                        <li><strong>Lazy Loading:</strong> Implement lazy loading for images</li>
+                        <li><strong>Caching:</strong> Use Django's template caching where appropriate</li>
+                        <li><strong>CDN:</strong> Serve static files from CDN in production</li>
+                    </ul>
+                </div>
+
+                <h3>Security Considerations</h3>
+                <div class="card warning">
+                    <h4>🔒 Security Best Practices</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Always use CSRF protection in forms</li>
+                        <li>Sanitize user input display with Django's auto-escaping</li>
+                        <li>Use HTTPS in production</li>
+                        <li>Validate file uploads properly</li>
+                        <li>Don't expose sensitive information in templates</li>
+                    </ul>
+                </div>
+
+                <h3>URL Pattern Examples</h3>
+                <div class="code-block" data-lang="html">
+<pre>
+<span class="comment">&lt;!-- Correct URL usage --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'catalog:product_detail' product.slug %}"</span><span class="tag">&gt;</span>View Product<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'catalog:category_list' %}"</span><span class="tag">&gt;</span>All Categories<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'users:profile' %}"</span><span class="tag">&gt;</span>My Profile<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attribute">href</span>=<span class="string">"{% url 'cart:cart_detail' %}"</span><span class="tag">&gt;</span>View Cart<span class="tag">&lt;/a&gt;</span>
+
+<span class="comment">&lt;!-- Form submissions --&gt;</span>
+<span class="tag">&lt;form</span> <span class="attribute">method</span>=<span class="string">"post"</span> <span class="attribute">action</span>=<span class="string">"{% url 'catalog:cart_add' product.id %}"</span><span class="tag">&gt;</span>
+    <span class="variable">{% csrf_token %}</span>
+    <span class="comment">&lt;!-- form fields --&gt;</span>
+<span class="tag">&lt;/form&gt;</span>
+</pre>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>E-commerce CMS Template Developer Guide</strong></p>
+            <p>Last updated: <span id="current-date"></span></p>
+            <p>For support, contact the development team or check the project repository.</p>
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
