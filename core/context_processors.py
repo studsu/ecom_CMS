@@ -1,7 +1,7 @@
 from django.conf import settings
 
 def site_context(request):
-    from catalog.models import Category
+    from catalog.models import Category, SiteSettings
     from catalog.cart import Cart
 
     # Get main categories for navigation
@@ -26,10 +26,16 @@ def site_context(request):
     except:
         cart_count = 0
 
+    # Get site settings and currency
+    site_settings = SiteSettings.get_settings()
+
     return {
-        "SITE_NAME": getattr(settings, "SITE_NAME", "Ecom_CMS"),
-        "THEME": getattr(settings, "THEME", "default"),
+        "SITE_NAME": site_settings.site_name,
+        "THEME": site_settings.theme,
         "main_categories": main_categories,
         "wishlist_count": wishlist_count,
         "cart_count": cart_count,
+        "site_settings": site_settings,
+        "CURRENCY_SYMBOL": site_settings.currency_symbol,
+        "DEFAULT_CURRENCY": site_settings.default_currency,
     }

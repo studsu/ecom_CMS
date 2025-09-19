@@ -93,8 +93,23 @@ class ProductReviewAdmin(admin.ModelAdmin):
     
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ("General Settings", {
+            "fields": ("site_name", "theme"),
+            "description": "Basic site configuration including name and visual theme."
+        }),
+        ("Currency Settings", {
+            "fields": ("default_currency",),
+            "description": "Configure the default currency for the site. Prices will be displayed with the corresponding symbol."
+        }),
+        ("Review Settings", {
+            "fields": ("enable_reviews", "require_review_approval", "min_review_length", "max_reviews_per_user_per_product"),
+            "description": "Configure how product reviews work on your site."
+        }),
+    )
+
     def has_add_permission(self, request):
         return not SiteSettings.objects.exists()
-    
+
     def has_delete_permission(self, request, obj=None):
         return False

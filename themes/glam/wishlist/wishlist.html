@@ -77,11 +77,11 @@
                         <div class="mb-6">
                             {% if item.product.sale_price and item.product.sale_price < item.product.price %}
                                 <div class="flex items-center space-x-3">
-                                    <span class="text-2xl font-serif font-bold text-primary-600">${{ item.product.sale_price }}</span>
-                                    <span class="text-lg text-gray-500 line-through font-elegant">${{ item.product.price }}</span>
+                                    <span class="text-2xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ item.product.sale_price }}</span>
+                                    <span class="text-lg text-gray-500 line-through font-elegant">{{ CURRENCY_SYMBOL }}{{ item.product.price }}</span>
                                 </div>
                             {% else %}
-                                <span class="text-2xl font-serif font-bold text-primary-600">${{ item.product.price }}</span>
+                                <span class="text-2xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ item.product.price }}</span>
                             {% endif %}
                         </div>
 

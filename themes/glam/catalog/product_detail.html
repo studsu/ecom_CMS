@@ -137,17 +137,17 @@
                     <div class="mb-10">
                         {% if product.sale_price and product.sale_price < product.price %}
                             <div class="flex items-center space-x-4 mb-3">
-                                <span class="text-5xl font-serif font-bold bg-gradient-to-r from-primary-600 to-rose-600 bg-clip-text text-transparent">${{ product.sale_price }}</span>
-                                <span class="text-3xl text-gray-500 line-through font-elegant">${{ product.price }}</span>
+                                <span class="text-5xl font-serif font-bold bg-gradient-to-r from-primary-600 to-rose-600 bg-clip-text text-transparent">{{ CURRENCY_SYMBOL }}{{ product.sale_price }}</span>
+                                <span class="text-3xl text-gray-500 line-through font-elegant">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                             </div>
                             <div class="inline-flex items-center bg-gradient-to-r from-red-100 to-red-200 text-red-800 px-4 py-2 rounded-full font-serif font-medium">
                                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                Save ${{ product.price|floatformat:2|add:"-"|add:product.sale_price|floatformat:2 }}
+                                Save {{ CURRENCY_SYMBOL }}{{ product.price|floatformat:2|add:"-"|add:product.sale_price|floatformat:2 }}
                             </div>
                         {% else %}
-                            <span class="text-5xl font-serif font-bold bg-gradient-to-r from-primary-600 to-rose-600 bg-clip-text text-transparent">${{ product.price }}</span>
+                            <span class="text-5xl font-serif font-bold bg-gradient-to-r from-primary-600 to-rose-600 bg-clip-text text-transparent">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                         {% endif %}
                     </div>
 
@@ -180,7 +180,7 @@
                                                 <span class="font-elegant font-semibold text-gray-800">{{ variant.value }}</span>
                                                 {% if variant.price_adjustment != 0 %}
                                                     <span class="text-sm {% if variant.price_adjustment > 0 %}text-red-600{% else %}text-green-600{% endif %} font-medium">
-                                                        ({% if variant.price_adjustment > 0 %}+{% endif %}₹{{ variant.price_adjustment }})
+                                                        ({% if variant.price_adjustment > 0 %}+{% endif %}{{ CURRENCY_SYMBOL }}{{ variant.price_adjustment }})
                                                     </span>
                                                 {% endif %}
                                             </div>
@@ -475,11 +475,11 @@
                         <div class="flex items-center justify-between">
                             {% if related_product.sale_price and related_product.sale_price < related_product.price %}
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-xl font-serif font-bold text-primary-600">${{ related_product.sale_price }}</span>
-                                    <span class="text-sm text-gray-500 line-through font-elegant">${{ related_product.price }}</span>
+                                    <span class="text-xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ related_product.sale_price }}</span>
+                                    <span class="text-sm text-gray-500 line-through font-elegant">{{ CURRENCY_SYMBOL }}{{ related_product.price }}</span>
                                 </div>
                             {% else %}
-                                <span class="text-xl font-serif font-bold text-primary-600">${{ related_product.price }}</span>
+                                <span class="text-xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ related_product.price }}</span>
                             {% endif %}
                             <a href="{% url 'catalog:product_detail' related_product.slug %}" class="bg-gradient-to-r from-primary-500 to-rose-600 text-white px-4 py-2 rounded-full text-sm font-serif font-medium hover:from-primary-600 hover:to-rose-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                                 View
@@ -495,6 +495,9 @@
 </div>
 
 <script>
+// Global currency symbol from Django context
+const CURRENCY_SYMBOL = '{{ CURRENCY_SYMBOL|escapejs }}';
+
 // Variant quantity control functions
 function decreaseVariantQty(variantId) {
     console.log('Decrease button clicked for variant:', variantId);
@@ -960,7 +963,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .reduce((sum, variant) => sum + variant.priceAdjustment, 0);
         const finalPrice = basePrice + totalAdjustment;
 
-        priceDiv.innerHTML = `Final Price: <span class="text-2xl">$${finalPrice.toFixed(2)}</span>`;
+        priceDiv.innerHTML = `Final Price: <span class="text-2xl">${CURRENCY_SYMBOL}${finalPrice.toFixed(2)}</span>`;
 
         // Update the main price display if needed
         updateMainPriceDisplay(finalPrice, totalAdjustment);
@@ -971,10 +974,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const mainPriceElements = document.querySelectorAll('.text-5xl');
         if (mainPriceElements.length > 0 && adjustment !== 0) {
             const mainPriceElement = mainPriceElements[0];
-            mainPriceElement.innerHTML = `$${finalPrice.toFixed(2)} <span class="text-2xl text-gray-500">($${basePrice.toFixed(2)} ${adjustment > 0 ? '+' : ''}$${adjustment.toFixed(2)})</span>`;
+            mainPriceElement.innerHTML = `${CURRENCY_SYMBOL}${finalPrice.toFixed(2)} <span class="text-2xl text-gray-500">(${CURRENCY_SYMBOL}${basePrice.toFixed(2)} ${adjustment > 0 ? '+' : ''}${CURRENCY_SYMBOL}${adjustment.toFixed(2)})</span>`;
         } else if (mainPriceElements.length > 0 && adjustment === 0) {
             const mainPriceElement = mainPriceElements[0];
-            mainPriceElement.textContent = `$${basePrice.toFixed(2)}`;
+            mainPriceElement.textContent = `${CURRENCY_SYMBOL}${basePrice.toFixed(2)}`;
         }
     }
 });

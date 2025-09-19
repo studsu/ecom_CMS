@@ -215,9 +215,9 @@
           </div>
           <div class="product-footer">
             <div class="product-pricing">
-              <span class="price-current">₹{{ product.price }}</span>
+              <span class="price-current">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
               {% if product.compare_price and product.compare_price > product.price %}
-              <span class="price-original">₹{{ product.compare_price }}</span>
+              <span class="price-original">{{ CURRENCY_SYMBOL }}{{ product.compare_price }}</span>
               {% endif %}
             </div>
             {% if product.is_in_stock %}

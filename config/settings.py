@@ -27,8 +27,7 @@ SECRET_KEY = 'django-insecure-jy2m4m5_*q+tc0#e%+sn791+04@biau^7@=z7ai*-w-dzqs5jr
 # SECURITY WARNING: don't run with debug turned on in production!
 
 # --------- Site-level customization ----------
-SITE_NAME = os.getenv("SITE_NAME", "Ecom_CMS")  # 👈 change via env
-THEME = os.getenv("THEME", "glam")           # 👈 switch templates: "default", "modern", "glam", or "smoke"
+# SITE_NAME and THEME are now managed through the database via SiteSettings model
 DEBUG = True
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")
 ALLOWED_HOSTS = ["*"]
@@ -77,6 +76,7 @@ INSTALLED_APPS += discover_plugins(BASE_DIR)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'core.middleware.DynamicStaticThemeMiddleware',  # Dynamic static files for themes
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -90,12 +90,12 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "themes" / THEME,       # 👈 active theme
-            BASE_DIR / "templates_shared",     # optional shared partials
-        ],
-        "APP_DIRS": True,  # also loads templates/ from each app (incl. plugins)
+        "DIRS": [],  # Managed by custom template loader
         "OPTIONS": {
+            "loaders": [
+                "core.template_loaders.DynamicThemeLoader",  # Custom dynamic theme loader
+                "django.template.loaders.app_directories.Loader",  # For app templates
+            ],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -161,7 +161,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static_shared",           # shared
-    BASE_DIR / "themes" / THEME / "static",  # theme-specific static
+    BASE_DIR / "themes" / "glam" / "static",  # Default theme static, overridden by middleware
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 

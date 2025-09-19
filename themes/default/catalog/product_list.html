@@ -113,72 +113,68 @@
                   <p>No Image</p>
                 </div>
               {% endif %}
-              
+
               {% if product.is_on_sale %}
                 <div class="sale-badge">
                   <span>-{{ product.discount_percentage }}%</span>
                 </div>
               {% endif %}
-              
+
               {% if not product.is_in_stock %}
                 <div class="stock-overlay">
                   <span>Out of Stock</span>
                 </div>
               {% endif %}
-              
-              <div class="product-overlay">
-                <a href="{% url 'catalog:product_detail' slug=product.slug %}" class="quick-view-btn">
-                  <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
-                  </svg>
-                  Quick View
-                </a>
-              </div>
             </div>
-            
+
             <div class="product-content-modern">
-              <div class="product-category">{{ product.category.name|default:"Uncategorized" }}</div>
-              <h3 class="product-title-modern">
-                <a href="{% url 'catalog:product_detail' slug=product.slug %}">{{ product.title }}</a>
-              </h3>
-              
-              {% if product.short_description %}
-                <p class="product-description-modern">{{ product.short_description|truncatewords:12 }}</p>
-              {% endif %}
-              
-              <div class="product-price-modern">
-                {% if product.is_on_sale %}
-                  <div class="price-group-modern">
-                    <span class="current-price-modern">₹{{ product.sale_price }}</span>
-                    <span class="original-price-modern">₹{{ product.price }}</span>
-                  </div>
-                {% else %}
-                  <span class="current-price-modern">₹{{ product.get_price }}</span>
+              <div class="product-info">
+                <div class="product-category">{{ product.category.name|default:"Uncategorized" }}</div>
+                <h3 class="product-title-modern">
+                  <a href="{% url 'catalog:product_detail' slug=product.slug %}">{{ product.title|truncatechars:40 }}</a>
+                </h3>
+
+                {% if product.short_description %}
+                  <p class="product-description-modern">{{ product.short_description|truncatewords:8 }}</p>
                 {% endif %}
+
               </div>
-              
+
               <div class="product-actions-modern">
+                <!-- Price Section -->
+                <div class="product-price-section mb-4">
+                  {% if product.is_on_sale %}
+                    <div class="price-group-modern">
+                      <span class="current-price-modern">{{ CURRENCY_SYMBOL }}{{ product.sale_price }}</span>
+                      <span class="original-price-modern">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
+                    </div>
+                  {% else %}
+                    <span class="current-price-modern">{{ CURRENCY_SYMBOL }}{{ product.get_price }}</span>
+                  {% endif %}
+                </div>
+
+                <!-- Add to Cart Button -->
                 {% if product.is_in_stock %}
                   <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="cart-form-modern">
                     {% csrf_token %}
                     <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="btn-modern btn-add-cart">
-                      <svg width="18" height="18" viewBox="0 0 24 24">
+                    <button type="submit" class="btn-modern btn-add-cart btn-compact w-full">
+                      <svg width="14" height="14" viewBox="0 0 24 24">
                         <path d="M11,9H13V6H16V4H13V1H11V4H8V6H11M7,18C5.9,18 5,18.9 5,20S5.9,22 7,22 9,20.1 9,20 8.1,18 7,18M1,2V4H3L6.6,11.59L5.25,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75L7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L20.88,5H18.7L15.55,11H8.53L4.27,2M17,18C15.9,18 15,18.9 15,20S15.9,22 17,22 19,20.1 19,20 18.1,18 17,18Z"/>
                       </svg>
                       Add to Cart
                     </button>
                   </form>
-                  {% if product.manage_stock %}
-                    <div class="stock-info-modern">{{ product.stock_quantity }} in stock</div>
-                  {% endif %}
                 {% else %}
-                  <button class="btn-modern btn-disabled" disabled>
-                    <svg width="18" height="18" viewBox="0 0 24 24">
+                  <button class="btn-modern btn-disabled w-full" disabled>
+                    <svg width="16" height="16" viewBox="0 0 24 24">
                       <path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"/>
                     </svg>
                     Out of Stock
                   </button>
+                {% endif %}
+                {% if product.manage_stock and product.is_in_stock %}
+                  <div class="stock-info-modern mt-2">{{ product.stock_quantity }} in stock</div>
                 {% endif %}
               </div>
             </div>
@@ -526,6 +522,9 @@
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 1px solid var(--border-color);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .modern-product-card:hover {
@@ -634,6 +633,9 @@
 
 .product-content-modern {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .product-category {
@@ -691,10 +693,15 @@
   text-decoration: line-through;
 }
 
+.product-info {
+  flex: 1;
+}
+
 .product-actions-modern {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: auto;
 }
 
 .cart-form-modern {
@@ -706,6 +713,13 @@
   background: var(--gradient-primary);
   color: white;
   justify-content: center;
+}
+
+.btn-compact {
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .btn-disabled {

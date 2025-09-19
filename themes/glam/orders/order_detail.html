@@ -62,7 +62,7 @@
                                             {% if item.product_sku %}
                                                 <p class="text-gray-600 font-elegant mb-1">Product Code: {{ item.product_sku }}</p>
                                             {% endif %}
-                                            <p class="text-gray-600 font-elegant">Unit Price: ${{ item.unit_price }}</p>
+                                            <p class="text-gray-600 font-elegant">Unit Price: {{ CURRENCY_SYMBOL }}{{ item.unit_price }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -73,7 +73,7 @@
                                     </div>
                                     <div class="text-center">
                                         <div class="text-sm text-gray-600 font-elegant mb-1">Total</div>
-                                        <div class="text-xl font-serif font-bold text-primary-600">${{ item.get_total_price }}</div>
+                                        <div class="text-xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ item.get_total_price }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -87,17 +87,17 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-center p-4 bg-white rounded-2xl border border-rose-100">
                                 <span class="font-elegant text-gray-600">Subtotal ({{ order.get_total_items }} item{{ order.get_total_items|pluralize }}):</span>
-                                <span class="font-serif font-medium text-gray-900">${{ order.subtotal }}</span>
+                                <span class="font-serif font-medium text-gray-900">{{ CURRENCY_SYMBOL }}{{ order.subtotal }}</span>
                             </div>
                             <div class="flex justify-between items-center p-4 bg-white rounded-2xl border border-rose-100">
                                 <span class="font-elegant text-gray-600">Tax (18% GST):</span>
-                                <span class="font-serif font-medium text-gray-900">${{ order.tax_amount }}</span>
+                                <span class="font-serif font-medium text-gray-900">{{ CURRENCY_SYMBOL }}{{ order.tax_amount }}</span>
                             </div>
                             <div class="flex justify-between items-center p-4 bg-white rounded-2xl border border-rose-100">
                                 <span class="font-elegant text-gray-600">Shipping:</span>
                                 <span class="font-serif font-medium text-gray-900">
                                     {% if order.shipping_cost > 0 %}
-                                        ${{ order.shipping_cost }}
+                                        {{ CURRENCY_SYMBOL }}{{ order.shipping_cost }}
                                     {% else %}
                                         <span class="text-emerald-600">Complimentary</span>
                                     {% endif %}
@@ -105,7 +105,7 @@
                             </div>
                             <div class="flex justify-between items-center p-6 bg-gradient-to-r from-primary-50 to-rose-50 rounded-2xl border-2 border-primary-200">
                                 <span class="text-lg font-serif font-bold text-gray-900">Order Total:</span>
-                                <span class="text-2xl font-serif font-bold text-primary-600">${{ order.total_amount }}</span>
+                                <span class="text-2xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ order.total_amount }}</span>
                             </div>
                         </div>
                     </div>

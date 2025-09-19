@@ -349,6 +349,73 @@ class ProductReview(models.Model):
 
 class SiteSettings(models.Model):
     """Global site settings"""
+    CURRENCY_CHOICES = [
+        ('USD', 'US Dollar ($)'),
+        ('EUR', 'Euro (€)'),
+        ('GBP', 'British Pound (£)'),
+        ('INR', 'Indian Rupee (₹)'),
+        ('JPY', 'Japanese Yen (¥)'),
+        ('CAD', 'Canadian Dollar (C$)'),
+        ('AUD', 'Australian Dollar (A$)'),
+        ('CHF', 'Swiss Franc (CHF)'),
+        ('CNY', 'Chinese Yuan (¥)'),
+        ('SEK', 'Swedish Krona (kr)'),
+        ('NOK', 'Norwegian Krone (kr)'),
+        ('DKK', 'Danish Krone (kr)'),
+        ('PLN', 'Polish Złoty (zł)'),
+        ('CZK', 'Czech Koruna (Kč)'),
+        ('HUF', 'Hungarian Forint (Ft)'),
+        ('RUB', 'Russian Ruble (₽)'),
+    ]
+
+    THEME_CHOICES = [
+        ('default', 'Default Theme'),
+        ('modern', 'Modern Theme'),
+        ('glam', 'Glam Theme'),
+        ('smoke', 'Smoke Theme'),
+    ]
+
+    CURRENCY_SYMBOLS = {
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£',
+        'INR': '₹',
+        'JPY': '¥',
+        'CAD': 'C$',
+        'AUD': 'A$',
+        'CHF': 'CHF',
+        'CNY': '¥',
+        'SEK': 'kr',
+        'NOK': 'kr',
+        'DKK': 'kr',
+        'PLN': 'zł',
+        'CZK': 'Kč',
+        'HUF': 'Ft',
+        'RUB': '₽',
+    }
+
+    # General Site Settings
+    site_name = models.CharField(
+        max_length=100,
+        default='Ecom_CMS',
+        help_text="Name of your website"
+    )
+    theme = models.CharField(
+        max_length=20,
+        choices=THEME_CHOICES,
+        default='glam',
+        help_text="Visual theme for your website"
+    )
+
+    # Currency Settings
+    default_currency = models.CharField(
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default='INR',
+        help_text="Default currency for the site"
+    )
+
+    # Review Settings
     enable_reviews = models.BooleanField(
         default=True,
         help_text="Enable/disable product reviews site-wide"
@@ -378,3 +445,22 @@ class SiteSettings(models.Model):
         """Get or create site settings"""
         settings, created = cls.objects.get_or_create(pk=1)
         return settings
+
+    def get_currency_symbol(self):
+        """Get the currency symbol for the selected currency"""
+        return self.CURRENCY_SYMBOLS.get(self.default_currency, '₹')
+
+    @property
+    def currency_symbol(self):
+        """Property to easily access currency symbol"""
+        return self.get_currency_symbol()
+
+    def save(self, *args, **kwargs):
+        """Clear theme cache when settings are saved"""
+        super().save(*args, **kwargs)
+        # Clear theme cache to force reload
+        try:
+            from django.core.cache import cache
+            cache.delete('current_theme')
+        except:
+            pass

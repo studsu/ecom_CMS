@@ -105,11 +105,11 @@
       <!-- Price -->
       <div class="price">
         {% if product.is_on_sale %}
-          <span class="sale-price">₹{{ product.sale_price }}</span>
-          <span class="original-price">₹{{ product.price }}</span>
+          <span class="sale-price">{{ CURRENCY_SYMBOL }}{{ product.sale_price }}</span>
+          <span class="original-price">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
           <span class="discount">{{ product.discount_percentage }}% OFF</span>
         {% else %}
-          <span class="current-price">₹{{ product.get_price }}</span>
+          <span class="current-price">{{ CURRENCY_SYMBOL }}{{ product.get_price }}</span>
         {% endif %}
       </div>
 
@@ -128,26 +128,77 @@
       <!-- Product Variants -->
       {% if variants %}
         <div class="variants">
-          <h4>Available Options</h4>
-          {% regroup variants by name as variant_groups %}
-          {% for variant_group in variant_groups %}
-            <div class="variant-group">
-              <strong>{{ variant_group.grouper }}:</strong>
-              {% for variant in variant_group.list %}
-                <span class="variant-option">
-                  {{ variant.value }}
-                  {% if variant.price_adjustment > 0 %}(+₹{{ variant.price_adjustment }}){% endif %}
-                </span>
-              {% endfor %}
+          <h4>Available Variations</h4>
+          <p class="variation-note">💡 Set quantities for the variations you want to add to cart</p>
+          <div class="variation-container">
+            {% regroup variants by name as variant_groups %}
+            {% for group in variant_groups %}
+            <div class="variation-group">
+              <label class="variant-group-label">{{ group.grouper }}</label>
+              <div class="variant-options">
+                {% for variant in group.list %}
+                <div class="variant-item {% if variant.stock_quantity <= 0 %}out-of-stock{% endif %}">
+                  <div class="variant-info">
+                    <div class="variant-details">
+                      <span class="variant-name">{{ variant.value }}</span>
+                      {% if variant.price_adjustment != 0 %}
+                        <span class="price-adjustment {% if variant.price_adjustment > 0 %}positive{% else %}negative{% endif %}">
+                          ({% if variant.price_adjustment > 0 %}+{% endif %}{{ CURRENCY_SYMBOL }}{{ variant.price_adjustment }})
+                        </span>
+                      {% endif %}
+                    </div>
+                    <div class="stock-info">
+                      {% if variant.stock_quantity <= 0 %}
+                        <span class="stock-status out-of-stock">Out of Stock</span>
+                      {% elif variant.stock_quantity <= 10 %}
+                        <span class="stock-status low-stock">Only {{ variant.stock_quantity }} left</span>
+                      {% else %}
+                        <span class="stock-status in-stock">{{ variant.stock_quantity }} available</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="quantity-controls">
+                    {% if variant.stock_quantity > 0 %}
+                      <div class="qty-wrapper">
+                        <button type="button" class="qty-btn decrease" onclick="decreaseVariantQty('{{ variant.id }}')">−</button>
+                        <input type="number" id="variant_qty_{{ variant.id }}" name="variant_qty_{{ variant.id }}"
+                               value="0" min="0" max="{{ variant.stock_quantity }}"
+                               class="variant-qty-input" onchange="updateVariantQty('{{ variant.id }}', this.value)">
+                        <button type="button" class="qty-btn increase" onclick="increaseVariantQty('{{ variant.id }}', {{ variant.stock_quantity }})">+</button>
+                      </div>
+                    {% else %}
+                      <span class="unavailable">Unavailable</span>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
             </div>
-          {% endfor %}
+            {% endfor %}
+          </div>
+
+          <!-- Add Selected Variants Button -->
+          <div class="add-variants-section">
+            <button onclick="addSelectedVariantsToCart()" class="btn-primary btn-large btn-variants">
+              Add Selected Variants to Cart
+            </button>
+          </div>
+
+          <!-- Selected Variation Display -->
+          <div id="selected-variations" class="selected-summary" style="display: none;">
+            <h5>Selected:</h5>
+            <div id="variation-summary" class="summary-text"></div>
+            <div id="adjusted-price" class="adjusted-price"></div>
+          </div>
         </div>
       {% endif %}
 
-      <!-- Add to Cart -->
-      {% if product.is_in_stock %}
+      <!-- Add to Cart (only for products without variants) -->
+      {% if product.is_in_stock and not variants %}
         <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="cart-form">
           {% csrf_token %}
+          <input type="hidden" name="variant_id" id="selected-variant-id" value="">
           <div class="quantity-section">
             <label for="quantity">Quantity:</label>
             <div class="quantity-wrapper">
@@ -160,6 +211,10 @@
           </div>
           <button type="submit" class="btn-primary btn-large">Add to Cart</button>
         </form>
+      {% elif not product.is_in_stock and not variants %}
+        <div class="out-of-stock-section">
+          <button disabled class="btn-disabled">Currently Unavailable</button>
+        </div>
       {% endif %}
 
 
@@ -199,10 +254,10 @@
               <h5><a href="{% url 'catalog:product_detail' slug=related.slug %}">{{ related.title }}</a></h5>
               <div class="related-price">
                 {% if related.is_on_sale %}
-                  <span class="sale-price">₹{{ related.sale_price }}</span>
-                  <span class="original-price">₹{{ related.price }}</span>
+                  <span class="sale-price">{{ CURRENCY_SYMBOL }}{{ related.sale_price }}</span>
+                  <span class="original-price">{{ CURRENCY_SYMBOL }}{{ related.price }}</span>
                 {% else %}
-                  <span class="current-price">₹{{ related.get_price }}</span>
+                  <span class="current-price">{{ CURRENCY_SYMBOL }}{{ related.get_price }}</span>
                 {% endif %}
               </div>
             </div>
@@ -555,7 +610,7 @@
 
 .variants {
   background: #f9f9f9;
-  padding: 20px;
+  padding: 25px;
   border-radius: 8px;
   margin-bottom: 25px;
 }
@@ -563,24 +618,216 @@
 .variants h4 {
   margin: 0 0 15px 0;
   color: #333;
+  font-size: 1.3rem;
 }
 
-.variant-group {
+.variation-note {
+  color: #6b46c1;
+  font-weight: 600;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.variation-container {
+  margin-bottom: 25px;
+}
+
+.variation-group {
+  margin-bottom: 20px;
+}
+
+.variant-group-label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
   margin-bottom: 15px;
 }
 
-.variant-group:last-child {
-  margin-bottom: 0;
+.variant-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.variant-option {
-  display: inline-block;
+.variant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.variant-item:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+.variant-item.out-of-stock {
+  opacity: 0.5;
+  background: #f8f9fa;
+}
+
+.variant-info {
+  flex: 1;
+}
+
+.variant-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.variant-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.price-adjustment {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.price-adjustment.positive {
+  color: #dc3545;
+}
+
+.price-adjustment.negative {
+  color: #28a745;
+}
+
+.stock-info {
+  margin-top: 4px;
+}
+
+.stock-status {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.stock-status.in-stock {
+  color: #16a085;
+}
+
+.stock-status.low-stock {
+  color: #f39c12;
+}
+
+.stock-status.out-of-stock {
+  color: #e74c3c;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+}
+
+.qty-wrapper {
+  display: flex;
+  align-items: center;
   border: 1px solid #ddd;
-  padding: 6px 12px;
-  border-radius: 4px;
-  margin: 0 8px 8px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.qty-btn {
+  background: #e9ecef;
+  border: none;
+  padding: 8px 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #495057;
+  font-weight: 600;
+}
+
+.qty-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
+.variant-qty-input {
+  width: 60px;
+  text-align: center;
+  border: none;
+  padding: 8px;
   font-size: 0.9rem;
+  font-weight: 600;
+  background: transparent;
+  outline: none;
+}
+
+.unavailable {
+  color: #999;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.add-variants-section {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.btn-variants {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 400px;
+}
+
+.btn-variants:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.selected-summary {
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.selected-summary h5 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-weight: bold;
+}
+
+.summary-text {
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.adjusted-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.btn-disabled {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 4px;
+  cursor: not-allowed;
+  font-size: 1.1rem;
+  font-weight: bold;
+  width: 100%;
 }
 
 .cart-form {
@@ -1070,6 +1317,124 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     return cookieValue;
+  }
+
+  /* -------------------------
+     VARIANT FUNCTIONALITY
+  ------------------------- */
+  // Global currency symbol from Django context
+  const CURRENCY_SYMBOL = '{{ CURRENCY_SYMBOL|escapejs }}';
+
+  // Variant quantity control functions
+  window.decreaseVariantQty = function(variantId) {
+    console.log('Decrease button clicked for variant:', variantId);
+    const input = document.getElementById('variant_qty_' + variantId);
+    console.log('Found input:', input);
+    if (!input) {
+      console.error('Input not found for variant:', variantId);
+      return;
+    }
+    const currentValue = parseInt(input.value) || 0;
+    console.log('Current value:', currentValue);
+    if (currentValue > 0) {
+      input.value = currentValue - 1;
+      console.log('New value:', input.value);
+    }
+  };
+
+  window.increaseVariantQty = function(variantId, maxStock) {
+    console.log('Increase button clicked for variant:', variantId, 'max stock:', maxStock);
+    const input = document.getElementById('variant_qty_' + variantId);
+    console.log('Found input:', input);
+    if (!input) {
+      console.error('Input not found for variant:', variantId);
+      return;
+    }
+    const currentValue = parseInt(input.value) || 0;
+    console.log('Current value:', currentValue, 'Max value:', maxStock);
+    if (currentValue < maxStock) {
+      input.value = currentValue + 1;
+      console.log('New value:', input.value);
+    }
+  };
+
+  window.updateVariantQty = function(variantId, value) {
+    console.log('Variant quantity updated:', variantId, 'value:', value);
+  };
+
+  window.addSelectedVariantsToCart = function() {
+    console.log('Add selected variants to cart clicked');
+
+    // Collect all variant quantities > 0
+    const selectedVariants = [];
+    const variantInputs = document.querySelectorAll('input[name^="variant_qty_"]');
+    console.log('Found variant inputs:', variantInputs.length);
+
+    variantInputs.forEach(input => {
+      const quantity = parseInt(input.value) || 0;
+      if (quantity > 0) {
+        const variantId = input.name.replace('variant_qty_', '');
+        selectedVariants.push({
+          variantId: variantId,
+          quantity: quantity
+        });
+      }
+    });
+
+    console.log('Selected variants:', selectedVariants);
+
+    if (selectedVariants.length === 0) {
+      alert('Please select at least one variation with quantity > 0');
+      return;
+    }
+
+    // Add each variant to cart sequentially
+    addVariantsSequentially(selectedVariants, 0, variantInputs);
+  };
+
+  function addVariantsSequentially(variants, index, variantInputs) {
+    if (index >= variants.length) {
+      // All variants added successfully
+      variantInputs.forEach(input => {
+        input.value = '0';
+      });
+      alert('All selected variations added to cart successfully!');
+      return;
+    }
+
+    const variant = variants[index];
+    console.log(`Adding variant ${index + 1}/${variants.length}: ${variant.variantId} (qty: ${variant.quantity})`);
+
+    addVariantToCart(variant.variantId, variant.quantity, () => {
+      // Successfully added this variant, move to next one
+      addVariantsSequentially(variants, index + 1, variantInputs);
+    });
+  }
+
+  function addVariantToCart(variantId, quantity, callback) {
+    fetch("{% url 'catalog:cart_add' product.id %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': getCookie('csrftoken'),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: `variant_id=${variantId}&quantity=${quantity}`
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log('Successfully added variant', variantId, 'to cart');
+        if (callback) callback();
+      } else {
+        alert(data.message || 'Failed to add variant to cart');
+        console.error('Failed to add variant:', variantId, data);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred while adding to cart');
+    });
   }
 });
 </script>

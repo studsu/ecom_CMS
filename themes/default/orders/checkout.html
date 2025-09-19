@@ -206,10 +206,10 @@
                             <div class="item-details">
                                 <h5>{{ item.product.title }}</h5>
                                 <p class="item-quantity">Quantity: {{ item.quantity }}</p>
-                                <p class="item-price">₹{{ item.price }} x {{ item.quantity }}</p>
+                                <p class="item-price">{{ CURRENCY_SYMBOL }}{{ item.price }} x {{ item.quantity }}</p>
                             </div>
                             <div class="item-total">
-                                <strong>₹{{ item.total_price }}</strong>
+                                <strong>{{ CURRENCY_SYMBOL }}{{ item.total_price }}</strong>
                             </div>
                         </div>
                     {% empty %}
@@ -220,7 +220,7 @@
                 <div class="order-totals">
                     <div class="subtotal">
                         <span>Subtotal:</span>
-                        <span>₹{{ cart_total }}</span>
+                        <span>{{ CURRENCY_SYMBOL }}{{ cart_total }}</span>
                     </div>
                     <div class="tax">
                         <span>Tax (18%):</span>

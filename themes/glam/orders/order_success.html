@@ -54,7 +54,7 @@
 
                 <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl p-6 text-center">
                     <p class="text-lg text-gray-600 mb-2">Total Amount</p>
-                    <p class="text-4xl font-serif font-bold text-purple-800">₹{{ order.total_amount }}</p>
+                    <p class="text-4xl font-serif font-bold text-purple-800">{{ CURRENCY_SYMBOL }}{{ order.total_amount }}</p>
                 </div>
             </div>
 
@@ -101,11 +101,11 @@
                             </div>
                             <div class="text-center mx-4">
                                 <span class="text-gray-600 text-sm">Unit Price</span>
-                                <p class="font-semibold text-gray-800">₹{{ item.unit_price }}</p>
+                                <p class="font-semibold text-gray-800">{{ CURRENCY_SYMBOL }}{{ item.unit_price }}</p>
                             </div>
                             <div class="text-right">
                                 <span class="text-gray-600 text-sm">Total</span>
-                                <p class="font-bold text-lg text-purple-600">₹{{ item.get_total_price }}</p>
+                                <p class="font-bold text-lg text-purple-600">{{ CURRENCY_SYMBOL }}{{ item.get_total_price }}</p>
                             </div>
                         </div>
                     {% endfor %}
@@ -115,20 +115,20 @@
                 <div class="bg-gradient-to-r from-gray-50 to-rose-50 rounded-2xl p-6 space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600 font-medium">Subtotal:</span>
-                        <span class="text-gray-800 font-semibold">₹{{ order.subtotal }}</span>
+                        <span class="text-gray-800 font-semibold">{{ CURRENCY_SYMBOL }}{{ order.subtotal }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600 font-medium">Tax (GST):</span>
-                        <span class="text-gray-800 font-semibold">₹{{ order.tax_amount }}</span>
+                        <span class="text-gray-800 font-semibold">{{ CURRENCY_SYMBOL }}{{ order.tax_amount }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600 font-medium">Shipping:</span>
-                        <span class="text-gray-800 font-semibold">₹{{ order.shipping_cost }}</span>
+                        <span class="text-gray-800 font-semibold">{{ CURRENCY_SYMBOL }}{{ order.shipping_cost }}</span>
                     </div>
                     <div class="border-t border-rose-200 pt-3 mt-3">
                         <div class="flex justify-between items-center">
                             <span class="text-xl font-serif font-bold text-gray-800">Total:</span>
-                            <span class="text-2xl font-serif font-bold text-purple-600">₹{{ order.total_amount }}</span>
+                            <span class="text-2xl font-serif font-bold text-purple-600">{{ CURRENCY_SYMBOL }}{{ order.total_amount }}</span>
                         </div>
                     </div>
                 </div>

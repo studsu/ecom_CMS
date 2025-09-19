@@ -98,14 +98,14 @@
                     <div class="mb-8">
                         {% if product.sale_price and product.sale_price < product.price %}
                             <div class="flex items-center space-x-3">
-                                <span class="text-4xl font-bold text-primary-600">${{ product.sale_price }}</span>
-                                <span class="text-2xl text-gray-500 line-through">${{ product.price }}</span>
+                                <span class="text-4xl font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.sale_price }}</span>
+                                <span class="text-2xl text-gray-500 line-through">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                                 <span class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full">
-                                    Save ${{ product.price|floatformat:2|add:"-"|add:product.sale_price|floatformat:2 }}
+                                    Save {{ CURRENCY_SYMBOL }}{{ product.price|floatformat:2|add:"-"|add:product.sale_price|floatformat:2 }}
                                 </span>
                             </div>
                         {% else %}
-                            <span class="text-4xl font-bold text-primary-600">${{ product.price }}</span>
+                            <span class="text-4xl font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                         {% endif %}
                     </div>
 
@@ -142,10 +142,89 @@
                         {% endif %}
                     </div>
 
-                    <!-- Add to Cart Form -->
-                    {% if product.is_in_stock %}
+                    <!-- Product Variants -->
+                    {% if variants %}
+                    <div class="mb-8 bg-gray-50 rounded-2xl p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-3">Available Variations</h4>
+                        <p class="text-sm text-purple-600 mb-6 font-medium">💡 Set quantities for the variations you want to add to cart</p>
+                        <div class="space-y-6">
+                            {% regroup variants by name as variant_groups %}
+                            {% for group in variant_groups %}
+                            <div class="variation-group">
+                                <label class="block text-base font-medium text-gray-800 mb-4">{{ group.grouper }}</label>
+                                <div class="space-y-3">
+                                    {% for variant in group.list %}
+                                    <div class="flex items-center justify-between bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-primary-400 transition-colors {% if variant.stock_quantity <= 0 %}opacity-50{% endif %}">
+                                        <div class="flex-1">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="font-medium text-gray-800">{{ variant.value }}</span>
+                                                {% if variant.price_adjustment != 0 %}
+                                                    <span class="text-sm {% if variant.price_adjustment > 0 %}text-red-600{% else %}text-green-600{% endif %} font-medium">
+                                                        ({% if variant.price_adjustment > 0 %}+{% endif %}{{ CURRENCY_SYMBOL }}{{ variant.price_adjustment }})
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="mt-1">
+                                                {% if variant.stock_quantity <= 0 %}
+                                                    <span class="text-xs text-red-500 font-medium">Out of Stock</span>
+                                                {% elif variant.stock_quantity <= 10 %}
+                                                    <span class="text-xs text-orange-600 font-medium">Only {{ variant.stock_quantity }} left</span>
+                                                {% else %}
+                                                    <span class="text-xs text-green-600 font-medium">{{ variant.stock_quantity }} available</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3">
+                                            {% if variant.stock_quantity > 0 %}
+                                                <div class="flex items-center border border-gray-300 rounded-xl overflow-hidden">
+                                                    <button type="button"
+                                                            class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                                                            onclick="decreaseVariantQty('{{ variant.id }}')">−</button>
+                                                    <input type="number"
+                                                           id="variant_qty_{{ variant.id }}"
+                                                           name="variant_qty_{{ variant.id }}"
+                                                           value="0"
+                                                           min="0"
+                                                           max="{{ variant.stock_quantity }}"
+                                                           class="w-16 text-center border-0 focus:ring-0 outline-none"
+                                                           onchange="updateVariantQty('{{ variant.id }}', this.value)">
+                                                    <button type="button"
+                                                            class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                                                            onclick="increaseVariantQty('{{ variant.id }}', {{ variant.stock_quantity }})">+</button>
+                                                </div>
+                                            {% else %}
+                                                <span class="text-gray-400 font-medium">Unavailable</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Add Selected Variants Button -->
+                        <div class="mt-6">
+                            <button onclick="addSelectedVariantsToCart()" class="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 text-white py-4 px-8 rounded-xl font-semibold hover:from-purple-600 hover:via-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg">
+                                Add Selected Variants to Cart
+                            </button>
+                        </div>
+
+                        <!-- Selected Variation Display -->
+                        <div id="selected-variations" class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200" style="display: none;">
+                            <h5 class="font-medium text-gray-900 mb-2">Selected:</h5>
+                            <div id="variation-summary" class="text-gray-700"></div>
+                            <div id="adjusted-price" class="mt-2 text-lg font-bold text-primary-600"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Add to Cart Form (only for products without variants) -->
+                    {% if product.is_in_stock and not variants %}
                     <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="mb-8">
                         {% csrf_token %}
+                        <input type="hidden" name="variant_id" id="selected-variant-id" value="">
                         <div class="flex items-center space-x-4">
                             <div class="flex items-center border border-gray-300 rounded-xl">
                                 <button type="button" id="decrease-qty" class="px-4 py-3 text-gray-600 hover:text-gray-800 transition-colors">−</button>
@@ -159,7 +238,7 @@
                             </button>
                         </div>
                     </form>
-                    {% else %}
+                    {% elif not product.is_in_stock and not variants %}
                     <div class="mb-8">
                         <button disabled class="w-full bg-gray-300 text-gray-500 py-4 px-8 rounded-xl font-semibold cursor-not-allowed">
                             Out of Stock
@@ -316,11 +395,11 @@
                         <div class="flex items-center justify-between">
                             {% if related_product.sale_price and related_product.sale_price < related_product.price %}
                                 <div class="flex items-center space-x-1">
-                                    <span class="text-lg font-bold text-primary-600">${{ related_product.sale_price }}</span>
-                                    <span class="text-sm text-gray-500 line-through">${{ related_product.price }}</span>
+                                    <span class="text-lg font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ related_product.sale_price }}</span>
+                                    <span class="text-sm text-gray-500 line-through">{{ CURRENCY_SYMBOL }}{{ related_product.price }}</span>
                                 </div>
                             {% else %}
-                                <span class="text-lg font-bold text-primary-600">${{ related_product.price }}</span>
+                                <span class="text-lg font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ related_product.price }}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -354,6 +433,133 @@ document.addEventListener('DOMContentLoaded', function() {
                 qtyInput.value = currentQty + 1;
             }
         });
+    }
+
+    /* -------------------------
+       VARIANT FUNCTIONALITY
+    ------------------------- */
+    // Global currency symbol from Django context
+    const CURRENCY_SYMBOL = '{{ CURRENCY_SYMBOL|escapejs }}';
+
+    // Variant quantity control functions
+    window.decreaseVariantQty = function(variantId) {
+        console.log('Decrease button clicked for variant:', variantId);
+        const input = document.getElementById('variant_qty_' + variantId);
+        if (!input) {
+            console.error('Input not found for variant:', variantId);
+            return;
+        }
+        const currentValue = parseInt(input.value) || 0;
+        if (currentValue > 0) {
+            input.value = currentValue - 1;
+        }
+    };
+
+    window.increaseVariantQty = function(variantId, maxStock) {
+        console.log('Increase button clicked for variant:', variantId, 'max stock:', maxStock);
+        const input = document.getElementById('variant_qty_' + variantId);
+        if (!input) {
+            console.error('Input not found for variant:', variantId);
+            return;
+        }
+        const currentValue = parseInt(input.value) || 0;
+        if (currentValue < maxStock) {
+            input.value = currentValue + 1;
+        }
+    };
+
+    window.updateVariantQty = function(variantId, value) {
+        console.log('Variant quantity updated:', variantId, 'value:', value);
+    };
+
+    window.addSelectedVariantsToCart = function() {
+        console.log('Add selected variants to cart clicked');
+
+        // Collect all variant quantities > 0
+        const selectedVariants = [];
+        const variantInputs = document.querySelectorAll('input[name^="variant_qty_"]');
+        console.log('Found variant inputs:', variantInputs.length);
+
+        variantInputs.forEach(input => {
+            const quantity = parseInt(input.value) || 0;
+            if (quantity > 0) {
+                const variantId = input.name.replace('variant_qty_', '');
+                selectedVariants.push({
+                    variantId: variantId,
+                    quantity: quantity
+                });
+            }
+        });
+
+        console.log('Selected variants:', selectedVariants);
+
+        if (selectedVariants.length === 0) {
+            alert('Please select at least one variation with quantity > 0');
+            return;
+        }
+
+        // Add each variant to cart sequentially
+        addVariantsSequentially(selectedVariants, 0, variantInputs);
+    };
+
+    function addVariantsSequentially(variants, index, variantInputs) {
+        if (index >= variants.length) {
+            // All variants added successfully
+            variantInputs.forEach(input => {
+                input.value = '0';
+            });
+            alert('All selected variations added to cart successfully!');
+            return;
+        }
+
+        const variant = variants[index];
+        console.log(`Adding variant ${index + 1}/${variants.length}: ${variant.variantId} (qty: ${variant.quantity})`);
+
+        addVariantToCart(variant.variantId, variant.quantity, () => {
+            // Successfully added this variant, move to next one
+            addVariantsSequentially(variants, index + 1, variantInputs);
+        });
+    }
+
+    function addVariantToCart(variantId, quantity, callback) {
+        fetch("{% url 'catalog:cart_add' product.id %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: `variant_id=${variantId}&quantity=${quantity}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Successfully added variant', variantId, 'to cart');
+                if (callback) callback();
+            } else {
+                alert(data.message || 'Failed to add variant to cart');
+                console.error('Failed to add variant:', variantId, data);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while adding to cart');
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 });
 </script>

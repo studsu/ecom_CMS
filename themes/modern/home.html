@@ -171,10 +171,10 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
                                 {% if product.sale_price and product.sale_price < product.price %}
-                                    <span class="text-2xl font-bold text-primary-600">${{ product.sale_price }}</span>
-                                    <span class="text-lg text-gray-400 line-through">${{ product.price }}</span>
+                                    <span class="text-2xl font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.sale_price }}</span>
+                                    <span class="text-lg text-gray-400 line-through">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                                 {% else %}
-                                    <span class="text-2xl font-bold text-primary-600">${{ product.price }}</span>
+                                    <span class="text-2xl font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                                 {% endif %}
                             </div>
 

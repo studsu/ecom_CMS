@@ -107,7 +107,7 @@
                             <h4 class="text-lg font-serif font-medium text-gray-900 mb-6">Price Range</h4>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-elegant">$</span>
+                                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-elegant">{{ CURRENCY_SYMBOL }}</span>
                                     <input type="number"
                                            name="min_price"
                                            value="{{ min_price }}"
@@ -115,7 +115,7 @@
                                            class="w-full pl-8 pr-4 py-3 border border-rose-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-white/50 backdrop-blur-sm font-elegant">
                                 </div>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-elegant">$</span>
+                                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-elegant">{{ CURRENCY_SYMBOL }}</span>
                                     <input type="number"
                                            name="max_price"
                                            value="{{ max_price }}"
@@ -155,109 +155,132 @@
                 {% if products %}
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                         {% for product in products %}
-                        <div class="group bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl hover:shadow-3xl transition-all duration-500 overflow-hidden transform hover:scale-105 ring-1 ring-rose-100 hover:ring-primary-200">
-                            <a href="{% url 'catalog:product_detail' product.slug %}" class="block">
-                                <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-rose-50 to-champagne-50 rounded-t-3xl overflow-hidden relative">
+                        <article class="group relative bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-rose-100/50 hover:border-primary-200">
+                            <!-- Product Image Section -->
+                            <div class="relative overflow-hidden rounded-t-2xl">
+                                <a href="{% url 'catalog:product_detail' product.slug %}" class="block">
                                     {% if product.image %}
-                                        <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700">
+                                        <img src="{{ product.image.url }}"
+                                             alt="{{ product.title }}"
+                                             class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500">
                                     {% else %}
-                                        <div class="w-full h-80 bg-gradient-to-br from-primary-100 via-white to-gold-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 relative">
-                                            <svg class="w-20 h-20 text-primary-600 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                                        <div class="w-full h-64 bg-gradient-to-br from-rose-100 via-champagne-50 to-gold-100 flex items-center justify-center">
+                                            <svg class="w-16 h-16 text-primary-300" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M5 16L3 14l5.5-11h7L21 14l-2 2H5zm2.7-5h8.6l-1.5-3H8.2l-1.5 3zm1.8 3l2.5 2.5L14.5 14H7.5z"/>
                                             </svg>
-                                            <div class="absolute inset-0 bg-gradient-to-br from-primary-600/10 to-gold-600/10 group-hover:from-primary-600/20 group-hover:to-gold-600/20 transition-all duration-500"></div>
                                         </div>
                                     {% endif %}
+                                </a>
 
-                                    <!-- Elegant Quick View Badge -->
-                                    <div class="absolute top-4 right-4">
-                                        <button class="bg-white/90 backdrop-blur-sm text-gray-700 p-3 rounded-full hover:bg-white hover:text-primary-600 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl transform hover:scale-110">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <!-- Wishlist Button -->
-                                    {% if user.is_authenticated %}
-                                    <div class="absolute top-4 left-4">
-                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToWishlist({{ product.id }})" class="bg-white/90 backdrop-blur-sm text-gray-700 p-3 rounded-full hover:bg-white hover:text-rose-600 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl transform hover:scale-110">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    {% endif %}
-
-                                    <!-- Elegant Status Badge -->
+                                <!-- Status Badges -->
+                                <div class="absolute top-3 left-3">
                                     {% if not product.is_in_stock %}
-                                    <div class="absolute bottom-4 left-4">
-                                        <span class="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-serif font-medium shadow-lg">Sold Out</span>
-                                    </div>
+                                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide">
+                                            Sold Out
+                                        </span>
                                     {% elif product.featured %}
-                                    <div class="absolute bottom-4 left-4">
-                                        <span class="bg-gradient-to-r from-gold-500 to-gold-600 text-white px-4 py-2 rounded-full text-sm font-serif font-medium shadow-lg">Signature</span>
-                                    </div>
+                                        <span class="bg-gradient-to-r from-gold-500 to-gold-600 text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide">
+                                            Featured
+                                        </span>
                                     {% endif %}
                                 </div>
-                            </a>
 
-                            <div class="p-8">
-                                <div class="mb-3">
-                                    <span class="text-sm text-primary-600 font-serif font-medium tracking-wider uppercase">{{ product.category.name }}</span>
+                                <!-- Wishlist Button -->
+                                {% if user.is_authenticated %}
+                                <div class="absolute top-3 right-3">
+                                    <button onclick="event.preventDefault(); event.stopPropagation(); addToWishlist({{ product.id }})"
+                                            class="bg-white/90 backdrop-blur-sm text-gray-600 p-2 rounded-full hover:bg-white hover:text-rose-500 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <h3 class="text-xl font-serif font-semibold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300 line-clamp-2">
-                                    <a href="{% url 'catalog:product_detail' product.slug %}">{{ product.title }}</a>
-                                </h3>
-                                <p class="text-gray-600 font-elegant mb-6 leading-relaxed line-clamp-2">{{ product.short_description|default:product.description|truncatewords:12 }}</p>
+                                {% endif %}
+                            </div>
 
-                                <!-- Elegant Rating -->
+                            <!-- Product Content -->
+                            <div class="p-6">
+                                <!-- Category -->
+                                <div class="mb-2">
+                                    <span class="text-xs text-primary-600 font-semibold uppercase tracking-wider">
+                                        {{ product.category.name }}
+                                    </span>
+                                </div>
+
+                                <!-- Title -->
+                                <h3 class="font-serif font-semibold text-lg text-gray-900 mb-3 leading-tight">
+                                    <a href="{% url 'catalog:product_detail' product.slug %}"
+                                       class="hover:text-primary-600 transition-colors duration-300">
+                                        {{ product.title|truncatechars:45 }}
+                                    </a>
+                                </h3>
+
+                                <!-- Description -->
+                                {% if product.short_description %}
+                                <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                                    {{ product.short_description|truncatewords:12 }}
+                                </p>
+                                {% endif %}
+
+                                <!-- Rating -->
                                 {% if product.get_review_count > 0 %}
-                                <div class="flex items-center mb-6">
+                                <div class="flex items-center mb-4">
                                     <div class="flex text-gold-400">
                                         {% for i in "12345" %}
                                             {% if forloop.counter <= product.get_average_rating %}
-                                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20">
                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                 </svg>
                                             {% else %}
-                                                <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                                <svg class="w-3 h-3 text-gray-300 fill-current" viewBox="0 0 20 20">
                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                 </svg>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
-                                    <span class="ml-3 text-sm text-gray-600 font-elegant">({{ product.get_review_count }} review{{ product.get_review_count|pluralize }})</span>
+                                    <span class="ml-2 text-xs text-gray-500">({{ product.get_review_count }})</span>
                                 </div>
                                 {% endif %}
 
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-3">
+                                <!-- Price Section -->
+                                <div class="pt-3 border-t border-gray-100">
+                                    <!-- Price -->
+                                    <div class="flex items-baseline space-x-2 mb-3">
                                         {% if product.sale_price and product.sale_price < product.price %}
-                                            <span class="text-2xl font-serif font-bold text-primary-600">${{ product.sale_price }}</span>
-                                            <span class="text-lg text-gray-500 line-through font-elegant">${{ product.price }}</span>
+                                            <span class="text-xl font-bold text-primary-600 font-serif">
+                                                {{ CURRENCY_SYMBOL }}{{ product.sale_price }}
+                                            </span>
+                                            <span class="text-sm text-gray-400 line-through">
+                                                {{ CURRENCY_SYMBOL }}{{ product.price }}
+                                            </span>
                                         {% else %}
-                                            <span class="text-2xl font-serif font-bold text-primary-600">${{ product.price }}</span>
+                                            <span class="text-xl font-bold text-primary-600 font-serif">
+                                                {{ CURRENCY_SYMBOL }}{{ product.price }}
+                                            </span>
                                         {% endif %}
                                     </div>
 
+                                    <!-- Add to Cart Button -->
                                     {% if product.is_in_stock %}
-                                        <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="add-to-cart-form">
+                                        <form method="post" action="{% url 'catalog:cart_add' product.id %}" class="w-full">
                                             {% csrf_token %}
                                             <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-6 py-3 rounded-full hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-300 transform hover:scale-110 font-serif font-medium shadow-lg hover:shadow-xl">
-                                                Add to Collection
+                                            <button type="submit"
+                                                    class="w-full bg-gradient-to-r from-primary-500 to-rose-500 text-white px-4 py-2.5 rounded-lg hover:from-primary-600 hover:to-rose-600 transition-all duration-300 font-medium text-sm shadow-md hover:shadow-lg transform hover:scale-105">
+                                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5M17 18a2 2 0 11-4 0 2 2 0 014 0zM9 18a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                Add to Cart
                                             </button>
                                         </form>
                                     {% else %}
-                                        <button disabled class="bg-gray-300 text-gray-500 px-6 py-3 rounded-full font-serif font-medium cursor-not-allowed shadow-lg">
-                                            Unavailable
+                                        <button disabled class="w-full bg-gray-200 text-gray-500 px-4 py-2.5 rounded-lg cursor-not-allowed font-medium text-sm">
+                                            Sold Out
                                         </button>
                                     {% endif %}
                                 </div>
                             </div>
-                        </div>
+                        </article>
                         {% endfor %}
                     </div>
 

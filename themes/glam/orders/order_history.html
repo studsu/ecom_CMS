@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="text-sm text-gray-600 font-elegant">Total</div>
                                 <div class="text-lg font-serif font-semibold text-gray-900">
-                                    ${{ order.total_amount }}
+                                    {{ CURRENCY_SYMBOL }}{{ order.total_amount }}
                                 </div>
                             </div>
 
@@ -101,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="font-serif font-semibold text-primary-600">
-                                    ${{ item.price }}
+                                    {{ CURRENCY_SYMBOL }}{{ item.price }}
                                 </div>
                             </div>
                             {% endfor %}

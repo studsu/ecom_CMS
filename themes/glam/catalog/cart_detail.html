@@ -73,7 +73,7 @@
                                     {% if item.product.sku %}
                                         <p class="text-gray-500 font-elegant text-sm">SKU: {{ item.product.sku }}</p>
                                     {% endif %}
-                                    <p class="text-lg font-serif font-bold text-primary-600 mt-2">₹{{ item.price }}</p>
+                                    <p class="text-lg font-serif font-bold text-primary-600 mt-2">{{ CURRENCY_SYMBOL }}{{ item.price }}</p>
                                 </div>
 
                                 <!-- Quantity Controls -->
@@ -91,7 +91,7 @@
                                         <button type="button" onclick="increaseQuantity(this)" class="px-4 py-2 text-gray-600 hover:text-primary-600 hover:bg-rose-50 transition-all duration-300 font-serif font-medium">+</button>
                                     </form>
 
-                                    <p class="text-lg font-serif font-bold text-gray-900">₹{{ item.total_price }}</p>
+                                    <p class="text-lg font-serif font-bold text-gray-900">{{ CURRENCY_SYMBOL }}{{ item.total_price }}</p>
                                 </div>
 
                                 <!-- Remove Button -->
@@ -132,7 +132,7 @@
                         <div class="space-y-4 mb-8">
                             <div class="flex justify-between items-center">
                                 <span class="font-elegant text-gray-600">Items ({{ cart|length }})</span>
-                                <span class="font-serif font-medium text-gray-900">${{ cart.get_total_price }}</span>
+                                <span class="font-serif font-medium text-gray-900">{{ CURRENCY_SYMBOL }}{{ cart.get_total_price }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="font-elegant text-gray-600">Shipping</span>
@@ -147,7 +147,7 @@
                         <div class="border-t border-rose-100 pt-6 mb-8">
                             <div class="flex justify-between items-center">
                                 <span class="text-xl font-serif font-bold text-gray-900">Total</span>
-                                <span class="text-2xl font-serif font-bold bg-gradient-to-r from-primary-600 to-rose-600 bg-clip-text text-transparent">${{ cart.get_total_price }}</span>
+                                <span class="text-2xl font-serif font-bold bg-gradient-to-r from-primary-600 to-rose-600 bg-clip-text text-transparent">{{ CURRENCY_SYMBOL }}{{ cart.get_total_price }}</span>
                             </div>
                         </div>
 

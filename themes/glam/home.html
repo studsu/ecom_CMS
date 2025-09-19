@@ -263,11 +263,11 @@
                     <div class="flex items-center justify-between">
                         {% if product.sale_price and product.sale_price < product.price %}
                             <div class="flex items-center space-x-3">
-                                <span class="text-3xl font-serif font-bold text-primary-600">${{ product.sale_price }}</span>
-                                <span class="text-lg text-gray-500 line-through font-elegant">${{ product.price }}</span>
+                                <span class="text-3xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.sale_price }}</span>
+                                <span class="text-lg text-gray-500 line-through font-elegant">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                             </div>
                         {% else %}
-                            <span class="text-3xl font-serif font-bold text-primary-600">${{ product.price }}</span>
+                            <span class="text-3xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                         {% endif %}
                         <div class="bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-6 py-3 rounded-full hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
                             View Details
@@ -293,7 +293,7 @@
                     <h3 class="text-2xl font-serif font-semibold text-gray-900 mb-3">Diamond Eternity Ring</h3>
                     <p class="text-gray-600 mb-6 font-elegant leading-relaxed">Exquisite 18k white gold ring featuring brilliant cut diamonds in a classic eternity setting.</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-3xl font-serif font-bold text-primary-600">$2,999</span>
+                        <span class="text-3xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}2,999</span>
                         <button class="bg-gradient-to-r from-primary-500 via-primary-600 to-rose-600 text-white px-6 py-3 rounded-full hover:from-primary-600 hover:via-primary-700 hover:to-rose-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
                             Add to Cart
                         </button>
@@ -317,7 +317,7 @@
                     <h3 class="text-2xl font-serif font-semibold text-gray-900 mb-3">Golden Starburst Necklace</h3>
                     <p class="text-gray-600 mb-6 font-elegant leading-relaxed">Stunning 22k gold necklace with intricate starburst pendant, adorned with precious gemstones.</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-3xl font-serif font-bold text-primary-600">$4,599</span>
+                        <span class="text-3xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}4,599</span>
                         <button class="bg-gradient-to-r from-gold-500 via-yellow-500 to-gold-600 text-white px-6 py-3 rounded-full hover:from-gold-600 hover:via-yellow-600 hover:to-gold-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
                             Add to Cart
                         </button>
@@ -341,7 +341,7 @@
                     <h3 class="text-2xl font-serif font-semibold text-gray-900 mb-3">Rose Gold Heart Earrings</h3>
                     <p class="text-gray-600 mb-6 font-elegant leading-relaxed">Delicate rose gold earrings featuring heart-shaped design with sparkling diamond accents.</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-3xl font-serif font-bold text-primary-600">$1,899</span>
+                        <span class="text-3xl font-serif font-bold text-primary-600">{{ CURRENCY_SYMBOL }}1,899</span>
                         <button class="bg-gradient-to-r from-rose-500 via-primary-600 to-pink-600 text-white px-6 py-3 rounded-full hover:from-rose-600 hover:via-primary-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-110 text-sm font-medium shadow-lg hover:shadow-xl">
                             Add to Cart
                         </button>

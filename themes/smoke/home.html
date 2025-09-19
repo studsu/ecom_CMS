@@ -142,11 +142,11 @@
                     <div class="flex items-center justify-between">
                         {% if product.sale_price and product.sale_price < product.price %}
                             <div class="flex items-center space-x-2">
-                                <span class="text-2xl font-bold text-primary-600">${{ product.sale_price }}</span>
-                                <span class="text-lg text-gray-500 line-through">${{ product.price }}</span>
+                                <span class="text-2xl font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.sale_price }}</span>
+                                <span class="text-lg text-gray-500 line-through">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                             </div>
                         {% else %}
-                            <span class="text-2xl font-bold text-primary-600">${{ product.price }}</span>
+                            <span class="text-2xl font-bold text-primary-600">{{ CURRENCY_SYMBOL }}{{ product.price }}</span>
                         {% endif %}
                         <div class="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2 rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all transform hover:scale-105 text-sm font-medium">
                             View Product

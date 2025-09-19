@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:400px;margin:2rem auto;text-align:center;">
+  <h2>Logout</h2>
+  <p>Are you sure you want to logout from {{ SITE_NAME }}?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn">Yes, Logout</button>
+    <a href="/" class="btn btn-secondary" style="margin-left:1rem;">Cancel</a>
+  </form>
+</div>
+{% endblock %}
