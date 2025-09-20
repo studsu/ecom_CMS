@@ -1,0 +1,22 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    {{ block.super }}
+    {% if current_version %}
+    <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; margin: 10px 0; border-radius: 4px;">
+        <strong>📦 Current Installed Version: </strong>
+        <span style="color: #007cba; font-weight: bold; font-size: 1.1em;">{{ current_version }}</span>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    {% if check_updates_url %}
+    <li>
+        <a href="{{ check_updates_url }}" class="addlink" style="background: #007cba; color: white;">
+            🔍 Check for Updates Now
+        </a>
+    </li>
+    {% endif %}
+{% endblock %}

@@ -30,7 +30,7 @@ urlpatterns = [
     path('users/', include('users.urls')),    # User auth (if exists)
     path('orders/', include('orders.urls')),  # Order management
     path('wishlist/', include('wishlist.urls')), # Wishlist functionality
-    path('updates/', include('updates.urls')), # Update management
+    path('updates/', include('updates.urls')), # Version checking
 ]
 
 # Serve media files during development

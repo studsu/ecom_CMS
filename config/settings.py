@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     "catalog",
     "orders",   # remove if you don't want it now
     "wishlist",  # Wishlist functionality
-    "updates",   # Auto-update system
+    "updates",   # Git-based version checking
 ]
 
 # Add discovered plugin apps
