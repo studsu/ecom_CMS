@@ -6,12 +6,24 @@
     <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; margin: 10px 0; border-radius: 4px;">
         <strong>📦 Current Installed Version: </strong>
         <span style="color: #007cba; font-weight: bold; font-size: 1.1em;">{{ current_version }}</span>
+        {% if latest_version %}
+        <br><strong>🆙 Update Available: </strong>
+        <span style="color: #28a745; font-weight: bold; font-size: 1.1em;">{{ latest_version }}</span>
+        {% endif %}
     </div>
     {% endif %}
 {% endblock %}
 
 {% block object-tools-items %}
     {{ block.super }}
+    {% if install_update_url %}
+    <li>
+        <a href="{{ install_update_url }}" class="addlink" style="background: #28a745; color: white;" 
+           onclick="return confirm('Are you sure you want to install the update? This will update your CMS to version {{ latest_version }}.');">
+            🚀 Install Update to {{ latest_version }}
+        </a>
+    </li>
+    {% endif %}
     {% if check_updates_url %}
     <li>
         <a href="{{ check_updates_url }}" class="addlink" style="background: #007cba; color: white;">

@@ -58,8 +58,27 @@ class VersionCheckAdmin(admin.ModelAdmin):
     
     def changelist_view(self, request, extra_context=None):
         """Add check updates button to the changelist"""
+        # Handle install update request
+        if request.GET.get('install_update'):
+            from .git_checker import git_checker
+            from django.contrib import messages
+            
+            # Get the latest version to install
+            latest_check = VersionCheck.objects.filter(check_successful=True, update_available=True).first()
+            if latest_check:
+                result = git_checker.install_update(latest_check.latest_version)
+                
+                if result['success']:
+                    messages.success(request, 
+                        f"🎉 Successfully updated to version {result['new_version']}! "
+                        f"Please restart the server to apply changes.")
+                else:
+                    messages.error(request, f"❌ Update failed: {result.get('error', 'Unknown error')}")
+            else:
+                messages.error(request, "❌ No available update found to install.")
+        
         # Handle check updates request
-        if request.GET.get('check_updates'):
+        elif request.GET.get('check_updates'):
             from .git_checker import git_checker
             from .models import UpdateSettings
             
@@ -103,6 +122,13 @@ class VersionCheckAdmin(admin.ModelAdmin):
         from .git_checker import git_checker
         current_version = git_checker.get_current_version()
         extra_context['current_version'] = current_version
+        
+        # Check if update is available and add install button
+        latest_check = VersionCheck.objects.filter(check_successful=True).first()
+        if latest_check and latest_check.update_available:
+            install_url = request.path + '?install_update=1'
+            extra_context['install_update_url'] = install_url
+            extra_context['latest_version'] = latest_check.latest_version
         
         return super().changelist_view(request, extra_context)
 

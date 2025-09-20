@@ -178,6 +178,92 @@ class GitVersionChecker:
                 'latest_version': self.get_current_version(),
                 'update_available': False,
             }
+    
+    def install_update(self, target_version):
+        """Install update by pulling and checking out the specified version"""
+        try:
+            current_version = self.get_current_version()
+            
+            # Ensure we have a clean working directory
+            result = subprocess.run(
+                ['git', 'status', '--porcelain'],
+                capture_output=True,
+                text=True,
+                cwd=settings.BASE_DIR
+            )
+            
+            if result.stdout.strip():
+                return {
+                    'success': False,
+                    'error': 'Working directory is not clean. Please commit or stash changes before updating.',
+                    'current_version': current_version,
+                }
+            
+            # Fetch latest changes from remote
+            result = subprocess.run(
+                ['git', 'fetch', '--tags'],
+                capture_output=True,
+                text=True,
+                cwd=settings.BASE_DIR
+            )
+            
+            if result.returncode != 0:
+                return {
+                    'success': False,
+                    'error': f'Failed to fetch updates: {result.stderr}',
+                    'current_version': current_version,
+                }
+            
+            # Checkout the target version
+            tag_name = target_version if target_version.startswith('v') else f'v{target_version}'
+            result = subprocess.run(
+                ['git', 'checkout', tag_name],
+                capture_output=True,
+                text=True,
+                cwd=settings.BASE_DIR
+            )
+            
+            if result.returncode != 0:
+                # Try without 'v' prefix
+                result = subprocess.run(
+                    ['git', 'checkout', target_version],
+                    capture_output=True,
+                    text=True,
+                    cwd=settings.BASE_DIR
+                )
+                
+                if result.returncode != 0:
+                    return {
+                        'success': False,
+                        'error': f'Failed to checkout version {target_version}: {result.stderr}',
+                        'current_version': current_version,
+                    }
+            
+            # Update version file if it exists
+            version_file = settings.BASE_DIR / 'version.json'
+            if version_file.exists():
+                try:
+                    with open(version_file, 'w') as f:
+                        json.dump({'version': target_version}, f, indent=2)
+                except Exception as e:
+                    logger.warning(f"Could not update version file: {e}")
+            
+            new_version = self.get_current_version()
+            
+            return {
+                'success': True,
+                'message': f'Successfully updated from {current_version} to {new_version}',
+                'old_version': current_version,
+                'new_version': new_version,
+            }
+            
+        except Exception as e:
+            logger.error(f"Error installing update: {e}")
+            return {
+                'success': False,
+                'error': str(e),
+                'current_version': self.get_current_version(),
+            }
 
 
 # Global instance

@@ -41,7 +41,13 @@ def test_button():
     else:
         print("❌ Version icon NOT found")
     
-    # Test clicking the button
+    # Check for install update button
+    if 'Install Update' in content:
+        print("✅ Install Update button found!")
+    else:
+        print("❌ Install Update button NOT found")
+    
+    # Test clicking the check updates button
     response = client.get('/admin/updates/versioncheck/?check_updates=1')
     print(f"Check updates response: {response.status_code}")
     
@@ -51,6 +57,21 @@ def test_button():
         messages = list(get_messages(response.wsgi_request))
         for message in messages:
             print(f"Message: {message}")
+    
+    # Now check if install button appears after update check
+    response = client.get('/admin/updates/versioncheck/')
+    content = response.content.decode('utf-8')
+    if 'Install Update' in content:
+        print("✅ Install Update button appeared after check!")
+        
+        # Test install button (but don't actually install)
+        print("🧪 Testing install update URL (simulation mode)")
+        if 'install_update=1' in content:
+            print("✅ Install URL parameter found!")
+        else:
+            print("❌ Install URL parameter NOT found")
+    else:
+        print("❌ Install Update button NOT found after check")
 
 if __name__ == '__main__':
     test_button()
