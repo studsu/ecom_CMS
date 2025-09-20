@@ -41,13 +41,13 @@ class UpdateSettings(models.Model):
         help_text="Maximum number of backups to keep"
     )
     update_server_url = models.URLField(
-        default="https://api.yoursite.com/cms-updates",
-        help_text="URL of the update server"
+        default="https://api.github.com/repos/studsu/ecom_CMS/releases",
+        help_text="GitHub releases API URL (leave as default for automatic GitHub integration)"
     )
     api_key = models.CharField(
         max_length=255,
         blank=True,
-        help_text="API key for update server (if required)"
+        help_text="GitHub token for higher API rate limits (optional but recommended)"
     )
     notification_email = models.EmailField(
         blank=True,

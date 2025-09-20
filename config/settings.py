@@ -186,6 +186,10 @@ CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
 CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
 
+# GitHub Integration (for auto-updates)
+# Optional: Add your GitHub token for higher API rate limits
+# GITHUB_TOKEN = 'your_github_token_here'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

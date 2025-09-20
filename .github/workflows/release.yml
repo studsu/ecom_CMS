@@ -1,0 +1,105 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers when you push a tag like v1.2.0
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Extract version from tag
+      id: extract_version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+        echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        
+    - name: Update version.json
+      run: |
+        python -c "
+import json
+from datetime import datetime
+
+# Update version.json
+with open('version.json', 'r') as f:
+    version_data = json.load(f)
+
+version_data['version'] = '${{ steps.extract_version.outputs.VERSION }}'
+version_data['install_date'] = datetime.now().isoformat() + 'Z'
+version_data['release_notes'] = 'Release ${{ steps.extract_version.outputs.VERSION }}'
+
+with open('version.json', 'w') as f:
+    json.dump(version_data, f, indent=2)
+"
+
+    - name: Create release package
+      run: |
+        # Create a clean package excluding unnecessary files
+        zip -r ecom-cms-${{ steps.extract_version.outputs.VERSION }}.zip . \
+          -x "*.git*" \
+          -x "*.github*" \
+          -x "__pycache__/*" \
+          -x "*.pyc" \
+          -x "*.pyo" \
+          -x "db.sqlite3" \
+          -x "backups/*" \
+          -x "temp_updates/*" \
+          -x "staticfiles/*" \
+          -x "media/*" \
+          -x "*.log" \
+          -x "*.env" \
+          -x "node_modules/*"
+          
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get commit messages since last tag
+        LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -z "$LAST_TAG" ]; then
+          CHANGES=$(git log --oneline --pretty=format:"* %s" HEAD~10..HEAD)
+        else
+          CHANGES=$(git log --oneline --pretty=format:"* %s" $LAST_TAG..HEAD)
+        fi
+        
+        echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+        echo "## What's Changed" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "$CHANGES" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "## Installation" >> $GITHUB_OUTPUT
+        echo "1. Download the \`ecom-cms-${{ steps.extract_version.outputs.VERSION }}.zip\` file" >> $GITHUB_OUTPUT
+        echo "2. Your CMS will automatically detect this update" >> $GITHUB_OUTPUT
+        echo "3. Click 'Update' in your admin panel" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$LAST_TAG...${{ steps.extract_version.outputs.TAG_NAME }}" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.extract_version.outputs.TAG_NAME }}
+        name: "Ecom CMS ${{ steps.extract_version.outputs.VERSION }}"
+        body: ${{ steps.changelog.outputs.CHANGELOG }}
+        files: |
+          ecom-cms-${{ steps.extract_version.outputs.VERSION }}.zip
+        draft: false
+        prerelease: ${{ contains(steps.extract_version.outputs.VERSION, '-') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Notify release created
+      run: |
+        echo "✅ Release ${{ steps.extract_version.outputs.VERSION }} created successfully!"
+        echo "📦 Package: ecom-cms-${{ steps.extract_version.outputs.VERSION }}.zip"
+        echo "🔗 URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.extract_version.outputs.TAG_NAME }}"

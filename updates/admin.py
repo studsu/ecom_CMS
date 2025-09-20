@@ -49,9 +49,9 @@ class UpdateSettingsAdmin(admin.ModelAdmin):
             'fields': ('backup_before_update', 'max_backups_to_keep'),
             'description': 'Backup configuration for updates'
         }),
-        ('Update Server', {
+        ('GitHub Integration', {
             'fields': ('update_server_url', 'api_key', 'beta_updates'),
-            'description': 'Update server configuration'
+            'description': 'GitHub releases integration - Leave update_server_url as default for GitHub'
         }),
         ('Notifications', {
             'fields': ('notification_email',),

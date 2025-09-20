@@ -25,7 +25,9 @@
       "Bash(dir \"C:\\Users\\dragon\\Documents\\GitHub\\ecom_CMS\\themes\\modern\\catalog\")",
       "Bash(fc:*)",
       "Bash(find:*)",
-      "Bash(move:*)"
+      "Bash(move:*)",
+      "Bash(pip3 install:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

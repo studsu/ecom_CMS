@@ -18,6 +18,7 @@ import logging
 # Optional import for update functionality
 try:
     import requests
+    from packaging import version as version_parser
     REQUESTS_AVAILABLE = True
 except ImportError:
     REQUESTS_AVAILABLE = False
@@ -68,79 +69,60 @@ class CMSVersion:
             return False
 
     def check_for_updates(self):
-        """Check if updates are available from update server"""
+        """Check if updates are available from GitHub releases"""
         if not REQUESTS_AVAILABLE:
             return {'error': 'requests library not available. Run: pip install requests'}
 
         try:
+            from .github_updater import github_updater
+            
             current_version = self.get_current_version()
-
-            # Prepare request data
-            request_data = {
-                'current_version': current_version,
-                'site_url': getattr(settings, 'SITE_URL', 'localhost'),
-                'cms_type': 'ecom_cms'
-            }
-
-            response = requests.get(
-                f"{self.UPDATE_SERVER_URL}/check",
-                params=request_data,
-                timeout=30
+            
+            # Get update settings to check for beta updates
+            try:
+                from updates.models import UpdateSettings
+                settings_obj = UpdateSettings.get_settings()
+                include_prereleases = settings_obj.beta_updates
+            except:
+                include_prereleases = False
+            
+            # Check GitHub for updates
+            update_info = github_updater.check_for_updates(
+                current_version=current_version,
+                include_prereleases=include_prereleases
             )
+            
+            return update_info
 
-            if response.status_code == 200:
-                update_data = response.json()
-                return {
-                    'update_available': update_data.get('update_available', False),
-                    'latest_version': update_data.get('latest_version'),
-                    'download_url': update_data.get('download_url'),
-                    'release_notes': update_data.get('release_notes'),
-                    'critical': update_data.get('critical', False),
-                    'compatibility': update_data.get('compatibility', {}),
-                    'file_size': update_data.get('file_size'),
-                    'checksum': update_data.get('checksum')
-                }
-            else:
-                logger.error(f"Update check failed: {response.status_code}")
-                return {'error': 'Failed to check for updates'}
-
-        except requests.RequestException as e:
-            logger.error(f"Network error checking updates: {e}")
-            return {'error': 'Network error checking for updates'}
         except Exception as e:
             logger.error(f"Error checking for updates: {e}")
-            return {'error': 'Error checking for updates'}
+            return {'error': f'Error checking for updates: {str(e)}'}
 
     def download_update(self, download_url, checksum=None):
-        """Download update package"""
+        """Download update package from GitHub"""
         if not REQUESTS_AVAILABLE:
             raise Exception('requests library not available. Run: pip install requests')
 
         try:
+            from .github_updater import github_updater
+            
             self.temp_dir.mkdir(exist_ok=True)
             update_file = self.temp_dir / "update.zip"
 
-            logger.info(f"Downloading update from {download_url}")
+            logger.info(f"Downloading update from GitHub: {download_url}")
 
-            response = requests.get(download_url, stream=True, timeout=300)
-            response.raise_for_status()
-
-            # Download with progress
-            total_size = int(response.headers.get('content-length', 0))
-            downloaded_size = 0
-
-            with open(update_file, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-                        downloaded_size += len(chunk)
+            # Use GitHub updater for download
+            success = github_updater.download_release(download_url, str(update_file))
+            
+            if not success:
+                raise Exception("Failed to download from GitHub")
 
             # Verify checksum if provided
             if checksum:
                 if not self.verify_checksum(update_file, checksum):
                     raise Exception("Checksum verification failed")
 
-            logger.info("Update downloaded successfully")
+            logger.info("Update downloaded successfully from GitHub")
             return str(update_file)
 
         except Exception as e:
