@@ -19,6 +19,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Import dynamic admin configuration
+from core.admin_config import update_admin_site
+update_admin_site()
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),           # Homepage

@@ -95,7 +95,4 @@ class WishlistItemAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related('wishlist__user', 'product')
 
 
-# Customize admin site header
-admin.site.site_header = "Glam Jewelry Admin"
-admin.site.site_title = "Glam Admin"
-admin.site.index_title = "Welcome to Glam Jewelry Administration"
+# Admin site headers are now dynamically configured in core.admin_config

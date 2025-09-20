@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "install_date": "2025-01-20T00:00:00Z",
-  "release_notes": "Initial release of Ecom CMS with auto-update system",
+  "version": "1.1.0",
+  "install_date": "2025-09-20T11:20:00Z",
+  "release_notes": "Version 1.1.0 - GitHub Auto-Update System & Dynamic Admin Headers",
   "last_check": null,
   "features": [
     "Multi-theme support (Default, Modern, Smoke, Glam)",
@@ -9,7 +9,8 @@
     "User authentication and profiles",
     "Shopping cart and order management",
     "Wishlist functionality",
-    "Auto-update system",
+    "GitHub auto-update system with one-click updates",
+    "Dynamic admin headers from site settings",
     "Admin panel with full control"
   ]
 }

@@ -456,11 +456,12 @@ class SiteSettings(models.Model):
         return self.get_currency_symbol()
 
     def save(self, *args, **kwargs):
-        """Clear theme cache when settings are saved"""
+        """Clear theme and admin cache when settings are saved"""
         super().save(*args, **kwargs)
         # Clear theme cache to force reload
         try:
             from django.core.cache import cache
             cache.delete('current_theme')
+            cache.delete('admin_site_name')  # Clear admin site name cache
         except:
             pass
