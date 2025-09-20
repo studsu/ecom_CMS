@@ -1,0 +1,36 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    {{ block.super }}
+    <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 10px 0; border-radius: 4px;">
+        <h3 style="margin: 0 0 10px 0;">🔌 Plugin Management System</h3>
+        <p style="margin: 0; color: #6c757d;">
+            Manage installed plugins: activate, deactivate, and discover new plugins. 
+            <strong>Note:</strong> Server restart required after activation/deactivation changes.
+        </p>
+    </div>
+{% endblock %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    {% if discover_plugins_url %}
+    <li>
+        <a href="{{ discover_plugins_url }}" class="addlink" style="background: #17a2b8; color: white;">
+            🔍 Discover Plugins
+        </a>
+    </li>
+    {% endif %}
+{% endblock %}
+
+{% block result_list %}
+    {{ block.super }}
+    
+    {% if cl.result_count == 0 %}
+    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin: 15px 0; border-radius: 4px; text-align: center;">
+        <h4 style="color: #856404; margin: 0 0 10px 0;">📦 No Plugins Found</h4>
+        <p style="margin: 0; color: #856404;">
+            No plugins have been discovered yet. Click "Discover Plugins" to scan for available plugins.
+        </p>
+    </div>
+    {% endif %}
+{% endblock %}

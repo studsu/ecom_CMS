@@ -68,10 +68,21 @@ INSTALLED_APPS = [
     "orders",   # remove if you don't want it now
     "wishlist",  # Wishlist functionality
     "updates",   # Git-based version checking
+    "plugins",   # Plugin management system
 ]
 
-# Add discovered plugin apps
-INSTALLED_APPS += discover_plugins(BASE_DIR)
+# Add active plugin apps
+def get_active_plugins():
+    """Get active plugins from database or fallback to discovery"""
+    try:
+        # Try to get active plugins from database
+        from plugins.models import PluginManager
+        return PluginManager.get_active_plugins()
+    except Exception:
+        # Fallback to file-based discovery if database not ready
+        return discover_plugins(BASE_DIR)
+
+INSTALLED_APPS += get_active_plugins()
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
