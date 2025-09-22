@@ -1,6 +1,6 @@
 """
 Git-based version checker for the CMS
-Checks GitHub releases to determine if updates are available
+Checks Git tags from remote repository to determine if updates are available
 """
 import subprocess
 import requests
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class GitVersionChecker:
-    """Check for updates from GitHub releases"""
+    """Check for updates from Git tags"""
 
     def __init__(self):
         self.repo_owner = "studsu"
@@ -115,69 +115,84 @@ class GitVersionChecker:
             logger.error(f"Error getting current version: {e}")
             return '1.0.0'
     
-    def get_github_releases(self, include_prereleases=False):
-        """Get releases from GitHub API"""
+    def get_remote_tags(self, include_prereleases=False):
+        """Get version tags from remote Git repository"""
         try:
-            cache_key = f"github_releases_{include_prereleases}"
+            cache_key = f"remote_tags_{include_prereleases}"
             cached_data = cache.get(cache_key)
             if cached_data:
                 return cached_data
-            
-            headers = {
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': f'{self.repo_name}/1.0'
-            }
-            
-            # Add GitHub token if available (for higher rate limits)
-            github_token = getattr(settings, 'GITHUB_TOKEN', None)
-            if github_token:
-                headers['Authorization'] = f'token {github_token}'
-            
-            url = f"{self.api_base}/repos/{self.repo_owner}/{self.repo_name}/releases"
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
-            
-            releases = response.json()
-            
-            # Filter out prereleases if not requested
-            if not include_prereleases:
-                releases = [r for r in releases if not r.get('prerelease', False)]
-            
+
+            # Fetch latest tags from remote
+            result = self._run_git_command(['git', 'fetch', '--tags'])
+            if result.returncode != 0:
+                logger.error(f"Failed to fetch tags: {result.stderr}")
+                return []
+
+            # Get all tags sorted by version
+            result = self._run_git_command(['git', 'tag', '-l', '--sort=-version:refname'])
+            if result.returncode != 0:
+                logger.error(f"Failed to list tags: {result.stderr}")
+                return []
+
+            tags = []
+            for tag_line in result.stdout.strip().split('\n'):
+                tag = tag_line.strip()
+                if not tag:
+                    continue
+
+                # Filter version tags (should start with 'v' or be numeric)
+                if tag.startswith('v') or tag.replace('.', '').isdigit():
+                    # Skip prerelease tags if not requested
+                    if not include_prereleases and ('alpha' in tag.lower() or 'beta' in tag.lower() or 'rc' in tag.lower()):
+                        continue
+
+                    # Get commit info for this tag
+                    commit_result = self._run_git_command(['git', 'show', '-s', '--format=%H|%ci|%s', tag])
+                    commit_info = commit_result.stdout.strip().split('|') if commit_result.returncode == 0 else ['', '', '']
+
+                    tags.append({
+                        'tag_name': tag,
+                        'name': f'Release {tag}',
+                        'commit_hash': commit_info[0] if len(commit_info) > 0 else '',
+                        'published_at': commit_info[1] if len(commit_info) > 1 else '',
+                        'body': commit_info[2] if len(commit_info) > 2 else f'Release {tag}',
+                        'prerelease': 'alpha' in tag.lower() or 'beta' in tag.lower() or 'rc' in tag.lower(),
+                        'html_url': f"https://github.com/{self.repo_owner}/{self.repo_name}/releases/tag/{tag}"
+                    })
+
             # Cache the result
-            cache.set(cache_key, releases, self.cache_timeout)
-            return releases
-            
-        except requests.RequestException as e:
-            logger.error(f"Error fetching GitHub releases: {e}")
-            return []
+            cache.set(cache_key, tags, self.cache_timeout)
+            return tags
+
         except Exception as e:
-            logger.error(f"Error processing GitHub releases: {e}")
+            logger.error(f"Error fetching remote tags: {e}")
             return []
     
     def get_latest_version(self, include_prereleases=False):
-        """Get the latest version from GitHub releases"""
-        releases = self.get_github_releases(include_prereleases)
-        
-        if not releases:
+        """Get the latest version from remote Git tags"""
+        tags = self.get_remote_tags(include_prereleases)
+
+        if not tags:
             return None
-        
-        # GitHub returns releases in reverse chronological order
+
+        # Tags are already sorted by version (newest first)
         # Find the latest version
-        for release in releases:
-            tag_name = release.get('tag_name', '')
+        for tag_info in tags:
+            tag_name = tag_info.get('tag_name', '')
             if tag_name:
                 # Clean the tag (remove 'v' prefix if present)
                 clean_version = tag_name.lstrip('v')
                 return {
                     'version': clean_version,
                     'tag_name': tag_name,
-                    'name': release.get('name', ''),
-                    'body': release.get('body', ''),
-                    'prerelease': release.get('prerelease', False),
-                    'published_at': release.get('published_at'),
-                    'html_url': release.get('html_url', ''),
+                    'name': tag_info.get('name', ''),
+                    'body': tag_info.get('body', ''),
+                    'prerelease': tag_info.get('prerelease', False),
+                    'published_at': tag_info.get('published_at'),
+                    'html_url': tag_info.get('html_url', ''),
                 }
-        
+
         return None
     
     def check_for_updates(self, include_prereleases=False):
@@ -189,7 +204,7 @@ class GitVersionChecker:
             if not latest_release:
                 return {
                     'success': False,
-                    'error': 'Unable to fetch release information from GitHub',
+                    'error': 'Unable to fetch version information from remote repository',
                     'current_version': current_version,
                     'latest_version': current_version,
                     'update_available': False,
