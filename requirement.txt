@@ -1,0 +1,141 @@
+# ==============================================================================
+# E-commerce CMS Requirements
+# Django-based multi-theme e-commerce content management system
+# ==============================================================================
+
+# Core Django Framework
+Django==5.2.5
+djangorestframework==3.15.2
+
+# Database Support
+# SQLite is included with Django, uncomment below for other databases
+# psycopg2-binary==2.9.9     # PostgreSQL
+# mysqlclient==2.2.4         # MySQL/MariaDB
+
+# Image Processing
+Pillow==11.3.0
+
+# HTTP Requests (for GitHub updates)
+requests==2.32.5
+
+# Version Management (for auto-updates)
+packaging==25.0
+
+# Date and Time Utilities
+python-dateutil==2.9.0.post0
+pytz==2025.2
+
+# Security and Cryptography
+pycryptodome==3.23.0
+
+# Development and Debugging Tools
+# ipython==9.5.0              # Enhanced Python shell
+# django-debug-toolbar==4.4.6  # Debug toolbar for Django
+
+# Production Server (uncomment for production)
+# gunicorn==23.0.0            # WSGI HTTP Server
+# whitenoise==6.8.2           # Static file serving
+
+# Caching (uncomment if needed)
+# redis==5.2.1                # Redis client
+# django-redis==5.4.0         # Redis cache backend
+
+# Email Backend (uncomment if needed)
+# django-anymail==12.0        # Multiple email service providers
+
+# File Storage (uncomment if needed)
+# django-storages==1.14.4     # Cloud storage backends
+# boto3==1.35.82              # AWS S3 storage
+
+# SEO and Optimization (uncomment if needed)
+# django-meta==2.4.1          # Meta tags management
+# django-sitemap==2.3         # XML sitemaps
+
+# Payment Processing (uncomment as needed)
+# stripe==11.2.0              # Stripe payment processing
+# paypal-checkout-serversdk==1.0.1  # PayPal integration
+
+# Social Authentication (uncomment if needed)
+# django-allauth==65.0.2      # Social account authentication
+
+# API Documentation (uncomment if needed)
+# drf-spectacular==0.28.0     # OpenAPI 3 schema generation
+
+# Monitoring and Logging (uncomment for production)
+# sentry-sdk==2.19.0          # Error monitoring
+# django-extensions==3.2.3    # Additional management commands
+
+# Testing (uncomment for development)
+# pytest==8.3.4               # Testing framework
+# pytest-django==4.9.0        # Django plugin for pytest
+# factory-boy==3.3.1          # Test fixtures
+
+# Code Quality (uncomment for development)
+# black==24.10.0               # Code formatter
+# flake8==7.1.1               # Linting
+# isort==5.13.2               # Import sorting
+
+# Data Processing (optional)
+# pandas==2.3.2               # Data analysis
+# numpy==2.3.2                # Numerical computing
+
+# ==============================================================================
+# Optional Dependencies Based on Features
+# ==============================================================================
+
+# Uncomment the sections below based on your project needs:
+
+# For Advanced E-commerce Features:
+# django-oscar==3.2.4         # E-commerce framework
+# django-shop==1.2.5          # Alternative e-commerce framework
+
+# For Multi-language Support:
+# django-modeltranslation==0.18.12  # Model translations
+# django-rosetta==0.10.1      # Translation interface
+
+# For Advanced Search:
+# elasticsearch-dsl==8.15.1   # Elasticsearch integration
+# django-elasticsearch-dsl==8.0  # Django Elasticsearch
+
+# For Performance:
+# django-cachalot==2.7.1      # ORM caching
+# django-compressor==4.5.1    # CSS/JS compression
+
+# For Content Management:
+# django-ckeditor==6.7.1      # Rich text editor
+# django-mptt==0.16.0         # Tree structures
+
+# For Analytics:
+# google-analytics==0.7.0     # Google Analytics integration
+# mixpanel==4.10.1            # Mixpanel analytics
+
+# ==============================================================================
+# Windows-specific Dependencies (already handled by Django)
+# ==============================================================================
+# Django automatically handles Windows compatibility
+# No additional Windows-specific packages required
+
+# ==============================================================================
+# Installation Instructions
+# ==============================================================================
+#
+# 1. Create virtual environment:
+#    python -m venv venv
+#
+# 2. Activate virtual environment:
+#    Windows: venv\Scripts\activate
+#    Linux/Mac: source venv/bin/activate
+#
+# 3. Install requirements:
+#    pip install -r requirements.txt
+#
+# 4. Run migrations:
+#    python manage.py migrate
+#
+# 5. Create superuser:
+#    python manage.py createsuperuser
+#
+# 6. Run development server:
+#    python manage.py runserver
+#
+# ==============================================================================

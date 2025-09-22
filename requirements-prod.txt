@@ -1,0 +1,60 @@
+# ==============================================================================
+# E-commerce CMS - Production Requirements
+# Optimized for production deployment with performance and security
+# ==============================================================================
+
+# Include base requirements
+-r requirements-minimal.txt
+
+# Production Web Server
+gunicorn==23.0.0
+whitenoise==6.8.2
+
+# Database Drivers (uncomment as needed)
+psycopg2-binary==2.9.9      # PostgreSQL
+# mysqlclient==2.2.4         # MySQL/MariaDB
+
+# Caching
+redis==5.2.1
+django-redis==5.4.0
+
+# Monitoring and Error Tracking
+sentry-sdk==2.19.0
+
+# Performance Optimization
+django-cachalot==2.7.1
+django-compressor==4.5.1
+
+# Static File Handling
+django-storages==1.14.4     # Cloud storage
+boto3==1.35.82              # AWS S3
+
+# Email Backend
+django-anymail==12.0
+
+# Security Enhancements
+django-csp==3.8             # Content Security Policy
+django-cors-headers==4.6.0  # CORS handling
+
+# SSL and HTTPS
+certifi==2025.8.3
+
+# Environment Management
+python-decouple==3.8        # Environment variables
+
+# API Rate Limiting
+django-ratelimit==5.0.0
+
+# ==============================================================================
+# Environment Variables for Production:
+# ==============================================================================
+# Create a .env file with:
+# DEBUG=False
+# SECRET_KEY=your-secret-key-here
+# DATABASE_URL=postgresql://user:pass@localhost/dbname
+# REDIS_URL=redis://localhost:6379/1
+# SENTRY_DSN=your-sentry-dsn
+# AWS_ACCESS_KEY_ID=your-aws-key
+# AWS_SECRET_ACCESS_KEY=your-aws-secret
+# AWS_STORAGE_BUCKET_NAME=your-bucket-name
+# ==============================================================================
