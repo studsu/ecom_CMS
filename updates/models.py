@@ -17,8 +17,8 @@ class VersionCheck(models.Model):
         verbose_name_plural = 'Version Checks'
     
     def __str__(self):
-        status = "✅ Success" if self.check_successful else "❌ Failed"
-        update_status = "🆙 Available" if self.update_available else "✅ Latest"
+        status = "Success" if self.check_successful else "Failed"
+        update_status = "Update Available" if self.update_available else "Latest"
         return f"{self.check_date.strftime('%Y-%m-%d %H:%M')} - {self.current_version} - {update_status} - {status}"
 
 

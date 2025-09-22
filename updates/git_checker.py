@@ -6,6 +6,7 @@ import subprocess
 import requests
 import json
 import re
+import platform
 from packaging import version
 from django.conf import settings
 from django.core.cache import cache
@@ -16,37 +17,84 @@ logger = logging.getLogger(__name__)
 
 class GitVersionChecker:
     """Check for updates from GitHub releases"""
-    
+
     def __init__(self):
         self.repo_owner = "studsu"
         self.repo_name = "ecom_CMS"
         self.api_base = "https://api.github.com"
         self.cache_timeout = 300  # 5 minutes
+        self._ssl_configured = False
+
+    def _configure_git_ssl(self):
+        """Configure Git SSL settings for Windows"""
+        try:
+            if platform.system() == 'Windows':
+                # Disable SSL certificate revocation checking for Windows
+                subprocess.run(['git', 'config', '--global', 'http.schannelCheckRevoke', 'false'],
+                             capture_output=True, cwd=settings.BASE_DIR)
+                subprocess.run(['git', 'config', '--global', 'http.sslVerify', 'true'],
+                             capture_output=True, cwd=settings.BASE_DIR)
+                logger.info("Configured Git SSL settings for Windows")
+                self._ssl_configured = True
+            return True
+        except Exception as e:
+            logger.error(f"Failed to configure Git SSL settings: {e}")
+            return False
+
+    def _run_git_command(self, cmd, retry_on_ssl_error=True):
+        """Run git command with SSL error handling"""
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=settings.BASE_DIR)
+
+            # Check for SSL/TLS errors (common on Windows)
+            ssl_error_keywords = [
+                'schannel', 'ssl', 'tls', 'certificate', 'handshake',
+                'server closed abruptly', 'missing close_notify'
+            ]
+
+            if (result.returncode != 0 and retry_on_ssl_error and
+                any(keyword in result.stderr.lower() for keyword in ssl_error_keywords)):
+
+                logger.warning(f"SSL error detected in git command: {result.stderr}")
+
+                # Configure SSL settings and retry
+                if self._configure_git_ssl():
+                    logger.info("Retrying git command after SSL configuration")
+                    result = subprocess.run(cmd, capture_output=True, text=True, cwd=settings.BASE_DIR)
+
+                    if result.returncode == 0:
+                        logger.info("Git command succeeded after SSL configuration")
+
+            return result
+
+        except Exception as e:
+            logger.error(f"Error running git command {cmd}: {e}")
+            # Return a failed result object
+            class FailedResult:
+                def __init__(self, error):
+                    self.returncode = 1
+                    self.stdout = ""
+                    self.stderr = str(error)
+            return FailedResult(e)
     
     def get_current_version(self):
         """Get current version from Git tag or version file"""
         try:
             # Try to get version from git tag first
-            result = subprocess.run(
-                ['git', 'describe', '--tags', '--exact-match', 'HEAD'],
-                capture_output=True,
-                text=True,
-                cwd=settings.BASE_DIR
+            result = self._run_git_command(
+                ['git', 'describe', '--tags', '--exact-match', 'HEAD']
             )
-            
+
             if result.returncode == 0:
                 # Clean the tag (remove 'v' prefix if present)
                 tag = result.stdout.strip()
                 return tag.lstrip('v')
-            
+
             # If no exact tag, get latest tag
-            result = subprocess.run(
-                ['git', 'describe', '--tags', '--abbrev=0'],
-                capture_output=True,
-                text=True,
-                cwd=settings.BASE_DIR
+            result = self._run_git_command(
+                ['git', 'describe', '--tags', '--abbrev=0']
             )
-            
+
             if result.returncode == 0:
                 tag = result.stdout.strip()
                 return tag.lstrip('v')
@@ -185,53 +233,33 @@ class GitVersionChecker:
             current_version = self.get_current_version()
             
             # Ensure we have a clean working directory
-            result = subprocess.run(
-                ['git', 'status', '--porcelain'],
-                capture_output=True,
-                text=True,
-                cwd=settings.BASE_DIR
-            )
-            
+            result = self._run_git_command(['git', 'status', '--porcelain'])
+
             if result.stdout.strip():
                 return {
                     'success': False,
                     'error': 'Working directory is not clean. Please commit or stash changes before updating.',
                     'current_version': current_version,
                 }
-            
+
             # Fetch latest changes from remote
-            result = subprocess.run(
-                ['git', 'fetch', '--tags'],
-                capture_output=True,
-                text=True,
-                cwd=settings.BASE_DIR
-            )
-            
+            result = self._run_git_command(['git', 'fetch', '--tags'])
+
             if result.returncode != 0:
                 return {
                     'success': False,
                     'error': f'Failed to fetch updates: {result.stderr}',
                     'current_version': current_version,
                 }
-            
+
             # Checkout the target version
             tag_name = target_version if target_version.startswith('v') else f'v{target_version}'
-            result = subprocess.run(
-                ['git', 'checkout', tag_name],
-                capture_output=True,
-                text=True,
-                cwd=settings.BASE_DIR
-            )
-            
+            result = self._run_git_command(['git', 'checkout', tag_name])
+
             if result.returncode != 0:
                 # Try without 'v' prefix
-                result = subprocess.run(
-                    ['git', 'checkout', target_version],
-                    capture_output=True,
-                    text=True,
-                    cwd=settings.BASE_DIR
-                )
-                
+                result = self._run_git_command(['git', 'checkout', target_version])
+
                 if result.returncode != 0:
                     return {
                         'success': False,
