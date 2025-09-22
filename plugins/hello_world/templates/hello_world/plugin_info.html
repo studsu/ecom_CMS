@@ -1,0 +1,28 @@
+{% if plugin %}
+<div class="card border-primary mb-3">
+    <div class="card-header bg-primary text-white">
+        <i class="fas fa-plug"></i> {{ plugin.name }} v{{ plugin.version }}
+        {% if is_active %}
+            <span class="badge bg-success ms-2">Active</span>
+        {% else %}
+            <span class="badge bg-secondary ms-2">Inactive</span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <p class="card-text">{{ plugin.description }}</p>
+        {% if is_active %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> Plugin is currently active and running!
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-pause-circle"></i> Plugin is currently inactive.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i> Hello World Plugin not found!
+</div>
+{% endif %}

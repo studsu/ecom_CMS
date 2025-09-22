@@ -1,0 +1,6 @@
+{
+  "name": "Hello World Plugin",
+  "description": "A simple test plugin that displays 'Hello World' message on the homepage header for testing activation/deactivation.",
+  "version": "1.0.0",
+  "app_name": "plugins.hello_world"
+}

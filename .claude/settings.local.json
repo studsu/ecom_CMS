@@ -29,7 +29,13 @@
       "Bash(pip3 install:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git checkout main)",
+      "Bash(git tag:*)",
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(dir plugins)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
